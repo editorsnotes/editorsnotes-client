@@ -1,17 +1,19 @@
 "use strict";
 
 var $ = require('./jquery')
-  , Backbone = window.Backbone = require('./backbone')
-  , BaseRouter
+  , Backbone = require('./backbone')
+  , router = require('./client')
+
+/* Add routes to the router */
+router.add([])
 
 $(document).ready(function () {
   initTimeago();
   initTooltips();
   initAutocomplete();
-
-  window.EditorsNotes.base = new BaseRouter();
 });
 
+/*
 BaseRouter = Backbone.Router.extend({
   routes: {
     'projects/:project/documents/:document/': 'showDocument'
@@ -23,6 +25,7 @@ BaseRouter = Backbone.Router.extend({
       , view = new ScansView({ el: '#scans', model: dokument })
   }
 });
+*/
 
 // Initialize timeago
 function initTimeago() {
