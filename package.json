@@ -16,13 +16,21 @@
     "brfs": "1.0.0",
     "browserify": "^8.1.3",
     "browserify-shim": "^3.8.2",
+    "cookie": "^0.1.2",
+    "cookie-cutter": "^0.1.1",
+    "exec-sync": "^0.1.6",
     "factor-bundle": "^2.3.3",
+    "jed": "^1.1.0",
     "jedify": "0.0.1",
     "less": "^1.7.0",
     "mocha": "^1.18.0",
+    "nunjucks": "^1.2.0",
     "node-underscorify": "0.0.14",
+    "po2json": "^0.3.2",
+    "request": "^2.53.0",
     "sinon": "^1.9.0",
     "testling": "^1.6.1",
+    "typogr": "^0.6.5",
     "uglify-js": "^2.4.14",
     "watchify": "^2.3.0"
   },
@@ -80,6 +88,5 @@
     "test": "mocha editorsnotes_app/src/test/*.js",
     "compile": "browserify src/index-base.js src/index-admin.js -p [ factor-bundle -o dist/base-bundle.js -o dist/admin-bundle.js ] -o dist/common-bundle.js",
     "watch": "watchify -dv src/index-base.js src/index-admin.js -p [ factor-bundle -o dist/base-bundle.js -o dist/admin-bundle.js ] -o dist/common-bundle.js"
-
   }
 }
