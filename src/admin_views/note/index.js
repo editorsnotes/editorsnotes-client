@@ -3,7 +3,6 @@
 var Backbone = require('../../backbone')
   , Cocktail = require('backbone.cocktail')
   , _ = require('underscore')
-  , i18n = require('../../utils/i18n').main
   , NoteSectionListView = require('./note_section_list')
   , RelatedTopicsView = require('../widgets/related_topics')
   , SaveItemMixin = require('../generic/save_item_mixin')
@@ -22,6 +21,7 @@ NoteView = module.exports = Backbone.View.extend({
       observe: 'status',
       selectOptions: {
         collection: function () {
+          var i18n = require('../../utils/i18n').main;
           return _.map(this.model.possibleStatuses, function (s) {
             return { value: s, label: i18n.translate(s).fetch() }
           });

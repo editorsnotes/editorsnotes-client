@@ -17,12 +17,8 @@ function getTemplatePaths() {
 }
 var API_URL = 'http://localhost:8001'
 
-/*
-require('./index-admin');
-require('./index-base');
-router.add(require('./index-admin'));
-router.add(require('./index-base'));
-*/
+router.add(require('./admin_views/routes'))
+router.add(require('./base_views/routes'))
 
 var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(getTemplatePaths()));
 

@@ -4,8 +4,6 @@ var Backbone = require('../../backbone')
   , _ = require('underscore')
   , $ = require('../../jquery')
   , CitationEngine = require('../../utils/citation_generator')
-  , zoteroToCsl = require('../../utils/zotero_to_csl')
-  , i18n = require('../../utils/i18n')
 
 function fetchItemTypes() {
   return $.getJSON('/api/metadata/documents/item_types/');
@@ -53,6 +51,7 @@ module.exports = Backbone.View.extend({
 
   renderZoteroData: function (zoteroItem) {
     var that = this
+      , i18n = require('../../utils/i18n')
       , template = require('./templates/zotero_item.html')
 
     fetchCreatorTypes(zoteroItem.itemType).done(function (creatorTypes) {
@@ -137,7 +136,8 @@ module.exports = Backbone.View.extend({
   },
 
   updateZoteroData: function () {
-    var zoteroData
+    var zoteroToCsl = require('../../utils/zotero_to_csl')
+      , zoteroData
       , cslData
       , citation
 

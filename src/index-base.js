@@ -4,28 +4,13 @@ var $ = require('./jquery')
   , Backbone = require('./backbone')
   , router = require('./client')
 
-/* Add routes to the router */
-router.add([])
+router.add(require('./base_views/routes'))
 
 $(document).ready(function () {
   initTimeago();
   initTooltips();
   initAutocomplete();
 });
-
-/*
-BaseRouter = Backbone.Router.extend({
-  routes: {
-    'projects/:project/documents/:document/': 'showDocument'
-  },
-  showDocument: function () {
-    var ScansView = require('./base_views/scans')
-      , Document = require('./models/document')
-      , dokument = new Document(EditorsNotes.bootstrap, { parse: true })
-      , view = new ScansView({ el: '#scans', model: dokument })
-  }
-});
-*/
 
 // Initialize timeago
 function initTimeago() {
