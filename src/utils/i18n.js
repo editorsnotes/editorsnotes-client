@@ -1,6 +1,6 @@
 "use strict";
 
 module.exports = {
-  main: requirePo('./../../../editorsnotes/main/locale/%s/LC_MESSAGES/django.po'),
-  zotero: requirePo('./../../../editorsnotes/djotero/locale/%s/LC_MESSAGES/django.po')
+  main: requirePo('../../locale/%s/LC_MESSAGES/main.po'),
+  zotero: requirePo('../../locale/%s/LC_MESSAGES/zotero.po'),
 }
