@@ -8,6 +8,7 @@
     "backbone.stickit": "^0.8.0",
     "jquery": "^1.11.0",
     "leaflet": "^0.7.3",
+    "route-recognizer": "^0.1.5",
     "underscore": "^1.7.0",
     "underscore-contrib": "^0.3.0"
   },
