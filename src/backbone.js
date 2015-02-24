@@ -3,10 +3,11 @@
 var Backbone = require('backbone')
   , oldSync = Backbone.sync
   , oldURL = Backbone.Model.prototype.url
-  , $ = require('./jquery')
 
-Backbone.$ = $;
-require('backbone.stickit');
+if (typeof window != 'undefined') {
+  Backbone.$ = require('./jquery');
+  require('backbone.stickit');
+}
 
 Backbone.Model.prototype.url = function () {
   var origURL = oldURL.call(this);
@@ -16,6 +17,7 @@ Backbone.Model.prototype.url = function () {
 Backbone.sync = function (method, model, options) {
   
   // Set a header with the CSRF token before sending any requests
+  /*
   options.beforeSend = function (xhr) {
     var token = $('input[name="csrfmiddlewaretoken"]').val();
 
@@ -26,6 +28,7 @@ Backbone.sync = function (method, model, options) {
 
     xhr.setRequestHeader('X-CSRFToken', token);
   }
+  */
 
   return oldSync(method, model, options);
 }
