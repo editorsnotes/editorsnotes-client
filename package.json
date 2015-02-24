@@ -77,8 +77,8 @@
   },
   "scripts": {
     "test": "mocha editorsnotes_app/src/test/*.js",
-    "compile": "browserify src/index-base.js src/index-admin.js -p [ factor-bundle -o dist/base-bundle.js dist/admin-bundle.js ] -o dist/common-bundle.js",
-    "watch": "watchify -dv src/index-base.js src/index-admin.js -p [ factor-bundle -o dist/base-bundle.js dist/admin-bundle.js ] -o dist/common-bundle.js"
+    "compile": "browserify src/index-base.js src/index-admin.js -p [ factor-bundle -o dist/base-bundle.js -o dist/admin-bundle.js ] -o dist/common-bundle.js",
+    "watch": "watchify -dv src/index-base.js src/index-admin.js -p [ factor-bundle -o dist/base-bundle.js -o dist/admin-bundle.js ] -o dist/common-bundle.js"
 
   }
 }
