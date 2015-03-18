@@ -64,10 +64,21 @@ router.fallbackHandler = function () {
       , fetch = !!(config.Model || config.Collection || config.fetch)
       , cookies = cookie.parse(this.req.headers.cookie || '')
       , options
+      , model
+      , url
+
+    if (config.Model) {
+      model = new config.Model(params);
+      url = model.url();
+    } else {
+      url = this.req.url;
+    }
+
+    url = API_URL + url;
 
     if (fetch) {
       options = {
-        url: API_URL + this.req.url,
+        url: url,
         headers: {
           'Host': this.req.headers.host,
           'Accept': 'application/json'

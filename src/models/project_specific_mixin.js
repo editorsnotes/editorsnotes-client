@@ -20,11 +20,17 @@ module.exports = {
     }
 
     if (candidates.attributes) {
-      slug = candidates.attributes.url.match(/[^\/]+/g).slice(-1);
-      candidates.attributes = new Project({
-        name: candidates.attributes.name,
-        slug: slug
-      });
+      if (typeof candidates.attributes === 'object') {
+        slug = candidates.attributes.url.match(/[^\/]+/g).slice(-1);
+        candidates.attributes = new Project({
+          name: candidates.attributes.name,
+          slug: slug
+        });
+      } else if (typeof candidates.attributes === 'string') {
+        candidates.attributes = new Project({
+          slug: candidates.attributes
+        });
+      }
     }
 
     results = _.chain(candidates).filter(function (p) { return p instanceof Project });
