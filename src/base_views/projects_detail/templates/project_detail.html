@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% set project=data %}
+{% block content %}
+<h1>{{ project.name }}</h1>
+<hr/>
+
+{% if show_edit_row %}
+<div class="well">
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="span6">
+    {% if project.has_description %}
+      {% if project.image %}
+        <img align="left" style="margin: 0 10px 10px 0;" src="{{ project.image.url }}" />
+      {% endif %}
+      {{ project.description }}
+    {% else %}
+      no project description
+    {% endif %}
+  </div>
+  <div class="span6">
+  </div>
+</div>
+
+
+{% endblock %}

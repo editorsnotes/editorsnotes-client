@@ -1,12 +1,12 @@
 <h2>Scans</h2>
 <div id="scanlist-container">                                                                  
   <ul id="scan-list">                                                                          
-    <% scans.forEach(function (scan, idx) { %>
+    {% for scan in scan %}
     <li><a class="scan btn"
-      href="<%= scan.image %>"
-      data-height="<%= scan.height %>"
-      data-width="<%= scan.width %>"><%= idx + 1 %></a></li>
-    <% }); %>
+      href="{{ scan.image }}"
+      data-height="{{ scan.height }}"
+      data-width="{{ scan.width }}">{{ loop.index }}</a></li>
+    {% endfor %}
   </ul>                                                                                        
 </div>   
 <div id="scan-viewer2"></div>
