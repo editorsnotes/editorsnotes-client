@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Page not found.</h1>
+{% if message %}
+<h2>Message</h2>
+<pre>{{ message }}</pre>
+{% endif %}
+{% endblock %}

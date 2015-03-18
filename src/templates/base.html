@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+
+    <title>Editors' Notes</title>
+    <meta charset="utf-8"/>
+
+    <link rel="stylesheet" href="/static/copied-style.css" />
+    <script type="text/javascript" src="/static/bundle.js"></script>
+
+    {% block css %}{% endblock %}
+
+      <script type="text/javascript">
+        var EditorsNotes = {}
+
+        {% if server %}
+        EditorsNotes.renderedOnServer = true;
+        {% endif %}
+
+        {% if bootstrap %}
+        EditorsNotes.bootstrap = {{ bootstrap }};
+        {% endif %}
+
+        {% if request.user.is_authenticated and request.user.email %}
+          EditorsNotes.loggedInUser = '{{ request.user.email }}';
+        {% endif %}
+      </script>
+
+    {% block js %}{% endblock %}
+
+  </head>
+
+  <body>
+    <div class="main-wrapper">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <div class="container">
+            <ul class="nav">
+              <li><a class="brand" href="/">Editors' Notes</a></li>
+              <li class="divider-vertical"></li>
+              <li><a href="/browse/">Browse</a></li>
+              <li><a href="/about/">About</a></li>
+              <li class="divider-vertical"></li>
+              <form class="navbar-search" action="/search/" method="get">
+                <input type="text" class="search-query search-autocomplete" name="q" x-search-target="topics" placeholder="Search" />
+              </form> 
+            </ul>
+
+              <ul id="auth-menu" class="nav pull-right">
+                <li id="auth-menu-signed-out"><a href="/login/">Log in</a></li>
+                <li id="auth-menu-signed-in"><a href="#"></a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div id="main-wrap" class="container">
+          {% if breadcrumb %}{% include "includes/breadcrumb.html" %}{% endif %}
+          <div id="main">{% block content %}{% endblock %}</div>
+          <div class="push"></div>
+        </div>
+
+      </div>
+
+      <div class="footer">
+        <div class="footer-inner container">
+          DEPLOYMENT INFO
+          {# {% deployment_info %} #}
+        </div>
+      </div>
+
+      {# {% if request.user.is_authenticated %}{% csrf_token %}{% endif %} #}
+
+    </body>
+</html>
