@@ -13,7 +13,7 @@ module.exports = [
     path: '/projects/',
     name: 'projects_list',
     View: require('./projects_list'),
-    Model: true
+    fetch: true
   },
   {
     path: '/projects/:project_slug/',
@@ -46,13 +46,13 @@ module.exports = [
     path: '/projects/:project_slug/notes/',
     name: 'notes_list',
     View: require('./notes_list'),
-    Model: true
+    fetch: true
   },
   {
     path: '/projects/:project_slug/notes/:id/',
     name: 'notes_detail',
     View: require('./notes_detail'),
-    Model: true
+    Model: require('../models/note')
   },
   {
     path: '/projects/:project_slug/topics/',

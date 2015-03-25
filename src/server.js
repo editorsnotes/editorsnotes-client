@@ -58,10 +58,12 @@ var jed = getJed();
 env.addExtension('trans', new exts.Trans(jed));
 
 router.fallbackHandler = function () {
+  // Render view template, unless there is no template, in which case just
+  // render a blank page.
   return function (config, params, queryParams) {
     var that = this
-      , template = config.View.prototype.template
-      , fetch = !!(config.Model || config.Collection || config.fetch)
+      , template = config.View.prototype.template || 'base.html'
+      , fetch = !!(config.Model || config.Collection || config.fetch) && config.fetch !== false
       , cookies = cookie.parse(this.req.headers.cookie || '')
       , options
       , model
