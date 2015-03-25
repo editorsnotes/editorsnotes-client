@@ -44,8 +44,6 @@ AddItemMixin = {
       , template = require('./templates/add_item_modal.html')
       , widget
 
-    debugger;
-
     widget = template({ type: that.itemType });
 
     this.$el.children().wrapAll('<div class="modal-body"></div>');
