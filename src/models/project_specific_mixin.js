@@ -16,21 +16,20 @@ module.exports = {
     candidates = {
       options: options && options.project,
       collection: options && options.collection && options.collection.project,
-      attributes: attributes && attributes.project
+      attributes: attributes && typeof attributes.project === 'object' && attributes.project,
+      attributes_slug: attributes && typeof attributes.project_slug === 'string' && attributes.project_slug,
     }
 
     if (candidates.attributes) {
-      if (typeof candidates.attributes === 'object') {
-        slug = candidates.attributes.url.match(/[^\/]+/g).slice(-1);
-        candidates.attributes = new Project({
-          name: candidates.attributes.name,
-          slug: slug
-        });
-      } else if (typeof candidates.attributes === 'string') {
-        candidates.attributes = new Project({
-          slug: candidates.attributes
-        });
-      }
+      slug = candidates.attributes.url.match(/[^\/]+/g).slice(-1);
+      candidates.attributes = new Project({
+        name: candidates.attributes.name,
+        slug: slug
+      });
+    } else if (candidates.attributes_slug) {
+      candidates.attributes_slug = new Project({
+        slug: candidates.attributes_slug
+      });
     }
 
     results = _.chain(candidates).filter(function (p) { return p instanceof Project });

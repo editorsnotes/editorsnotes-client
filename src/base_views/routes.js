@@ -32,7 +32,7 @@ module.exports = [
     View: require('./documents_list'),
   },
   {
-    path: '/projects/:project_slug/documents/:document_id/',
+    path: '/projects/:project_slug/documents/:id/',
     name: 'documents_detail',
     View: require('./documents_detail'),
     fetch: true
@@ -49,7 +49,7 @@ module.exports = [
     Model: true
   },
   {
-    path: '/projects/:project_slug/notes/:note_id/',
+    path: '/projects/:project_slug/notes/:id/',
     name: 'notes_detail',
     View: require('./notes_detail'),
     Model: true
@@ -60,7 +60,7 @@ module.exports = [
     View: require('./topics_list'),
   },
   {
-    path: '/projects/:project_slug/topics/:topic_id/',
+    path: '/projects/:project_slug/topics/:id/',
     name: 'topics_detail',
     View: require('./topics_detail'),
     fetch: true
