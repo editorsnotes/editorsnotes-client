@@ -60,7 +60,8 @@
 
         </dl>
 
-        {% if 'change_note' in data._permissions %}
+        {% set links = data._links|groupby('rel') %}
+        {% if links.edit %}
           <div class="row">
             <div class="span12 container" style="text-align: center; padding-top: 19px; border-top: 1px solid #ddd;">
               <a href="{{ data.url }}edit/" class="btn btn-default">Edit note</a>
