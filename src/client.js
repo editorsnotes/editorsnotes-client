@@ -1,4 +1,5 @@
 var $ = require('jquery')
+  , cookie = require('cookie-cutter')
   , Router = require('./router')
   , router = new Router()
   , currentView = null
@@ -8,6 +9,28 @@ var $ = require('jquery')
 function switchView(view) {
   if (currentView) currentView.remove();
   currentView = view;
+}
+
+function initLogin() {
+  var user = localStorage.userInfo
+    , authCookie = cookie.get('token')
+    , $authSignedOut = $('#auth-menu-signed-out')
+    , $authSignedIn = $('#auth-menu-signed-in')
+
+  if (user && authCookie) {
+    user = JSON.parse(user);
+    $authSignedOut.hide();
+    $authSignedIn.show().find('a')
+      .attr('href', user.url)
+      .text(user.display_name)
+  } else {
+    delete localStorage.userInfo;
+    cookie.set('token', '', { expires: new Date(0) });
+
+    $authSignedOut.show();
+    $authSignedIn.hide();
+  }
+
 }
 
 router.fallbackHandler = function () {
@@ -31,6 +54,7 @@ router.fallbackHandler = function () {
 }
 
 $(document).ready(function () {
+  initLogin();
   router.execute(window.location.pathname);
 });
 
