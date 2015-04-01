@@ -3,5 +3,5 @@
 var Backbone = require('../../backbone')
 
 module.exports = Backbone.Model.extend({
-  template: 'document.html'
+  template: 'document_show.html'
 });

@@ -52,7 +52,7 @@ module.exports = Backbone.View.extend({
   renderZoteroData: function (zoteroItem) {
     var that = this
       , i18n = require('../../utils/i18n')
-      , template = require('./templates/zotero_item.html')
+      , template = require('./templates/zotero_item_form.html')
 
     fetchCreatorTypes(zoteroItem.itemType).done(function (creatorTypes) {
       that.$el.html(template({

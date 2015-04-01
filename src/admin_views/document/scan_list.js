@@ -22,7 +22,7 @@ module.exports = Backbone.View.extend({
   },
   render: function () {
     var that = this
-      , template = require('./templates/scans.html')
+      , template = require('./templates/scans_form.html')
 
     this.$el.html( template({ scans: that.collection }) );
     this.$dropTarget = this.$('#scan-drop');
