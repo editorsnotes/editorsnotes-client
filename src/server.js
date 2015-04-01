@@ -2,32 +2,15 @@
 
 var cookie = require('cookie')
   , http = require('http')
-  , nunjucks = require('nunjucks')
   , request = require('request')
-  , typogr = require('typogr')
   , Router = require('./router')
   , router = new Router()
   , server
 
-function getTemplatePaths() {
-  var execSync = require('exec-sync')
-    , dirs = execSync('find base_views admin_views -name templates -type d').split('\n')
-
-  return ['templates'].concat(dirs)
-}
 var API_URL = 'http://localhost:8001'
 
 router.add(require('./admin_views/routes'))
 router.add(require('./base_views/routes'))
-
-var env = new nunjucks.Environment(new nunjucks.FileSystemLoader(getTemplatePaths()));
-
-var exts = require('./nunjucks-ext');
-env.addExtension('url', new exts.URL(router));
-
-env.addFilter('typogrify', function (str) {
-  return typogr.typogrify(str);
-})
 
 function getJed() {
   var Jed = require('jed');
@@ -55,7 +38,13 @@ function getJed() {
 }
 
 var jed = getJed();
-env.addExtension('trans', new exts.Trans(jed));
+
+var env = require('./nunjucks/env')(router, jed);
+
+/*
+ * TODO: need to figure out how to deal with permissions for pages that don't
+ * require fetching (i.e. adding things)
+ */
 
 router.fallbackHandler = function () {
   // Render view template, unless there is no template, in which case just

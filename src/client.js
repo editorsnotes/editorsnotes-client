@@ -1,6 +1,7 @@
 var $ = require('jquery')
   , cookie = require('cookie-cutter')
   , Router = require('./router')
+  , env = require('./nunjucks/env')
   , router = new Router()
   , currentView = null
 

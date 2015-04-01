@@ -2,3 +2,4 @@
 node_modules/*
 dist/*
 static/*
+src/nunjucks/compiled_templates.js
