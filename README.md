@@ -4,6 +4,7 @@ JavaScript application that communicates (read/write) with the [Editors' Notes s
 ## Running
   1. Run an instance of an [Editors' Notes server](https://github.com/editorsnotes/editorsnotes). 
   2. Set up this repository with `npm install`
+  2. Compile the client-side application with `npm run compile`
   3. Start the Editors' Notes server and this one (using `npm start`). The configuration currently assumes that you will be running the Editors' Notes server on port 8001.
   4. Set up a proxy that will server static files and forward non-HTML requests. An example nginx is included below.
 
