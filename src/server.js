@@ -82,7 +82,13 @@ router.fallbackHandler = function () {
       }
 
       request(options, function (error, response, body) {
-        if (error) throw new Error('dangit');
+        if (error) {
+          console.log('ERROR\n==========');
+          console.log(error);
+          console.log('=========');
+          that.res.writeHead(500);
+          that.res.end('<h1>Server error: ' + that.res.statusCode + '</h1>' + body)
+        }
         that.res.writeHead(200, { 'Content-Type': 'text/html' });
 
         try {
