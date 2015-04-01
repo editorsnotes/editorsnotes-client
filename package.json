@@ -88,7 +88,7 @@
   "scripts": {
     "test": "mocha editorsnotes_app/src/test/*.js",
     "start": "cd src && node server.js",
-    "compile": "browserify src/index-base.js src/index-admin.js -u src/nunjucks/server-env.js -o static/bundle.js",
+    "compile": "mkdir -p static && npm run compile-templates && browserify src/index-base.js src/index-admin.js -u src/nunjucks/server-env.js -o static/bundle.js",
     "compile-templates": "node ./src/nunjucks/precompile > ./src/nunjucks/compiled_templates.js",
     "watch": "watchify src/index-base.js src/index-admin.js -u src/nunjucks/server-env.js -o static/bundle.js -dv"
   }

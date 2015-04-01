@@ -1,4 +1,5 @@
 var nunjucks = require('nunjucks')
+  , child_process = require('child_process')
   , extensions = require('./extensions')
   , typogr = require('typogr')
   , env = new nunjucks.Environment();
