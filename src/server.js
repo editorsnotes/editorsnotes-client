@@ -3,6 +3,7 @@
 var cookie = require('cookie')
   , http = require('http')
   , request = require('request')
+  , child_process = require('child_process')
   , Router = require('./router')
   , router = new Router()
   , server
@@ -14,10 +15,11 @@ router.add(require('./base_views/routes'))
 
 function getJed() {
   var Jed = require('jed');
-  var execSync = require('exec-sync')
   var path = require('path')
   var po2json = require('po2json')
-  var files = execSync('find ../locale -type f -name *po').split('\n');
+  var files = child_process.execSync('find ../locale -type f -name *po', { encoding: 'utf-8' })
+    .trim()
+    .split('\n');
 
   var data = files.reduce(function (acc, file) {
     var domain = 'messages_' + path.basename(file).replace('.po', '');

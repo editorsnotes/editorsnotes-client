@@ -20,7 +20,6 @@
     "browserify-shim": "^3.8.2",
     "cookie": "^0.1.2",
     "cookie-cutter": "^0.1.1",
-    "exec-sync": "^0.1.6",
     "factor-bundle": "^2.3.3",
     "jed": "^1.1.0",
     "jedify": "0.0.1",

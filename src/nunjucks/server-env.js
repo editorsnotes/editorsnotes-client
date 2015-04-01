@@ -1,9 +1,9 @@
 var nunjucks = require('nunjucks')
+  , child_process = require('child_process')
   , env
 
 function getTemplatePaths() {
-  var execSync = require('exec-sync')
-    , dirs = execSync('cd ' + __dirname + '/.. && find base_views admin_views -name templates -type d').split('\n')
+  var dirs = child_process.execSync('cd ' + __dirname + '/.. && find base_views admin_views -name templates -type d', { encoding: 'utf-8' }).split('\n')
 
   return ['templates'].concat(dirs)
 }

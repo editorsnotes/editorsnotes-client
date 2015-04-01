@@ -10,8 +10,7 @@ env.addFilter('typogrify', function (str) {
 });
 
 function getTemplatePaths() {
-  var execSync = require('exec-sync')
-    , dirs = execSync('cd ' + __dirname + '/.. && find . -wholename *templates*html -type f').split('\n')
+  var dirs = child_process.execSync('cd ' + __dirname + '/.. && find . -wholename *templates*html -type f', { encoding: 'utf-8' }).split('\n')
 
   return dirs;
 }

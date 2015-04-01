@@ -1,6 +1,8 @@
 # Editors' Notes renderer
 JavaScript application that communicates (read/write) with the [Editors' Notes server API](https://github.com/editorsnotes/editorsnotes). Pages can be rendered both server- and client-side.
 
+Requires nodejs >=0.12.0
+
 ## Running
   1. Run an instance of an [Editors' Notes server](https://github.com/editorsnotes/editorsnotes). 
   2. Set up this repository with `npm install`
