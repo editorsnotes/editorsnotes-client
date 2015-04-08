@@ -9,6 +9,7 @@ var cookie = require('cookie')
   , server
 
 var API_URL = 'http://localhost:8001'
+  , SERVER_PORT = 8450
 
 router.add(require('./admin_views/routes'))
 router.add(require('./base_views/routes'))
@@ -116,13 +117,27 @@ router.fallbackHandler = function () {
   }
 }
 
-var server = http.createServer(function (req, res) {
-  router.dispatch(req, res, function (err) {
-    if (err) {
-      res.writeHead(404, { 'Content-Type': 'text/html' });
-      res.end(env.render('404.html', { message: err }));
+console.log('Starting server...')
+console.log('Verifying Editors\' Notes API address at ' + API_URL + '...')
+request({
+  url: API_URL,
+  headers: {'Accept': 'application/json'}
+}, function (error, response, body) {
+  if (error) {
+    if (error.code === 'ECONNREFUSED') {
+      throw new Error('Could not connect to Editor\'s Notes API server at ' + API_URL);
     }
+  }
+
+  console.log('Server started');
+  server = http.createServer(function (req, res) {
+    router.dispatch(req, res, function (err) {
+      if (err) {
+        res.writeHead(404, { 'Content-Type': 'text/html' });
+        res.end(env.render('404.html', { message: err }));
+      }
+    });
   });
+  server.listen(SERVER_PORT);
 });
 
-server.listen(8450);
