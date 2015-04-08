@@ -1,4 +1,4 @@
-BROWSERIFY_OPTS = src/index-base.js src/index-admin.js -u src/nunjucks/server-env.js -o static/bundle.js
+BROWSERIFY_OPTS = src/index-base.js src/index-admin.js -i src/nunjucks/server-env.js -o static/bundle.js
 
 JS_FILES = $(shell find src/ -type f -name *js)
 CSS_FILES = $(shell find style/ -regex ".*\(css\|less\)")
