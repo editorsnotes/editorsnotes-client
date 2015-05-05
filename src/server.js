@@ -1,6 +1,9 @@
 "use strict";
 
-require('babel/register');
+require('babel/register')({
+  only: /src/
+});
+
 
 var cookie = require('cookie')
   , http = require('http')
@@ -11,8 +14,8 @@ var cookie = require('cookie')
   , env
 
 
-const API_URL = 'http://localhost:8001'
-    , SERVER_PORT = 8450
+const API_URL = process.env.EDITORSNOTES_API_URL || 'http://localhost:8001'
+    , SERVER_PORT = process.env.EDITORSNOTES_CLIENT_PORT || 8450
 
 
 router.add(require('./admin_views/routes'))
@@ -37,13 +40,13 @@ function getJed() {
       , poData = po2json.parseFileSync(file, { format: 'jed', domain: domain })
 
     // Fix for jed format right now...
-    Object.keys(poData.local_data[domain]).forEach(function (key) {
-      var val = poData[domain][key];
+    Object.keys(poData.locale_data[domain]).forEach(function (key) {
+      var val = poData.locale_data[domain][key];
       if (!key) return;
       if (val[0] === null) val.shift();
     });
 
-    acc.locale_data[domain] = poData[domain];
+    acc.locale_data[domain] = poData.locale_data[domain];
     return acc;
   }, { domain: 'messages_main', locale_data: {} })
 
