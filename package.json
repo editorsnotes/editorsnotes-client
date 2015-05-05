@@ -95,6 +95,6 @@
   },
   "scripts": {
     "test": "mocha editorsnotes_app/src/test/*.js",
-    "start": "cd src && node server.js"
+    "start": "cd src && node server"
   }
 }
