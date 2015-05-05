@@ -2,7 +2,7 @@
 
 var _ = require('underscore')
   , fs = require('fs')
-  , z2csl = fs.readFileSync(__dirname + '/../lib/typeMap.xml', 'utf8')
+  , z2csl = fs.readFileSync(__dirname + '/../../lib/typeMap.xml', 'utf8')
   , parser = new global.DOMParser()
   , doc = parser.parseFromString(z2csl, 'application/xml');
 

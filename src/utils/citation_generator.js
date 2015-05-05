@@ -1,7 +1,7 @@
 "use strict";
 
 var _ = require('underscore')
-  , CSL = require ('../lib/citeproc-js/citeproc').CSL
+  , CSL = require ('../../lib/citeproc-js/citeproc').CSL
   , styles = require('./citeproc_styles')
   , locales = require('./citeproc_locales')
 

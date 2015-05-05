@@ -43,15 +43,15 @@
     ]
   },
   "browser": {
-    "jquery-ui": "./src/lib/jquery/jquery-ui-1.10.4.custom.js",
-    "jquery-ui-touch-punch": "./src/lib/jquery/jquery.ui.touch-punch.js",
-    "jquery-timeago": "./src/lib/jquery/jquery.timeago.js",
-    "jquery-bootstrap": "./src/lib/jquery/bootstrap.min.js",
-    "jquery-babbq": "./src/lib/jquery/jquery.ba-bbq.min.js",
+    "jquery-ui": "./lib/jquery/jquery-ui-1.10.4.custom.js",
+    "jquery-ui-touch-punch": "./lib/jquery/jquery.ui.touch-punch.js",
+    "jquery-timeago": "./lib/jquery/jquery.timeago.js",
+    "jquery-bootstrap": "./lib/jquery/bootstrap.min.js",
+    "jquery-babbq": "./lib/jquery/jquery.ba-bbq.min.js",
     "sinon-event": "sinon/lib/sinon/util/event",
     "sinon-fakeserver": "sinon/lib/sinon/util/fake_server",
     "sinon-fakexhr": "sinon/lib/sinon/util/fake_xml_http_request",
-    "wysihtml5": "./src/lib/wysihtml5/wysihtml5-0.3.0.min.js"
+    "wysihtml5": "./lib/wysihtml5/wysihtml5-0.3.0.min.js"
   },
   "browserify-shim": {
     "jquery-ui": {
