@@ -3,6 +3,7 @@
   "author": "Patrick Golden",
   "private": true,
   "dependencies": {
+    "babelify": "^6.0.2",
     "backbone": "^1.1.2",
     "backbone.cocktail": "^0.5.10",
     "backbone.stickit": "^0.8.0",
@@ -36,6 +37,13 @@
   },
   "browserify": {
     "transform": [
+      [
+        "babelify",
+        {
+          "sourceMapRelative": ".",
+          "only": "src/**"
+        }
+      ],
       "browserify-shim",
       "node-underscorify",
       "jedify",

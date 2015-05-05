@@ -1,48 +1,56 @@
 "use strict";
 
+require('babel/register');
+
 var cookie = require('cookie')
   , http = require('http')
   , request = require('request')
-  , child_process = require('child_process')
   , Router = require('./router')
   , router = new Router()
   , server
+  , env
 
-var API_URL = 'http://localhost:8001'
-  , SERVER_PORT = 8450
+
+const API_URL = 'http://localhost:8001'
+    , SERVER_PORT = 8450
+
 
 router.add(require('./admin_views/routes'))
 router.add(require('./base_views/routes'))
 
+
 function getJed() {
-  var Jed = require('jed');
-  var path = require('path')
-  var po2json = require('po2json')
-  var files = child_process.execSync('find ../locale -type f -name *po', { encoding: 'utf-8' })
+  var child_process = require('child_process')
+    , Jed = require('jed')
+    , path = require('path')
+    , po2json = require('po2json')
+    , files
+    , data
+
+  files = child_process
+    .execSync('find ../locale -type f -name *po', { encoding: 'utf-8' })
     .trim()
     .split('\n');
 
-  var data = files.reduce(function (acc, file) {
-    var domain = 'messages_' + path.basename(file).replace('.po', '');
-    var data = po2json.parseFileSync(file, { format: 'jed', domain: domain }).locale_data;
+  data = files.reduce(function (acc, file) {
+    var domain = 'messages_' + path.basename(file).replace('.po', '')
+      , poData = po2json.parseFileSync(file, { format: 'jed', domain: domain })
 
     // Fix for jed format right now...
-    Object.keys(data[domain]).forEach(function (key) {
-      var val = data[domain][key];
+    Object.keys(poData.local_data[domain]).forEach(function (key) {
+      var val = poData[domain][key];
       if (!key) return;
       if (val[0] === null) val.shift();
     });
 
-    acc.locale_data[domain] = data[domain];
+    acc.locale_data[domain] = poData[domain];
     return acc;
   }, { domain: 'messages_main', locale_data: {} })
 
   return new Jed(data);
 }
 
-var jed = getJed();
-
-var env = require('./nunjucks/env')(router, jed);
+env = require('./nunjucks/env')(router, getJed());
 
 /*
  * TODO: need to figure out how to deal with permissions for pages that don't
@@ -122,9 +130,9 @@ console.log('Verifying Editors\' Notes API address at ' + API_URL + '...')
 request({
   url: API_URL,
   headers: {'Accept': 'application/json'}
-}, function (error, response, body) {
-  if (error) {
-    if (error.code === 'ECONNREFUSED') {
+}, function (err) {
+  if (err) {
+    if (err.code === 'ECONNREFUSED') {
       throw new Error('Could not connect to Editor\'s Notes API server at ' + API_URL);
     }
   }
