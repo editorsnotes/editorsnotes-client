@@ -1,5 +1,5 @@
 *swp
-*npm_debug.log
+*npm-debug.log
 node_modules/*
 dist/*
 static/*

@@ -6,6 +6,7 @@
 
     "asi": true,
     "laxcomma": true,
+    "esnext": true,
     "browser": true,
     "globalstrict": true,
     "globals": {
