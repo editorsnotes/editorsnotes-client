@@ -5,8 +5,7 @@ require('babel/register')({
 });
 
 
-var cookie = require('cookie')
-  , http = require('http')
+var http = require('http')
   , request = require('request')
   , Router = require('./router')
   , router = new Router()
@@ -64,66 +63,47 @@ router.fallbackHandler = function () {
   // Render view template, unless there is no template, in which case just
   // render a blank page.
   return function (config, params, queryParams) {
-    var that = this
-      , template = config.View.prototype.template || 'base.html'
-      , fetch = !!(config.Model || config.Collection || config.fetch) && config.fetch !== false
-      , cookies = cookie.parse(this.req.headers.cookie || '')
-      , options
-      , model
-      , url
+    var template = config.View.prototype.template || 'base.html'
+      , cookies = require('cookie').parse(this.req.headers.cookie || '')
+      , options = { headers: {}}
 
-    if (config.Model) {
-      model = new config.Model(params);
-      url = model.url();
-    } else {
-      url = this.req.url;
-    }
+    if (config.View.prototype.fetch) {
+      options.headers.Host = this.req.headers.host;
+      options.headers.Accept = 'application/json';
 
-    url = API_URL + url;
-
-    if (fetch) {
-      options = {
-        url: url,
-        headers: {
-          'Host': this.req.headers.host,
-          'Accept': 'application/json'
-        }
-      }
       if (cookies.token) {
         options.headers.Authorization = 'Token ' + cookies.token;
       }
-
-      request(options, function (error, response, body) {
-        if (error) {
-          console.log('ERROR\n==========');
-          console.log(error);
-          console.log('=========');
-          that.res.writeHead(500);
-          that.res.end('<h1>Server error: ' + that.res.statusCode + '</h1>' + body)
-        }
-        that.res.writeHead(200, { 'Content-Type': 'text/html' });
-
-        try {
-          if (that.res.statusCode === 200) {
-            that.res.end(env.render(template, {
-              server: true,
-              bootstrap: body,
-              data: JSON.parse(body)
-            }));
+      config.View.prototype.fetch(options)
+        .then(([data, resp, req]) => {
+          if (resp.statusCode === 200) {
+            this.res.writeHead(200, { 'Content-Type': 'text/html' });
+            try {
+              this.end(env.render(template, {
+                server: true,
+                bootstrap: data,
+                data: JSON.parse(data)
+              }));
+            } catch (e) {
+              this.res.end(
+                '<h1>Rendering error</h1>' +
+                '<p>' + e + '</p>' +
+                '<h2>Stack</h2>' +
+                '<pre>' + e.stack + '</pre>')
+            }
           } else {
-            that.res.end('<h1>Server error: ' + that.res.statusCode + '</h1>' + body)
+            this.res.end('<h1>Server error: ' + this.res.statusCode + '</h1>')// + body);
           }
-        } catch (e) {
-          that.res.end(
-            '<h1>Rendering error</h1>' +
-            '<p>' + e + '</p>' +
-            '<h2>Stack</h2>' +
-            '<pre>' + e.stack + '</pre>')
-        }
-      });
+        }, ([err, req]) => {
+          process.stderr.write('ERROR\n==========');
+          process.stderr.write(err);
+          process.stderr.write('=========');
+          this.res.writeHead(500);
+          this.res.end('<h1>Server error: ' + this.res.statusCode + '</h1>')// + body)
+        })
     } else {
-      that.res.writeHead(200, { 'Content-Type': 'text/html' });
-      that.res.end(env.render(template, { server: true }));
+      this.res.writeHead(200, { 'Content-Type': 'text/html' });
+      this.res.end(env.render(template, { server: true }));
     }
   }
 }

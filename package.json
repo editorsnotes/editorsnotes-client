@@ -8,6 +8,7 @@
     "backbone.cocktail": "^0.5.10",
     "backbone.stickit": "^0.8.0",
     "browserify": "^9.0.7",
+    "hyperquest": "^1.2.0",
     "jquery": "^1.11.0",
     "leaflet": "^0.7.3",
     "route-recognizer": "^0.1.5",
