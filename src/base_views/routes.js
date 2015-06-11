@@ -19,6 +19,7 @@ module.exports = [
     path: '/projects/:project_slug/',
     name: 'projects_detail',
     View: require('./projects_detail'),
+    fetch: true
   },
   {
     path: '/browse/',
@@ -30,6 +31,7 @@ module.exports = [
     path: '/projects/:project_slug/documents/',
     name: 'documents_list',
     View: require('./documents_list'),
+    fetch: true
   },
   {
     path: '/projects/:project_slug/documents/:id/',
@@ -41,6 +43,7 @@ module.exports = [
     path: '/projects/:project_slug/documents/:document_id/transcript/',
     name: 'transcripts_detail',
     View: require('./transcripts_detail'),
+    fetch: true
   },
   {
     path: '/projects/:project_slug/notes/',
@@ -52,12 +55,13 @@ module.exports = [
     path: '/projects/:project_slug/notes/:id/',
     name: 'notes_detail',
     View: require('./notes_detail'),
-    Model: require('../models/note')
+    fetch: true
   },
   {
     path: '/projects/:project_slug/topics/',
     name: 'topics_list',
     View: require('./topics_list'),
+    fetch: true
   },
   {
     path: '/projects/:project_slug/topics/:id/',

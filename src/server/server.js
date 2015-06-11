@@ -2,6 +2,7 @@
 
 var process = require('process')
   , http = require('http')
+  , request = require('request')
   , Router = require('../router')
   , router = new Router()
   , jed = require('./jed')
@@ -23,30 +24,65 @@ env = require('../nunjucks/env')(router, jed)
  * require fetching (i.e. adding things)
  */
 
+function getFetchOpts(req) {
+  var cookies = require('cookie').parse(req.headers.cookie || '')
+    , options
+
+  options = {
+    baseUrl: API_URL,
+    headers: {
+      Host: req.headers.host,
+      Accept: 'application/json'
+    }
+  }
+
+  if (cookies.token) {
+    options.headers.Authorization = 'Token ' + cookies.token;
+  }
+
+  return options;
+}
+
 router.fallbackHandler = function () {
   // Render view template, unless there is no template, in which case just
   // render a blank page.
   return function (config, params, queryParams) {
     var template = config.View.prototype.template || 'base.html'
-      , cookies = require('cookie').parse(this.req.headers.cookie || '')
-      , options = { headers: {}}
+      , url
+      , options
 
-    if (config.View.prototype.fetch) {
-      options.headers.Host = this.req.headers.host;
-      options.headers.Accept = 'application/json';
-
-      if (cookies.token) {
-        options.headers.Authorization = 'Token ' + cookies.token;
+    if (config.fetch) {
+      options = getFetchOpts(this.req);
+      if (config.fetch === true) {
+        url = this.req.url;
+      } else if (config.fetch === 'model') {
+        url = (new config.Model(params)).url();
       }
-      config.View.prototype.fetch(options)
-        .then(([data, resp, req]) => {
+      request(url, options, (err, resp, body) => {
+        var data
+          , breadcrumb
+
+        if (err) {
+          process.stderr.write('ERROR\n==========\n');
+          process.stderr.write(options + '\n');
+          process.stderr.write(err + '\n');
+          process.stderr.write('=========\n\n');
+          this.res.writeHead(500);
+          this.res.end('<h1>Server error: ' + this.res.statusCode + '</h1>')// + body)
+        } else {
           if (resp.statusCode === 200) {
             this.res.writeHead(200, { 'Content-Type': 'text/html' });
             try {
-              this.end(env.render(template, {
+              data = JSON.parse(body);
+
+              if (config.View.prototype.getBreadcrumb) {
+                breadcrumb = config.View.prototype.getBreadcrumb(data);
+              }
+              this.res.end(env.render(template, {
                 server: true,
-                bootstrap: data,
-                data: JSON.parse(data)
+                bootstrap: body,
+                data: data,
+                breadcrumb: breadcrumb
               }));
             } catch (e) {
               this.res.end(
@@ -58,13 +94,8 @@ router.fallbackHandler = function () {
           } else {
             this.res.end('<h1>Server error: ' + this.res.statusCode + '</h1>')// + body);
           }
-        }, ([err, req]) => {
-          process.stderr.write('ERROR\n==========');
-          process.stderr.write(err);
-          process.stderr.write('=========');
-          this.res.writeHead(500);
-          this.res.end('<h1>Server error: ' + this.res.statusCode + '</h1>')// + body)
-        })
+        }
+      });
     } else {
       this.res.writeHead(200, { 'Content-Type': 'text/html' });
       this.res.end(env.render(template, { server: true }));
