@@ -5,8 +5,6 @@ var $ = require('jquery')
   , router = new Router()
   , currentView = null
 
-//require('./compiled_templates');
-
 function switchView(view) {
   if (currentView) currentView.remove();
   currentView = view;
@@ -49,8 +47,7 @@ router.fallbackHandler = function () {
       opts.collection = new config.Collection();
     }
 
-    view = new config.View(opts, { prerendered: renderedOnServer });
-    switchView(view);
+    switchView(new config.View(opts, { prerendered: renderedOnServer }));
   }
 }
 
