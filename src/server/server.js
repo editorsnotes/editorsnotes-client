@@ -3,26 +3,35 @@
 var process = require('process')
   , http = require('http')
   , request = require('request')
+  , React = require('react')
   , Router = require('../router')
   , router = new Router()
-  , jed = require('./jed')
-  , env
 
 
 const API_URL = process.env.EDITORSNOTES_API_URL || 'http://localhost:8001'
     , SERVER_PORT = process.env.EDITORSNOTES_CLIENT_PORT || 8450
 
+function makeHTML(body) {
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <title>Editors' Notes</title>
+    <meta charset="utf-8"/>
 
-router.add(require('../admin_views/routes'))
-router.add(require('../base_views/routes'))
+    <link rel="stylesheet" href="/static/style.css" />
+    <script type="text/javascript" src="/static/bundle.js"></script>
+  </head>
 
+  <body>
+    ${body}
+  </body>
+</html>
+`
+}
 
-env = require('../nunjucks/env')(router, jed)
+//router.add(require('../admin_views/routes'))
+router.add(require('../base_routes'))
 
-/*
- * TODO: need to figure out how to deal with permissions for pages that don't
- * require fetching (i.e. adding things)
- */
 
 function getFetchOpts(req) {
   var cookies = require('cookie').parse(req.headers.cookie || '')
@@ -47,8 +56,7 @@ router.fallbackHandler = function () {
   // Render view template, unless there is no template, in which case just
   // render a blank page.
   return function (config, params, queryParams) {
-    var template = config.View.prototype.template || 'base.html'
-      , url
+    var url
       , options
 
     if (config.fetch) {
@@ -78,12 +86,15 @@ router.fallbackHandler = function () {
               if (config.View.prototype.getBreadcrumb) {
                 breadcrumb = config.View.prototype.getBreadcrumb(data);
               }
+
+              // FIXME
               this.res.end(env.render(template, {
                 server: true,
                 bootstrap: body,
                 data: data,
                 breadcrumb: breadcrumb
               }));
+
             } catch (e) {
               this.res.end(
                 '<h1>Rendering error</h1>' +
@@ -97,8 +108,12 @@ router.fallbackHandler = function () {
         }
       });
     } else {
+      let Application = require('../components/application.jsx')
+        , body = React.renderToString(React.createElement(Application))
+
       this.res.writeHead(200, { 'Content-Type': 'text/html' });
-      this.res.end(env.render(template, { server: true }));
+      this.res.end(makeHTML(body));
+      this.res.end(React.renderToString(React.createElement(Application)));
     }
   }
 }
@@ -109,7 +124,7 @@ module.exports = {
       router.dispatch(req, res, function (err) {
         if (err) {
           res.writeHead(404, { 'Content-Type': 'text/html' });
-          res.end(env.render('404.html', { message: err }));
+          res.end(makeHTML('<h1>404</h1><p>' + err + '</p>'));
         }
       });
     });

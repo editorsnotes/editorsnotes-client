@@ -1,4 +1,5 @@
-var RouteRecognizer = require('route-recognizer')
+var _ = require('underscore')
+  , RouteRecognizer = require('route-recognizer')
   , isNode = typeof window === 'undefined'
 
 function Router() {
@@ -9,8 +10,11 @@ function Router() {
 
 Router.prototype.add = function (path, opts) {
   var _path;
-  if (Array.isArray(path)) {
-    path.forEach(this.add, this);
+
+  if (_.isObject(path)) {
+    _.forEach(path, function (opts, path) {
+      this.add(path, opts);
+    }, this);
   } else {
     if (typeof path === 'object') {
       _path = path.path;

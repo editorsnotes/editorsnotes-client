@@ -4,16 +4,14 @@
   "private": true,
   "dependencies": {
     "babelify": "^6.0.2",
-    "backbone": "^1.1.2",
-    "backbone.cocktail": "^0.5.10",
-    "backbone.stickit": "^0.8.0",
     "browserify": "^9.0.7",
+    "immutable": "^3.7.3",
+    "isomorphic-fetch": "^2.1.0",
     "jquery": "^1.11.0",
     "leaflet": "^0.7.3",
-    "request": "^2.55.0",
+    "react": "^0.13.3",
     "route-recognizer": "^0.1.5",
     "underscore": "^1.7.0",
-    "underscore-contrib": "^0.3.0",
     "watchify": "^3.1.0"
   },
   "devDependencies": {
@@ -30,7 +28,6 @@
     "node-underscorify": "0.0.14",
     "nunjucks": "^1.2.0",
     "po2json": "^0.3.2",
-    "request": "^2.53.0",
     "sinon": "^1.9.0",
     "testling": "^1.6.1",
     "typogr": "^0.6.5",
