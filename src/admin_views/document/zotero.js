@@ -5,16 +5,21 @@ var Backbone = require('../../backbone')
   , $ = require('../../jquery')
   , CitationEngine = require('../../utils/citation_generator')
 
+const ZOTERO_API_URL = 'https://api.zotero.org'
+
 function fetchItemTypes() {
-  return $.getJSON('/api/metadata/documents/item_types/');
+  return $.getJSON(`${ZOTERO_API_URL}/itemTypes`);
+  //return $.getJSON('/api/metadata/documents/item_types/');
 }
 
 function fetchItemTemplate(itemType) {
-  return $.getJSON('/api/metadata/documents/item_template/', { itemType: itemType });
+  return $.getJSON(`${ZOTERO_API_URL}/items/new`, { itemType });
+  //return $.getJSON('/api/metadata/documents/item_template/', { itemType: itemType });
 }
 
 function fetchCreatorTypes(itemType) {
-  return $.getJSON('/api/metadata/documents/item_type_creators/', { itemType: itemType });
+  return $.getJSON(`${ZOTERO_API_URL}/itemTypeCreatorTypes`, { itemType });
+  //return $.getJSON('/api/metadata/documents/item_type_creators/', { itemType: itemType });
 }
 
 
