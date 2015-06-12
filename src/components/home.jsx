@@ -3,10 +3,11 @@
 var React = require('react')
 
 module.exports = React.createClass({
+  displayName: 'Homepage',
   render: function () {
     return (
       <div>
-      You're home baby
+      Homepage
       </div>
     )
   }
