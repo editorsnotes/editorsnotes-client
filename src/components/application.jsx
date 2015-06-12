@@ -1,11 +1,16 @@
 "use strict";
 
-var React = require('react')
+var _ = require('underscore')
+  , React = require('react')
 
 module.exports = React.createClass({
   render: function () {
     var Header = require('./header.jsx')
       , Footer = require('./footer.jsx')
+      , ActiveComponent = this.props.ActiveComponent
+      , activeComponentProps
+
+    activeComponentProps = _.omit(this.props, ['ActiveComponent'])
 
     return (
       <div style={{ height: '100%' }}>
@@ -13,7 +18,8 @@ module.exports = React.createClass({
           <Header />
 
           <div data-fixme="main-wrap" className="container">
-            {/*
+            {/* FIXME: messages
+
             {% if messages %}
             <div id="message-list" class="container">
               {% for message in messages %}
@@ -23,10 +29,12 @@ module.exports = React.createClass({
               {% endfor %}
             </div>
             {% endif %}
+
             */}
 
             <div data-fixme="main">
               {/* Main application*/}
+              <ActiveComponent {...activeComponentProps} />
             </div>
             <div className="push" />
           </div>
