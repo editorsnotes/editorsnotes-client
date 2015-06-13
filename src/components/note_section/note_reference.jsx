@@ -5,9 +5,8 @@ var React = require('react')
 module.exports = React.createClass({
   displayName: 'NoteReferenceSection',
   render: function () {
-    return (
-        <h1>FIXME</h1>
-      {/*
+    return <h1>FIXME</h1>
+      /*
       <div className="note-section note-reference-section">
         <div className="note-reference-note">
           <i className="fa fa-pencil"></i>
@@ -19,7 +18,6 @@ module.exports = React.createClass({
         </div>
         {% endif %}
       </div>
-      */}
-    )
+      */
   }
 });
