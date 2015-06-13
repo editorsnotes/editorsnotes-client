@@ -7,6 +7,7 @@ var process = require('process')
   , React = require('react')
   , Immutable = require('immutable')
   , Router = require('../router')
+  , jed = require('./jed')
   , router = new Router()
 
 
@@ -116,7 +117,10 @@ router.fallbackHandler = function () {
     }
 
     promise = promise
-      .then(props => _.extend(props, { ActiveComponent: config.Component }))
+      .then(props => _.extend(props, {
+        ActiveComponent: config.Component,
+        i18n: jed
+      }))
       .then(props => render(props, bootstrap))
       .then(html => {
         this.res.writeHead(200, { 'Content-Type': 'text/html' });
