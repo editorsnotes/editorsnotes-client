@@ -6,12 +6,9 @@ var React = require('react')
 module.exports = React.createClass({
   displayName: 'Note',
   render: function () {
-    var note = this.props.data
-      , links
-
-    links = note.get('_links')
-      .toMap()
-      .mapKeys((k, v) => v.get('rel'))
+    var getLinks = require('../helpers/get_links')
+      , note = this.props.data
+      , links = getLinks(note)
 
     return (
     <div id="note">

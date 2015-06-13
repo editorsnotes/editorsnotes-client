@@ -131,7 +131,7 @@ router.fallbackHandler = function () {
       let msg = '<h1>Server error</h1>';
 
       process.stderr.write('ERROR\n==========\n');
-      process.stderr.write(err + '\n');
+      process.stderr.write(err.stack + '\n');
       process.stderr.write('=========\n\n');
 
       this.res.writeHead(500);
