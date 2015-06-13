@@ -18,6 +18,11 @@ module.exports = {
     Component: require('./components/browse.jsx'),
     getData: getJSONFromPath
   },
+  '/projects/:project_slug/notes/:id/': {
+    name: 'notes_detail',
+    Component: require('./components/notes_detail.jsx'),
+    getData: getJSONFromPath
+  },
   /*
   '/login/': {
     name: 'login',
@@ -51,11 +56,6 @@ module.exports = {
   '/projects/:project_slug/notes/': {
     name: 'notes_list',
     View: require('./notes_list'),
-    fetch: true
-  },
-  '/projects/:project_slug/notes/:id/': {
-    name: 'notes_detail',
-    View: require('./notes_detail'),
     fetch: true
   },
   '/projects/:project_slug/topics/': {
