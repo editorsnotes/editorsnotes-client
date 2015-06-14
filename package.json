@@ -10,6 +10,7 @@
     "isomorphic-fetch": "^2.1.0",
     "jquery": "^1.11.0",
     "leaflet": "^0.7.3",
+    "location-bar": "^2.0.0",
     "react": "^0.13.3",
     "request": "^2.57.0",
     "route-recognizer": "^0.1.5",

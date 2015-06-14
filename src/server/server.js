@@ -68,7 +68,7 @@ function makeHTML(body, bootstrap) {
   </head>
 
   <body>
-    ${body}
+    <div id="react-app" style="height: 100%">${body}</div>
     ${bootstrapScript}
     <script type="text/javascript" src="/static/bundle.js"></script>
   </body>

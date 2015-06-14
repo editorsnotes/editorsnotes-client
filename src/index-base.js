@@ -1,11 +1,10 @@
 "use strict";
 
-var $ = require('./jquery')
-  , Backbone = require('./backbone')
-  , router = require('./client')
+var router = require('./client')
 
-router.add(require('./base_views/routes'))
+router.add(require('./base_routes'));
 
+/*
 $(document).ready(function () {
   initTimeago();
   initTooltips();
@@ -45,3 +44,4 @@ function initTooltips () {
     .tooltip({ selector: '[data-toggle="tooltip"]' })
     .on('click', 'a[data-toggle="tooltip"][href="#"]', function () { return false });
 }
+*/

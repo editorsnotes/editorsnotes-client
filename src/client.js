@@ -1,15 +1,13 @@
-var $ = require('jquery')
-  , cookie = require('cookie-cutter')
+"use strict";
+
+var _ = require('underscore')
+  , Immutable = require('immutable')
+  , React = require('react')
   , Router = require('./router')
-  , env = require('./nunjucks/env')
   , router = new Router()
-  , currentView = null
+  , jed = require('./jed')
 
-function switchView(view) {
-  if (currentView) currentView.remove();
-  currentView = view;
-}
-
+/*
 function initLogin() {
   var user = localStorage.userInfo
     , authCookie = cookie.get('token')
@@ -31,29 +29,43 @@ function initLogin() {
   }
 
 }
+*/
 
+function render(props) {
+  var Application = require('./components/application.jsx')
+    , el = document.body.querySelector('#react-app')
+
+  return React.render(<Application {...props} />, el);
+}
 router.fallbackHandler = function () {
   return function(config, params, queryParams) {
-    var renderedOnServer = EditorsNotes.hasOwnProperty('renderedOnServer')
-      , bootstrap = EditorsNotes.bootstrap
-      , opts = { el: '#main' }
+    var promise = Promise.resolve({})
 
-    delete EditorsNotes.renderedOnServer;
+    if (window.EDITORSNOTES_BOOTSTRAP) {
+      promise = promise
+        .then(() => {
+          var data = window.EDITORSNOTES_BOOTSTRAP
+            , immutableData = {}
 
-    if (config.Model) {
-      opts.model = new config.Model(bootstrap || params);
-    } else if (config.Collection) {
-      // FIXME
-      opts.collection = new config.Collection();
+          Object.keys(data).forEach(key => {
+            immutableData[key] = Immutable.fromJS(data[key]);
+          });
+
+          return immutableData;
+        });
     }
 
-    switchView(new config.View(opts, { prerendered: renderedOnServer }));
+    promise = promise
+      .then(props => _.extend(props, {
+        ActiveComponent: config.Component,
+        i18n: jed
+      }))
+      .then(render)
   }
 }
 
-$(document).ready(function () {
-  initLogin();
+window.onload = function () {
   router.execute(window.location.pathname);
-});
+}
 
 module.exports = router;
