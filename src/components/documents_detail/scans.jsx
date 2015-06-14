@@ -22,7 +22,7 @@ module.exports = React.createClass({
       attributionControl: false
     });
 
-    this.setState({ viewer });
+    this.setState({ viewer }, () => this.viewScan(this.props.scans.first()));
   },
   componentWillUnmount: function () {
     // Tear down the scan viewer
@@ -30,18 +30,19 @@ module.exports = React.createClass({
   },
   handleClick: function (scan, index, e) {
     e.preventDefault();
-    this.viewScan(scan.get('image'), scan.get('height'), scan.get('width'));
+    this.viewScan(scan);
     this.setState({ currentPage: index });
   },
-  viewScan: function (url, height, width) {
+  viewScan: function (scan) {
     var leaflet = require('leaflet')
-      , sw = this.map.unproject([0, height], this.map.getMaxZoom() - 3)
-      , ne = this.map.unproject([width, 0], this.map.getMaxZoom() - 3)
+      , viewer = this.state.viewer
+      , sw = viewer.unproject([0, scan.get('height')], viewer.getMaxZoom() - 3)
+      , ne = viewer.unproject([scan.get('width'), 0], viewer.getMaxZoom() - 3)
       , bounds = new leaflet.LatLngBounds(sw, ne)
-      , overlay = leaflet.imageOverlay(url, bounds)
+      , overlay = leaflet.imageOverlay(scan.get('image'), bounds)
 
     if (this.state.currentPageOverlay) {
-      this.state.currentPageOverlay.remove();
+      viewer.removeLayer(this.state.currentPageOverlay);
     }
 
     overlay.addTo(this.state.viewer);
