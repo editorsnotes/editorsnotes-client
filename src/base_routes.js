@@ -28,6 +28,11 @@ module.exports = {
     Component: require('./components/documents_detail'),
     getData: getJSONFromPath
   },
+  '/projects/:project_slug/topics/:id/': {
+    name: 'topics_detail',
+    Component: require('./components/topics_detail.jsx'),
+    getData: getJSONFromPath
+  },
   /*
   '/login/': {
     name: 'login',
@@ -63,10 +68,5 @@ module.exports = {
     View: require('./topics_list'),
     fetch: true
   },
-  '/projects/:project_slug/topics/:id/': {
-    name: 'topics_detail',
-    View: require('./topics_detail'),
-    fetch: true
-  }
   */
 }
