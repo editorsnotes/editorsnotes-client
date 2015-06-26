@@ -1,9 +1,26 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
 
 module.exports = React.createClass({
   displayName: 'TopicDetail',
+
+  renderBreadcrumb: function () {
+    var Breadcrumb = require('./shared/breadcrumb.jsx')
+      , topic = this.props.data
+      , project = topic.get('project')
+      , crumbs
+
+    crumbs = Immutable.fromJS([
+      { href: project.get('url'), label: project.get('name') },
+      { href: project.get('url') + 'topics/', label: 'Topics' },
+      { label: topic.get('preferred_name') }
+    ]);
+
+    return <Breadcrumb crumbs={crumbs} />
+  },
+
   render: function () {
     var getLinks = require('../helpers/get_links')
       , topic = this.props.data
@@ -11,6 +28,9 @@ module.exports = React.createClass({
 
     return (
       <div>
+
+        {this.renderBreadcrumb()}
+
         <h1>Topic: {topic.get('preferred_name')}</h1>
         <p className="quiet">
           Last updated {topic.get('last_updated')}

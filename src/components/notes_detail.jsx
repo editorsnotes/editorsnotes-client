@@ -1,10 +1,27 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
   , NoteSection = require('./note_section')
 
 module.exports = React.createClass({
   displayName: 'Note',
+
+  renderBreadcrumb: function () {
+    var Breadcrumb = require('./shared/breadcrumb.jsx')
+      , note = this.props.data
+      , project = note.get('project')
+      , crumbs
+
+    crumbs = Immutable.fromJS([
+      { href: project.get('url'), label: project.get('name') },
+      { href: project.get('url') + 'notes/', label: 'Notes' },
+      { label: note.get('title') }
+    ]);
+
+    return <Breadcrumb crumbs={crumbs} />
+  },
+
   render: function () {
     var getLinks = require('../helpers/get_links')
       , note = this.props.data
@@ -12,6 +29,9 @@ module.exports = React.createClass({
 
     return (
     <div id="note">
+
+      {this.renderBreadcrumb()}
+
       <header><h2>{note.get('title')}</h2></header>
       <section id="note-details">
         <div id="note-about">

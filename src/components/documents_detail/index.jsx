@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
   , ZoteroDisplay = require('./zotero_display.jsx')
   , Links = require('./links.jsx')
   , RelatedTopics = require('./related_topics.jsx')
@@ -9,6 +10,22 @@ var React = require('react')
 
 module.exports = React.createClass({
   displayName: 'DocumentDetail',
+
+  renderBreadcrumb: function () {
+    var Breadcrumb = require('../shared/breadcrumb.jsx')
+      , doc = this.props.data
+      , project = doc.get('project')
+      , crumbs
+
+    crumbs = Immutable.fromJS([
+      { href: project.get('url'), label: project.get('name') },
+      { href: project.get('url') + 'documents/', label: 'Documents' },
+      { label: doc.get('description') }
+    ]);
+
+    return <Breadcrumb crumbs={crumbs} />
+  },
+
   render: function () {
     var getLinks = require('../../helpers/get_links')
       , doc = this.props.data
@@ -16,6 +33,9 @@ module.exports = React.createClass({
 
     return (
       <div>
+
+        {this.renderBreadcrumb()}
+
         <header dangerouslySetInnerHTML={{ __html: doc.get('description') }} />
 
         <section id="info">
