@@ -15,7 +15,8 @@
     "request": "^2.57.0",
     "route-recognizer": "^0.1.5",
     "underscore": "^1.7.0",
-    "watchify": "^3.1.0"
+    "watchify": "^3.1.0",
+    "wysihtml": "git://github.com/Voog/wysihtml5.git#0.5.0-beta10"
   },
   "devDependencies": {
     "brfs": "1.0.0",
@@ -59,8 +60,7 @@
     "jquery-babbq": "./lib/jquery/jquery.ba-bbq.min.js",
     "sinon-event": "sinon/lib/sinon/util/event",
     "sinon-fakeserver": "sinon/lib/sinon/util/fake_server",
-    "sinon-fakexhr": "sinon/lib/sinon/util/fake_xml_http_request",
-    "wysihtml5": "./lib/wysihtml5/wysihtml5-0.3.0.min.js"
+    "sinon-fakexhr": "sinon/lib/sinon/util/fake_xml_http_request"
   },
   "browserify-shim": {
     "jquery-ui": {
@@ -78,7 +78,7 @@
     "jquery-babbq": {
       "depends": "jquery"
     },
-    "wysihtml5": "wysihtml5",
+    "wysihtml": "global:wysihtml5",
     "citeproc": "global:CSL"
   },
   "testling": {
