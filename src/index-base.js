@@ -3,6 +3,7 @@
 var router = require('./client')
 
 router.add(require('./base_routes'));
+router.add(require('./admin_routes'));
 
 /*
 $(document).ready(function () {

@@ -1,7 +1,5 @@
 "use strict";
 
-var _ = require('underscore')
-
 function getJSONFromPath(get, pathname) {
   return get(pathname, { 'Accept': 'application/json' })
     .then(data => JSON.parse(data))

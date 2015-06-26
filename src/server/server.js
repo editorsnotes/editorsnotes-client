@@ -78,6 +78,7 @@ function makeHTML(body, bootstrap) {
 
 //router.add(require('../admin_views/routes'))
 router.add(require('../base_routes'))
+router.add(require('../admin_routes'))
 
 function render(props, bootstrap) {
   var Application = require('../components/application')
