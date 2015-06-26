@@ -19,9 +19,15 @@ module.exports = React.createClass({
               </form>
             </ul>
 
-              <ul data-fixme="auth-menu" className="nav pull-right">
-                <li data-fixme="auth-menu-signed-out"><a href="/login/">Log in</a></li>
-                <li data-fixme="auth-menu-signed-in"><a href="#"></a></li>
+              <ul className="nav pull-right">
+                {
+                  !this.props.user ?
+                    <li><a href="/login/">Log in</a></li> :
+                    [
+                      <li key="logged-in-user"><p className="navbar-text">Logged in as {this.props.user.display_name} </p></li>,
+                      <li key="log-out"><a href="/logout/">Log out</a></li>
+                    ]
+                }
               </ul>
             </div>
           </div>

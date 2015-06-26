@@ -4,6 +4,22 @@ var _ = require('underscore')
   , React = require('react')
 
 module.exports = React.createClass({
+  getInitialState: function () {
+    return { user: null }
+  },
+  componentDidMount: function () {
+    this.checkForUser();
+  },
+  checkForUser: function () {
+  var cookie = require('cookie-cutter')
+    , user = localStorage.userInfo
+    , authCookie = cookie.get('token')
+
+    if (user && authCookie) {
+      user = JSON.parse(user);
+      this.setState({ user });
+    }
+  },
   render: function () {
     var Header = require('./header.jsx')
       , Footer = require('./footer.jsx')
@@ -15,7 +31,7 @@ module.exports = React.createClass({
     return (
       <div style={{ height: '100%' }}>
         <div className="main-wrapper">
-          <Header />
+          <Header user={this.state.user} />
 
           <div data-fixme="main-wrap" className="container">
             {/* FIXME: messages
