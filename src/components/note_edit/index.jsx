@@ -24,6 +24,7 @@ module.exports = React.createClass({
 
   render: function () {
     var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
+      , HTMLEditor = require('../shared/text_editor.jsx')
       , note = this.props.data
 
     return (
@@ -39,6 +40,7 @@ module.exports = React.createClass({
               type="text"
               value={note.get('title')} />
         </header>
+
         <section id="note-details">
           <div id="note-about">
             <div id="note-status">
@@ -70,6 +72,19 @@ module.exports = React.createClass({
             </dd>
           </dl>
         </section>
+
+        <section id="note-description">
+          <HTMLEditor
+              style={{
+                height: '200px',
+                width: '99%',
+                padding: '4px 6px',
+                border: '1px solid rgb(204, 204, 204)',
+                'border-radius': '4px'
+              }}
+              html={note.get('content')} />
+        </section>
+
       </div>
     )
   }
