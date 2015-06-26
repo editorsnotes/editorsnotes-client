@@ -56,30 +56,35 @@ FullToolbar = React.createClass({
 module.exports = React.createClass({
   displayName: 'TextEditor',
 
+  getDefaultProps: function () {
+    return { html: '', style: {} }
+  },
+
   getInitialState: function () {
     return { editor: null }
   },
 
   componentDidMount: function () {
     var wysihtml = require('wysihtml')
-      , editorID = 'editor-' + Math.random().toString().slice(2, 10)
-      , toolbarID = editorID + '-toolbar'
-
-    React.findDOMNode(this.refs.text).setAttribute('id', editorID);
-    React.findDOMNode(this.refs.toolbar).setAttribute('id', toolbarID);
+      , editorEl = React.findDOMNode(this.refs.text)
+      , toolbarEl = React.findDOMNode(this.refs.toolbar)
 
     this.setState({
-      editor: new wysihtml.Editor(editorID, {
-        toolbar: toolbarID
+      editor: new wysihtml.Editor(editorEl, {
+        toolbar: toolbarEl
       })
     });
   },
 
   render: function () {
     return (
-      <div>
+      <div className="html-editor">
         <FullToolbar ref="toolbar" />
-        <div ref="text" />
+        <div
+            ref="text"
+            style={this.props.style}
+            className="html-editor-data"
+            dangerouslySetInnerHTML={{ __html: this.props.html }} />
       </div>
     )
 
