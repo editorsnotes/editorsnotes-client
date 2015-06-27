@@ -131,6 +131,14 @@ module.exports = React.createClass({
               html={note.content} />
         </section>
 
+        <NoteSections sections={this.state.note.sections} />
+
+        <section>
+          <div className="well">
+            <button className="btn btn-primary btn-large" onClick={this.handleSave}>Save</button>
+          </div>
+        </section>
+
       </div>
     )
   }
