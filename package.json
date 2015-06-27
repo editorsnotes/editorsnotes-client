@@ -12,6 +12,7 @@
     "leaflet": "^0.7.3",
     "location-bar": "^2.0.0",
     "react": "^0.13.3",
+    "react-dnd": "^1.1.3",
     "request": "^2.57.0",
     "route-recognizer": "^0.1.5",
     "underscore": "^1.7.0",
