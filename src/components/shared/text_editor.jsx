@@ -76,6 +76,12 @@ module.exports = React.createClass({
     });
   },
 
+  getValue: function () {
+    return this.state.editor ?
+      this.state.editor.getValue() :
+      this.props.html
+  },
+
   render: function () {
     return (
       <div className="html-editor">
