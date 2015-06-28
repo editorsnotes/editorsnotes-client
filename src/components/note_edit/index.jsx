@@ -46,6 +46,10 @@ module.exports = React.createClass({
       .update('license', license => license.get('url'))
   },
 
+  handleAddSection(section, index) {
+    console.log(section.toJS(), index);
+  },
+
   handleChange: function (e) {
     var field = e.target.name
       , value = e.target.value
@@ -65,7 +69,8 @@ module.exports = React.createClass({
 
   render: function () {
     var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
-      , NoteSections = require('./sections.jsx')
+      , SectionAddBar = require('./section_add_bar.jsx')
+      , SectionsContainer = require('./sections_container.jsx')
       , HTMLEditor = require('../shared/text_editor.jsx')
       , note = this.state.note
 
@@ -131,7 +136,10 @@ module.exports = React.createClass({
               html={note.content} />
         </section>
 
-        <NoteSections sections={this.state.note.sections} />
+        <section id="note-sections">
+          <SectionAddBar />
+          <SectionsContainer onAddSection={this.handleAddSection} />
+        </section>
 
         <section>
           <div className="well">
