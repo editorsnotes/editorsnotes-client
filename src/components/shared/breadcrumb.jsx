@@ -11,6 +11,18 @@ module.exports = React.createClass({
   },
 
   render: function () {
+    var truncatise = require('truncatise')
+      , lastLabel = this.props.crumbs.last().get('label')
+
+    lastLabel = truncatise(lastLabel, {
+      TruncateBy: 'characters',
+      StripHTML: true,
+      Strict: false
+    });
+
+    lastLabel = lastLabel.replace(/&#?\d*\.{3}$/, '...');
+
+
     return (
       <ul className="breadcrumb-top">
         {
