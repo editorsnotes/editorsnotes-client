@@ -14,7 +14,7 @@ module.exports = React.createClass({
               topics.size === 0 ?
                 <p>There are no topics related to this document.</p> :
                 topics.map(topic =>
-                  <li>
+                  <li key={topic.hashCode()}>
                     <a href={topic.get('url')}>{topic.get('preferred_name')}</a>
                   </li>
                 )
