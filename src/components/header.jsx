@@ -3,6 +3,16 @@
 var React = require('react')
 
 module.exports = React.createClass({
+  handleLogOut: function (e) {
+    e.preventDefault();
+
+    var cookie = require('cookie-cutter')
+
+    cookie.set('token', '', { expires: new Date(0) });
+    localStorage.removeItem('userInfo');
+
+    window.location.reload();
+  },
   render: function () {
     return (
       <div className="navbar">
@@ -25,7 +35,7 @@ module.exports = React.createClass({
                     <li><a href="/login/">Log in</a></li> :
                     [
                       <li key="logged-in-user"><p className="navbar-text">Logged in as {this.props.user.display_name} </p></li>,
-                      <li key="log-out"><a href="/logout/">Log out</a></li>
+                      <li key="log-out"><a href="#" onClick={this.handleLogOut}>Log out</a></li>
                     ]
                 }
               </ul>

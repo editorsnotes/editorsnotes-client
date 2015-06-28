@@ -15,9 +15,9 @@ Application = React.createClass({
     this.checkForUser();
   },
   checkForUser: function () {
-  var cookie = require('cookie-cutter')
-    , user = localStorage.userInfo
-    , authCookie = cookie.get('token')
+    var cookie = require('cookie-cutter')
+      , user = localStorage.userInfo
+      , authCookie = cookie.get('token')
 
     if (user && authCookie) {
       user = JSON.parse(user);

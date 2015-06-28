@@ -26,9 +26,7 @@ module.exports = React.createClass({
           )
         }
 
-        {
-          <li className="active">{this.props.crumbs.last().get('label')}</li>
-        }
+        <li className="active" dangerouslySetInnerHTML={{ __html: lastLabel }} />
       </ul>
     )
   }

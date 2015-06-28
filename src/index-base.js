@@ -2,6 +2,8 @@
 
 var router = require('./client')
 
+require('whatwg-fetch');
+
 router.add(require('./base_routes'));
 router.add(require('./admin_routes'));
 

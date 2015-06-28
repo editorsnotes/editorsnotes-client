@@ -11,6 +11,10 @@ module.exports = {
     name: 'home',
     Component: require('./components/home.jsx'),
   },
+  '/login/': {
+    name: 'login',
+    Component: require('./components/login.jsx')
+  },
   '/browse/': {
     name: 'browse',
     Component: require('./components/browse.jsx'),
@@ -32,10 +36,6 @@ module.exports = {
     getData: getJSONFromPath
   },
   /*
-  '/login/': {
-    name: 'login',
-    View: require('./login')
-  },
   '/projects/': {
     name: 'projects_list',
     View: require('./projects_list'),
