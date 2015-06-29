@@ -96,6 +96,7 @@
   },
   "scripts": {
     "test": "mocha editorsnotes_app/src/test/*.js",
-    "start": "cd src && node server"
+    "start": "cd src && node server",
+    "start-debug": "cd src && nodemon server -w ./ -e 'js,jsx'"
   }
 }
