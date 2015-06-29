@@ -1,46 +1,26 @@
 "use strict";
 
-var _ = require('underscore')
-  , Immutable = require('immutable')
-  , React = require('react')
-  , { DropTarget } = require('react-dnd')
-  , sectionsTarget
-  , SectionsContainer
+var React = require('react')
 
-sectionsTarget = {
-  drop(props, monitor) {
-    var section = Immutable.fromJS(monitor.getItem())
-      , index = 0
-
-    props.onAddSection(section, index);
-  }
-}
-
-function collect(connect, monitor) {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver()
-  }
-}
-
-SectionsContainer = React.createClass({
+module.exports = React.createClass({
+  displayName: 'SectionsContainer',
   render: function () {
-    var { connectDropTarget, isOver } = this.props
+    var NoteSection = require('./sections')
+      , { sections } = this.props
 
-    return connectDropTarget(
-        <div style={{
-          minHeight: '200px',
-          background: isOver ? '#eee' : 'none'
-        }}>
+    return (
+        <div style={{ minHeight: '200px' }}>
+
+        {
+          sections.map((section, i) =>
+            <NoteSection
+                key={section.has('note_section_id') ? section.hashCode() : Math.random().toString()}
+                onAddBefore={this.props.onAddSection.bind(null, i)}
+                onAddAfter={this.props.onAddSection.bind(null, i + 1)}
+                section={section} />
+          )
+        }
         </div>
     )
   }
 });
-
-module.exports = (
-  DropTarget(
-    _.values(require('./section_types')),
-    sectionsTarget,
-    collect
-  )(SectionsContainer)
-)

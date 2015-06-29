@@ -46,7 +46,7 @@ module.exports = React.createClass({
       .update('license', license => license.get('url'))
   },
 
-  handleAddSection(section, index) {
+  handleAddSection(index, section) {
     console.log(section.toJS(), index);
   },
 
@@ -138,7 +138,9 @@ module.exports = React.createClass({
 
         <section id="note-sections">
           <SectionAddBar />
-          <SectionsContainer onAddSection={this.handleAddSection} />
+          <SectionsContainer
+              sections={note.sections}
+              onAddSection={this.handleAddSection} />
         </section>
 
         <section>
