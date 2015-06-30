@@ -17,3 +17,30 @@ msgstr "Closed"
 
 msgid "hibernating"
 msgstr "Hibernating"
+
+msgid "username"
+msgstr "Username"
+
+msgid "email"
+msgstr "Email"
+
+msgid "password"
+msgstr "Password"
+
+msgid "confirm password"
+msgstr "Confirm password"
+
+msgid "username is required"
+msgstr "Please choose a username."
+
+msgid "username must be ascii"
+msgstr "Please use only ASCII characters in your username."
+
+msgid "email must be valid"
+msgstr "Please enter a valid email address."
+
+msgid "password must be at least 8 characters"
+msgstr "Please choose a password with 8 or more characters."
+
+msgid "passwords do not match"
+msgstr "The passwords do not match."
