@@ -96,34 +96,27 @@ module.exports = React.createClass({
     }
   },
 
-  validateField: function(field, pass, message, errors) {
-    if (pass(this.state[field])) {
-      return [true, errors]
-    } else {
-      return [false, errors.push(Immutable.Map(
-        {field: field, message: message}))]
-      }
-  },
-
   validates: function() {
-    var errors = this.state.errors.clear(), passed
-    [passed, errors] = this.validateField(
-      'username', f => !validator.isNull(f),
-      'username is required', errors)
-    if (passed) {
-        [, errors] = this.validateField(
-          'username', f => validator.isAscii(f),
-          'username must be ascii', errors)
+    var errors = this.state.errors.clear()
+    const validateField = (field, pass, message) =>
+    {
+      if (pass(this.state[field])) {
+        return true
+      }
+      errors = errors.push(Immutable.Map({field: field, message: message}))
+      return false
     }
-    [, errors] = this.validateField(
-      'email', f => validator.isEmail(f),
-      'email must be valid', errors);
-    [, errors] = this.validateField(
-      'password', f => validator.isLength(f, 8),
-      'password must be at least 8 characters', errors);
-    [, errors] = this.validateField(
-      'confirm', f => validator.equals(f, this.state.password),
-      'passwords do not match', errors)
+    if (validateField('username', f => !validator.isNull(f),
+                       'username is required')) {
+        validateField('username', f => validator.isAscii(f),
+                       'username must be ascii')
+    }
+    validateField('email', f => validator.isEmail(f),
+                   'email must be valid')
+    validateField('password', f => validator.isLength(f, 8),
+                   'password must be at least 8 characters')
+    validateField('confirm', f => validator.equals(f, this.state.password),
+                   'passwords do not match')
     this.setState({errors: errors})
     return errors.size === 0
   },
