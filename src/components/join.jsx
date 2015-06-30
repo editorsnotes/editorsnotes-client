@@ -40,7 +40,7 @@ var ValidatedInput = React.createClass({
           <Translate
             text={this.props.label ? this.props.label : this.props.field}
             i18n={this.props.i18n} />
-          {' '}
+          <br/>
           <input
             type="text"
             name={this.props.field}
