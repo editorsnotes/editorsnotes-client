@@ -9,7 +9,11 @@ function getJSONFromPath(get, pathname) {
 module.exports = {
   '/': {
     name: 'home',
-    Component: require('./components/home.jsx'),
+    Component: require('./components/home.jsx')
+  },
+  '/join/': {
+    name: 'join',
+    Component: require('./components/join.jsx')
   },
   '/login/': {
     name: 'login',
