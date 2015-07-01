@@ -25,8 +25,10 @@ module.exports = {
   '/projects/:project_slug/topics/add/': {
     name: 'topic_add',
   },
+  */
   '/projects/:project_slug/topics/:id/edit/': {
     name: 'topic_edit',
+    Component: require('./components/topic_edit'),
+    getData: getJSONFromTrimmedPath
   }
-  */
 }
