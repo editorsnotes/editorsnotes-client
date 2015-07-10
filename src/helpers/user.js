@@ -40,7 +40,7 @@ const userValidation = [
 ]
 
 function validateUser(user) {
-  var { validate } = require('./validate');
+  var { validate } = require('../utils/validate');
   return validate(user, userValidation);
 }
 
