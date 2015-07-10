@@ -10,8 +10,12 @@ module.exports = React.createClass({
 
   propTypes: {
     values: React.PropTypes.instanceOf(Immutable.List).isRequired,
-    onValueAdded: React.PropTypes.func,
-    onValueRemoved: React.PropTypes.func
+    onChange: React.PropTypes.func.isRequired
+  },
+
+  removeValue: function(value) {
+    this.props.onChange(
+      this.props.values.delete(this.props.values.indexOf(value)))
   },
 
   handleKeyDown: function(e) {
@@ -19,7 +23,7 @@ module.exports = React.createClass({
         e.target.value.length > 0 &&
         !this.props.values.includes(e.target.value)) {
 
-      this.props.onValueAdded(e.target.value)
+      this.props.onChange(this.props.values.push(e.target.value))
       e.target.value = ''
     }
   },
@@ -37,7 +41,7 @@ module.exports = React.createClass({
           this.props.values.map((value, i) =>
             <div key={'value-' + i} className="multiple-text-input-value">
               <span className="destroy"
-                onClick={this.props.onValueRemoved.bind(null, value)}>
+                onClick={() => this.removeValue(value)}>
                 <i className="fa fa-minus-circle" />
               </span>
               {value}

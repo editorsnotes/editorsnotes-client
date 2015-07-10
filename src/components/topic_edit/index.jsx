@@ -4,19 +4,12 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Topic
-
-Topic = Immutable.Record({
-  preferred_name: '',
-  summary: '',
-  alternate_names: Immutable.List(),
-  related_topics: Immutable.List()
-});
 
 module.exports = React.createClass({
   displayName: 'TopicEdit',
 
   getInitialState: function () {
+    var Topic = require('../../records/topic')
     return { topic: new Topic(this.props.data) }
   },
 
@@ -35,45 +28,19 @@ module.exports = React.createClass({
 
     return <Breadcrumb crumbs={crumbs} />
   },
-/*
-  getValue: function () {
-    return this.state.topic
-      .set('content', this.refs.content.getValue())
-      .update('related_topics', topics => topics.map(topic => topic.get('url')))
-      .update('license', license => license.get('url'))
-  },
 
-  handleAddSection(index, section) {
-    console.log(section.toJS(), index);
+  handleValueChange(value) {
+    this.setState(prev => ({ topic: prev.topic.merge(value) }));
   },
 
   handleChange: function (e) {
     var field = e.target.name
       , value = e.target.value
-
-    if (field === 'is_private') {
-      value = value === 'true' ? true : false;
-    }
-
     this.setState(prev => ({ topic: prev.topic.set(field, value) }));
   },
 
   handleSave: function () {
-    var topic = this.getValue()
-
-    console.log(topic.toJS());
-  },
-*/
-  handleAlternateNameAdded: function (name) {
-    this.setState(prev =>
-      ({ topic: prev.topic.update('alternate_names',
-        names => names.push(name)) }))
-  },
-
-  handleAlternateNameRemoved: function (name) {
-    this.setState(prev =>
-      ({ topic: prev.topic.update('alternate_names',
-        names => names.delete(names.indexOf(name))) }))
+    console.log(this.state.topic.toJS());
   },
 
   render: function () {
@@ -89,8 +56,7 @@ module.exports = React.createClass({
           <h3>Preferred name</h3>
           <div data-error-target="title"></div>
           <input
-              id="topic-preferred-name"
-              name="preferred-name"
+              name="preferred_name"
               maxLength="80"
               type="text"
               value={topic.preferred_name}
@@ -100,15 +66,17 @@ module.exports = React.createClass({
         <section id="topic-alternate-names">
           <h3>Alternate names</h3>
           <MultipleTextInput
+            onChange={alternate_names =>
+                      this.handleValueChange({ alternate_names })}
             values={topic.get('alternate_names').toList()}
-            onValueAdded={this.handleAlternateNameAdded}
-            onValueRemoved={this.handleAlternateNameRemoved}
           />
         </section>
 
         <section id="topic-related-topics">
           <h3>Related topics</h3>
           <RelatedTopicsSelector
+            onChange={related_topics =>
+                      this.handleValueChange({ related_topics })}
             topics={topic.get('related_topics').toSet()} />
         </section>
 
@@ -123,6 +91,7 @@ module.exports = React.createClass({
                 border: '1px solid rgb(204, 204, 204)',
                 borderRadius: '4px'
               }}
+              onChange={summary => this.handleValueChange({ summary })}
               html={topic.summary} />
         </section>
 
