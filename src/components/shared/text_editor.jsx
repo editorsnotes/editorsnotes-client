@@ -64,22 +64,31 @@ module.exports = React.createClass({
     return { editor: null }
   },
 
+  componentWillReceiveProps: function (nextProps) {
+    if (!this.state.editor) return;
+
+    if ('html' in nextProps && nextProps.html !== this.state.editor.getValue()) {
+      this.state.editor.setValue(nextProps.html);
+    }
+  },
+
   componentDidMount: function () {
     var wysihtml = require('wysihtml')
       , editorEl = React.findDOMNode(this.refs.text)
       , toolbarEl = React.findDOMNode(this.refs.toolbar)
+      , editor
 
-    this.setState({
-      editor: new wysihtml.Editor(editorEl, {
-        toolbar: toolbarEl
+    editor = new wysihtml.Editor(editorEl, { toolbar: toolbarEl })
+
+    if (this.props.onChange) {
+      editor.on('load', () => editor.setValue(this.props.html));
+      editor.on('interaction', () => {
+        var val = editor.getValue();
+        this.props.onChange(val);
       })
-    });
-  },
+    }
 
-  getValue: function () {
-    return this.state.editor ?
-      this.state.editor.getValue() :
-      this.props.html
+    this.setState({ editor });
   },
 
   render: function () {
@@ -89,8 +98,7 @@ module.exports = React.createClass({
         <div
             ref="text"
             style={this.props.style}
-            className="html-editor-data"
-            dangerouslySetInnerHTML={{ __html: this.props.html }} />
+            className="html-editor-data" />
       </div>
     )
 

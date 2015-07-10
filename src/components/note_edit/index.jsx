@@ -4,22 +4,12 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Note
-
-Note = Immutable.Record({
-  title: '',
-  content: '',
-  status: 'open',
-  is_private: false,
-  license: null,
-  related_topics: Immutable.List(),
-  sections: Immutable.List()
-});
 
 module.exports = React.createClass({
   displayName: 'NoteEdit',
 
-  getInitialState: function () {
+  getInitialState() {
+    var Note = require('../../records/note');
     return { note: new Note(this.props.data) }
   },
 
@@ -41,13 +31,16 @@ module.exports = React.createClass({
 
   getValue: function () {
     return this.state.note
-      .set('content', this.refs.content.getValue())
       .update('related_topics', topics => topics.map(topic => topic.get('url')))
       .update('license', license => license.get('url'))
   },
 
   handleAddSection(index, section) {
     console.log(section.toJS(), index);
+  },
+
+  handleValueChange(value) {
+    this.setState(prev => ({ note: prev.note.merge(value) }));
   },
 
   handleChange: function (e) {
@@ -62,9 +55,7 @@ module.exports = React.createClass({
   },
 
   handleSave: function () {
-    var note = this.getValue()
-
-    console.log(note.toJS());
+    console.log(this.state.note.toJS());
   },
 
   render: function () {
@@ -133,6 +124,7 @@ module.exports = React.createClass({
                 border: '1px solid rgb(204, 204, 204)',
                 borderRadius: '4px'
               }}
+              onChange={content => this.handleValueChange({ content })}
               html={note.content} />
         </section>
 
