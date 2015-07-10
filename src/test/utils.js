@@ -3,11 +3,11 @@
 var test = require('tape')
 
 test('Citation generator', function (t) {
-  t.plan(2);
-
   var CitationGenerator = require('../utils/citation_generator')
     , generator = new CitationGenerator()
     , testData
+
+  t.plan(2);
 
   testData = {
     id: 'testing',
@@ -31,11 +31,11 @@ test('Citation generator', function (t) {
 });
 
 test('Zotero => CSL converter', function (t) {
-  t.plan(1);
-
   var converter = require('../utils/zotero_to_csl')
     , testData
     , expected
+
+  t.plan(1);
 
   testData = {
     itemType: 'book',
