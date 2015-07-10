@@ -1,11 +1,13 @@
 "use strict";
 
-var $ = require('./jquery')
-  , Backbone = require('./backbone')
-  , router = require('./client')
+var router = require('./client')
 
-router.add(require('./base_views/routes'))
+require('whatwg-fetch');
 
+router.add(require('./base_routes'));
+router.add(require('./admin_routes'));
+
+/*
 $(document).ready(function () {
   initTimeago();
   initTooltips();
@@ -45,3 +47,4 @@ function initTooltips () {
     .tooltip({ selector: '[data-toggle="tooltip"]' })
     .on('click', 'a[data-toggle="tooltip"][href="#"]', function () { return false });
 }
+*/

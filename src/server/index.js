@@ -9,21 +9,26 @@ var request = require('request')
 
 const API_URL = process.env.EDITORSNOTES_API_URL || 'http://localhost:8001'
 
-
 console.log('Starting server...')
 console.log('Verifying Editors\' Notes API address at ' + API_URL + '...')
 
+function start() {
+  request(API_URL, { headers: { Accept: 'application/json' }}, function (err) {
+    if (err) {
+      if (err.code === 'ECONNREFUSED') {
+        console.error('Could not connect to Editor\'s Notes API server at ' + API_URL);
+        console.error('Retrying in 5 seconds...');
 
-request(API_URL, { headers: { Accept: 'application/json' }}, function (err) {
-  if (err) {
-    if (err.code === 'ECONNREFUSED') {
-      throw new Error('Could not connect to Editor\'s Notes API server at ' + API_URL);
-    } else {
-      throw err;
+        setTimeout(start, 5000);
+        return;
+      } else {
+        throw err;
+      }
     }
-  }
 
-  console.log('Server started');
-  server.serve()
-});
+    console.log('Server started');
+    server.serve()
+  });
+}
 
+start();

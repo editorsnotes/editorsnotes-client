@@ -2,19 +2,23 @@
   "name": "editorsnotes",
   "author": "Patrick Golden",
   "private": true,
+  "version": "0.10.1",
   "dependencies": {
     "babelify": "^6.0.2",
-    "backbone": "^1.1.2",
-    "backbone.cocktail": "^0.5.10",
-    "backbone.stickit": "^0.8.0",
     "browserify": "^9.0.7",
-    "jquery": "^1.11.0",
+    "immutable": "^3.7.3",
     "leaflet": "^0.7.3",
-    "request": "^2.55.0",
+    "location-bar": "^2.0.0",
+    "react": "^0.13.3",
+    "react-dnd": "^1.1.3",
+    "request": "^2.57.0",
     "route-recognizer": "^0.1.5",
+    "truncatise": "0.0.2",
     "underscore": "^1.7.0",
-    "underscore-contrib": "^0.3.0",
-    "watchify": "^3.1.0"
+    "validator": "^3.41.2",
+    "watchify": "^3.1.0",
+    "whatwg-fetch": "^0.9.0",
+    "wysihtml": "git://github.com/Voog/wysihtml5.git#0.5.0-beta10"
   },
   "devDependencies": {
     "brfs": "1.0.0",
@@ -30,7 +34,6 @@
     "node-underscorify": "0.0.14",
     "nunjucks": "^1.2.0",
     "po2json": "^0.3.2",
-    "request": "^2.53.0",
     "sinon": "^1.9.0",
     "testling": "^1.6.1",
     "typogr": "^0.6.5",
@@ -59,8 +62,7 @@
     "jquery-babbq": "./lib/jquery/jquery.ba-bbq.min.js",
     "sinon-event": "sinon/lib/sinon/util/event",
     "sinon-fakeserver": "sinon/lib/sinon/util/fake_server",
-    "sinon-fakexhr": "sinon/lib/sinon/util/fake_xml_http_request",
-    "wysihtml5": "./lib/wysihtml5/wysihtml5-0.3.0.min.js"
+    "sinon-fakexhr": "sinon/lib/sinon/util/fake_xml_http_request"
   },
   "browserify-shim": {
     "jquery-ui": {
@@ -78,7 +80,7 @@
     "jquery-babbq": {
       "depends": "jquery"
     },
-    "wysihtml5": "wysihtml5",
+    "wysihtml": "global:wysihtml5",
     "citeproc": "global:CSL"
   },
   "testling": {
@@ -95,6 +97,7 @@
   },
   "scripts": {
     "test": "mocha editorsnotes_app/src/test/*.js",
-    "start": "cd src && node server"
+    "start": "cd src && node server",
+    "start-debug": "cd src && nodemon server -w ./ -e 'js,jsx'"
   }
 }

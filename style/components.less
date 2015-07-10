@@ -108,6 +108,25 @@ body.modal-open .tooltip {
   }
 }
 
+@multipleTextInputValueVerticalPadding: 4px;
+.multiple-text-input {
+  .multiple-text-input-value {
+    font-size: 14px;
+    padding: @multipleTextInputValueVerticalPadding 0;
+    &:hover {
+      background: #e2e2e2;
+    }
+  }
+  .multiple-text-input-value .destroy {
+    color: black;
+    padding: 6px 2*@multipleTextInputValueVerticalPadding;
+    &:hover {
+      text-decoration: none;
+      cursor: pointer;
+      color: @btnDangerBackground;
+    }
+  }
+}
 
 .save-row {
   background: #f0f0f0;
