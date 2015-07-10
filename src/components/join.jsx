@@ -4,9 +4,8 @@ var React = require('react')
   , Immutable = require('immutable')
   , Jed = require('jed')
   , Translate = require('./shared/translate.jsx')
-  , validator = require('validator')
 
-function createUser(username, email, password) {
+function createUser({ username, email, password }) {
   return fetch('/users/', {
     method: 'post',
     headers: {
@@ -66,25 +65,28 @@ module.exports = React.createClass({
   displayName: 'Join',
 
   getInitialState: function () {
-    return { username: null
-           , email: null
-           , password: null
-           , confirm: null
-           , errors: Immutable.List()
-           }
+    return {
+      errors: Immutable.List(),
+      user: Immutable.Record({
+        username: null,
+        email: null,
+        password: null,
+        confirm: null
+      })
+    }
   },
 
   handleChange: function (e) {
     var value = e.target.value
       , field = e.target.name
 
-    this.setState({ [field]: value });
+    this.setState(prev => ({ user: prev.user.set(field, value) }));
   },
 
   handleSubmit: function (e) {
     e.preventDefault();
     if (this.validates()) {
-      createUser(this.state.username, this.state.email, this.state.password)
+      createUser(this.state.user.toJS())
         .then(response => {
           if (response.status === 200) {
             window.location.href = '/me'
@@ -97,28 +99,12 @@ module.exports = React.createClass({
   },
 
   validates: function() {
-    var errors = this.state.errors.clear()
-    const validateField = (field, pass, message) =>
-    {
-      if (pass(this.state[field])) {
-        return true
-      }
-      errors = errors.push(Immutable.Map({field: field, message: message}))
-      return false
-    }
-    if (validateField('username', f => !validator.isNull(f),
-                       'username is required')) {
-        validateField('username', f => validator.isAscii(f),
-                       'username must be ascii')
-    }
-    validateField('email', f => validator.isEmail(f),
-                   'email must be valid')
-    validateField('password', f => validator.isLength(f, 8),
-                   'password must be at least 8 characters')
-    validateField('confirm', f => validator.equals(f, this.state.password),
-                   'passwords do not match')
-    this.setState({errors: errors})
-    return errors.size === 0
+    var { validateUser } = require('../helpers/user')
+      , errors = validateUser(this.state.user)
+
+    this.setState({ errors });
+
+    return errors.size === 0;
   },
 
   render: function () {
@@ -136,20 +122,20 @@ module.exports = React.createClass({
           <ValidatedInput
             i18n={this.props.i18n}
             field={'username'}
-            value={this.state.username}
+            value={this.state.user.username}
             errors={errorsFor('username')}
             onChange={this.handleChange} />
           <ValidatedInput
             i18n={this.props.i18n}
             field={'email'}
-            value={this.state.email}
+            value={this.state.user.email}
             errors={errorsFor('email')}
             onChange={this.handleChange} />
           <ValidatedInput
             i18n={this.props.i18n}
             field={'password'}
             type={'password'}
-            value={this.state.passsword}
+            value={this.state.user.passsword}
             errors={errorsFor('password')}
             onChange={this.handleChange} />
           <ValidatedInput
@@ -157,7 +143,7 @@ module.exports = React.createClass({
             field={'confirm'}
             type={'password'}
             label={'confirm password'}
-            value={this.state.passsword}
+            value={this.state.user.confirm}
             errors={errorsFor('confirm')}
             onChange={this.handleChange} />
           <br />
