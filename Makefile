@@ -6,21 +6,21 @@ FONT_FILES = $(shell find style/ -wholename "*/font/*" -type f)
 
 # ------------------ #
 
-all: static/bundle.js static/style.css
+all: static/bundle.js \
+	static/bundle.min.js \
+	static/style.css \
+	static/style.min.css
 
 
 static:
 	mkdir -p static
 
 
-static/bundle.js: static src/nunjucks/compiled_templates.js $(JS_FILES)
+static/bundle.js: $(JS_FILES)
 	node_modules/.bin/browserify $(BROWSERIFY_OPTS)
 
 static/bundle.min.js: static/bundle.js
 	node_modules/.bin/uglifyjs static/bundle.js > static/bundle.min.js
-
-src/nunjucks/compiled_templates.js:
-	node ./src/nunjucks/precompile > ./src/nunjucks/compiled_templates.js
 
 
 static/style.css: $(CSS_FILES) static/font
