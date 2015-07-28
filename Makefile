@@ -16,14 +16,14 @@ static:
 	mkdir -p static
 
 
-static/bundle.js: $(JS_FILES)
+static/bundle.js: static $(JS_FILES)
 	node_modules/.bin/browserify $(BROWSERIFY_OPTS)
 
 static/bundle.min.js: static/bundle.js
 	node_modules/.bin/uglifyjs static/bundle.js > static/bundle.min.js
 
 
-static/style.css: $(CSS_FILES) static/font
+static/style.css: static $(CSS_FILES) static/font
 	node_modules/.bin/lessc ./style/main.less > static/style.css
 	
 static/font: $(FONT_FILES)
