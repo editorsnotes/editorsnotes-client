@@ -4,11 +4,14 @@ var child_process = require('child_process')
   , Jed = require('jed')
   , path = require('path')
   , po2json = require('po2json')
+  , localePath
   , files
   , data
 
+localePath = path.join(__dirname, '..', '..', 'locale');
+
 files = child_process
-  .execSync('find ../locale -type f -name *po', { encoding: 'utf-8' })
+  .execSync('find ' + localePath + ' -type f -name *po', { encoding: 'utf-8' })
   .trim()
   .split('\n');
 
