@@ -14,6 +14,10 @@ var process = require('process')
 const API_URL = process.env.EDITORSNOTES_API_URL || 'http://localhost:8001'
     , SERVER_PORT = process.env.EDITORSNOTES_CLIENT_PORT || 8450
 
+const FETCH_ERROR = '__error__'
+
+
+// fetchFn should __never__ return anything except 200. Anything else is an error.
 const fetchFn = function (req, pathname, headers={}) {
   var url
     , authorization
@@ -32,10 +36,24 @@ const fetchFn = function (req, pathname, headers={}) {
 
   return new Promise((resolve, reject) => {
     request.get({ url, headers }, function (error, response, body) {
-      if (!error && response.statusCode === 200) {
+      if (error) {
+        reject(error);
+      } else if (response.statusCode === 200) {
         resolve(body);
       } else {
-        reject([error, response]);
+        let msg
+
+        msg = 'Request resulted in non-200 status code\n. Request content:';
+        msg += JSON.stringify(response, true, ' ');
+
+        logError(msg);
+
+        resolve(JSON.stringify({
+          [FETCH_ERROR]: {
+            statusCode: response.statusCode,
+            message: JSON.parse(body).detail
+          }
+        }));
       }
     });
   })
@@ -89,6 +107,13 @@ function render(props, bootstrap) {
   return html;
 }
 
+function logError(err) {
+  process.stderr.write('ERROR\n==========\n');
+  process.stderr.write((err.stack || err) + '\n');
+  process.stderr.write('=========\n\n');
+
+}
+
 // Render view template, unless there is no template, in which case just
 // render a blank page.
 //
@@ -119,10 +144,15 @@ router.fallbackHandler = function () {
     }
 
     promise = promise
-      .then(props => _.extend(props, {
-        ActiveComponent: config.Component,
-        i18n: jed
-      }))
+      .then(props => {
+        var hadError = props.data && props.data.has(FETCH_ERROR)
+          , component = hadError ? require('../components/error.jsx') : config.Component
+
+        return _.extend(props, {
+          ActiveComponent: component,
+          i18n: jed
+        })
+      })
       .then(props => render(props, bootstrap))
       .then(html => {
         this.res.writeHead(200, { 'Content-Type': 'text/html' });
@@ -132,9 +162,7 @@ router.fallbackHandler = function () {
     promise.catch(err => {
       let msg = '<h1>Server error</h1>';
 
-      process.stderr.write('ERROR\n==========\n');
-      process.stderr.write(err.stack + '\n');
-      process.stderr.write('=========\n\n');
+      logError(err);
 
       this.res.writeHead(500);
       this.res.end(makeHTML(msg));
