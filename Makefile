@@ -1,14 +1,13 @@
 BROWSERIFY_OPTS = src/index-base.js -o static/bundle.js
 
-JS_FILES = $(shell find src/ -type f -name *js)
+JS_FILES = $(shell find src/ -type f -name *js -o -name *jsx)
 CSS_FILES = $(shell find style/ -regex ".*\(css\|less\)")
 FONT_FILES = $(shell find style/ -wholename "*/font/*" -type f)
 
 # ------------------ #
 
-all: static/bundle.js \
+all: \
 	static/bundle.min.js \
-	static/style.css \
 	static/style.min.css
 
 
@@ -20,10 +19,16 @@ static/bundle.js: static $(JS_FILES)
 	node_modules/.bin/browserify $(BROWSERIFY_OPTS)
 
 static/bundle.min.js: static/bundle.js
-	node_modules/.bin/uglifyjs static/bundle.js > static/bundle.min.js
+	node_modules/.bin/uglifyjs -c -- static/bundle.js > static/bundle.min.js
 
 
-static/style.css: static $(CSS_FILES) static/font
+static/basscss.css: static
+	echo '@import "basscss";' | node_modules/.bin/cssnext > static/basscss.css
+
+static/normalize.css: static
+	echo '@import "normalize.css";' | node_modules/.bin/cssnext > static/normalize.css
+
+static/style.css: static $(CSS_FILES) static/font static/basscss.css static/normalize.css
 	node_modules/.bin/lessc ./style/main.less > static/style.css
 	
 static/font: $(FONT_FILES)
