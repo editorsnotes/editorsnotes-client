@@ -8,34 +8,19 @@ var _ = require('underscore')
 
 Application = React.createClass({
   displayName: 'EditorsNotesApplication',
-  getInitialState: function () {
-    return { user: null }
-  },
-  componentDidMount: function () {
-    this.checkForUser();
-  },
-  checkForUser: function () {
-    var cookie = require('cookie-cutter')
-      , user = localStorage.userInfo
-      , authCookie = cookie.get('token')
-
-    if (user && authCookie) {
-      user = JSON.parse(user);
-      this.setState({ user });
-    }
-  },
   render: function () {
     var Header = require('./header.jsx')
       , Footer = require('./footer.jsx')
       , ActiveComponent = this.props.ActiveComponent
+      , user = this.props.__AUTHENTICATED_USER__ || null
       , activeComponentProps
 
-    activeComponentProps = _.omit(this.props, ['ActiveComponent'])
+    activeComponentProps = _.omit(this.props, ['ActiveComponent', '__AUTHENTICATED_USER__']);
 
     return (
       <div style={{ height: '100%' }}>
         <div className="main-wrapper">
-          <Header user={this.state.user} />
+          <Header user={user} />
 
           <div data-fixme="main-wrap" className="container">
             {/* FIXME: messages

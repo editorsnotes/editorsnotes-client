@@ -4,6 +4,7 @@ var process = require('process')
   , http = require('http')
   , _ = require('underscore')
   , request = require('request')
+  , cookie = require('cookie')
   , React = require('react')
   , Immutable = require('immutable')
   , Router = require('../router')
@@ -15,21 +16,24 @@ const API_URL = process.env.EDITORSNOTES_API_URL || 'http://localhost:8001'
     , SERVER_PORT = process.env.EDITORSNOTES_CLIENT_PORT || 8450
 
 const FETCH_ERROR = '__error__'
+    , USER_DATA = '__AUTHENTICATED_USER__'
+
+function getSessionID(req) {
+  return cookie.parse(req.headers.cookie || '').sessionid;
+}
 
 
 // fetchFn should __never__ return anything except 200. Anything else is an error.
 const fetchFn = function (req, pathname, headers={}) {
-  var url
-    , authorization
+  var sessionID = getSessionID(req)
+    , url
 
   if (pathname[0] !== '/') throw Error('Can only fetch data relative to local API.');
 
   url = API_URL + pathname;
 
-  // Set authorization token from cookie if present
-  authorization = getAuthorizationHeader(req);
-  if (authorization) {
-    headers.Authorization = authorization;
+  if (sessionID) {
+    headers.cookie = cookie.serialize('sessionid', sessionID);
   }
 
   headers.Host = req.headers.host;
@@ -56,18 +60,7 @@ const fetchFn = function (req, pathname, headers={}) {
         }));
       }
     });
-  })
-}
-
-function getAuthorizationHeader(req) {
-  var cookies = require('cookie').parse(req.headers.cookie || '')
-    , auth = null
-
-  if (cookies.token) {
-    auth = 'Token ' + cookies.token;
-  }
-
-  return auth;
+  });
 }
 
 
@@ -114,6 +107,34 @@ function logError(err) {
 
 }
 
+function getUserData(req) {
+  var sessionID = getSessionID(req)
+
+  if (!sessionID) return Promise.resolve(null);
+
+  return new Promise((resolve, reject) => {
+    var url = API_URL + '/me'
+      , headers = {}
+
+    headers.cookie = cookie.serialize('sessionid', sessionID);
+    headers.Accept = 'application/json'
+
+    request.get({ url, headers }, function (err, response, body) {
+      // TODO: Maybe, if status code is 403, invalidate the sessionid cookie?
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      if (response.statusCode === 200) {
+        resolve(JSON.parse(body));
+      }
+
+      resolve(null);
+    });
+  })
+}
+
 // Render view template, unless there is no template, in which case just
 // render a blank page.
 //
@@ -131,19 +152,24 @@ router.fallbackHandler = function () {
           this.req.url,
           params,
           queryParams))
-        .then(data => (bootstrap = data))
-        .then(data => {
-          var immutableData = {};
-
-          Object.keys(data).forEach(key => {
-            immutableData[key] = Immutable.fromJS(data[key]);
-          });
-
-          return immutableData;
-        });
     }
 
     promise = promise
+      .then(data => getUserData(this.req).then(userData => {
+        if (userData) data[USER_DATA] = userData;
+
+        return data;
+      }))
+      .then(data => (bootstrap = data))
+      .then(data => {
+        var immutableData = {};
+
+        Object.keys(data).forEach(key => {
+          immutableData[key] = Immutable.fromJS(data[key]);
+        });
+
+        return immutableData;
+      })
       .then(props => {
         var hadError = props.data && props.data.has(FETCH_ERROR)
           , component = hadError ? require('../components/error.jsx') : config.Component
@@ -175,8 +201,27 @@ module.exports = {
     var server = http.createServer(function (req, res) {
       router.dispatch(req, res, function (err) {
         if (err) {
-          res.writeHead(404, { 'Content-Type': 'text/html' });
-          res.end(render({ ActiveComponent: require('../components/not_found.jsx') }))
+
+          getUserData(req)
+            .then(userData => {
+              var props = {}
+                , data = {}
+
+              if (userData) data[USER_DATA] = props[USER_DATA] = Immutable.fromJS(userData);
+              props.ActiveComponent = require('../components/not_found.jsx');
+
+              res.writeHead(404, { 'Content-Type': 'text/html' });
+
+              res.end(render(props, data));
+            })
+            .catch(err => {
+              let msg = '<h1>Server error</h1>';
+
+              logError(err);
+
+              res.writeHead(500);
+              res.end(makeHTML(msg));
+            })
         }
       });
     });
