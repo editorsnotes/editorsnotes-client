@@ -82,7 +82,6 @@ function makeHTML(body, bootstrap) {
   <body>
     <div id="react-app" style="height: 100%">${body}</div>
     ${bootstrapScript}
-    <script type="text/javascript" src="/lib/wysihtml-toolbar.js"></script>
     <script type="text/javascript" src="/static/bundle.js"></script>
   </body>
 </html>

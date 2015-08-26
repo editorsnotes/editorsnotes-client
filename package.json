@@ -24,8 +24,7 @@
     "underscore": "^1.7.0",
     "validator": "^3.41.2",
     "watchify": "^3.2.3",
-    "whatwg-fetch": "^0.9.0",
-    "wysihtml": "git://github.com/Voog/wysihtml5.git#0.5.0-beta10"
+    "whatwg-fetch": "^0.9.0"
   },
   "devDependencies": {
     "brfs": "1.0.0",
@@ -85,7 +84,6 @@
     "jquery-babbq": {
       "depends": "jquery"
     },
-    "wysihtml": "global:wysihtml5",
     "citeproc": "global:CSL"
   },
   "scripts": {
