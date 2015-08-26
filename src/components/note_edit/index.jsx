@@ -43,10 +43,6 @@ module.exports = React.createClass({
       .update('license', license => license.get('url'))
   },
 
-  handleAddSection(index, section) {
-    console.log(section.toJS(), index);
-  },
-
   handleValueChange(value) {
     this.setState(prev => ({ note: prev.note.merge(value) }));
   },
@@ -68,9 +64,7 @@ module.exports = React.createClass({
 
   render: function () {
     var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
-      , SectionAddBar = require('./section_add_bar.jsx')
-      , SectionsContainer = require('./sections_container.jsx')
-      , HTMLEditor = require('../shared/text_editor.jsx')
+      , HTMLEditor = require('../shared/text_editor/index.jsx')
       , note = this.state.note
 
     return (
@@ -122,25 +116,12 @@ module.exports = React.createClass({
           </dl>
         </section>
 
-        <section id="note-description">
+        <section>
           <HTMLEditor
               ref="content"
-              style={{
-                height: '200px',
-                width: '99%',
-                padding: '4px 6px',
-                border: '1px solid rgb(204, 204, 204)',
-                borderRadius: '4px'
-              }}
-              onChange={content => this.handleValueChange({ content })}
+              onChange={markup => this.handleValueChange({ markup })}
               html={note.content} />
-        </section>
-
-        <section id="note-sections">
-          <SectionAddBar />
-          <SectionsContainer
-              sections={note.sections}
-              onAddSection={this.handleAddSection} />
+          <br />
         </section>
 
         <section>

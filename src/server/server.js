@@ -76,6 +76,7 @@ function makeHTML(body, bootstrap) {
     <title>Editors' Notes</title>
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/codemirror.css" />
   </head>
 
   <body>

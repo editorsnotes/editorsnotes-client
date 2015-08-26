@@ -79,7 +79,7 @@ module.exports = React.createClass({
   render: function () {
     var MultipleTextInput = require('../shared/multiple_text_input.jsx')
       , RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
-      , HTMLEditor = require('../shared/text_editor.jsx')
+      , HTMLEditor = require('../shared/text_editor/index.jsx')
       , topic = this.state.topic
 
     return (
