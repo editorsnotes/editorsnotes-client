@@ -16,15 +16,23 @@ module.exports = React.createClass({
   renderBreadcrumb: function () {
     var Breadcrumb = require('../shared/breadcrumb.jsx')
       , note = this.props.data
-      , project = note.get('project')
+      , project = this.props.project || note.get('project')
       , crumbs
 
     crumbs = Immutable.fromJS([
       { href: project.get('url'), label: project.get('name') },
       { href: project.get('url') + 'notes/', label: 'Notes' },
-      { href: note.get('url'), label: note.get('title') },
-      { label: 'Edit' }
     ]);
+
+    crumbs = crumbs.concat(Immutable.fromJS(
+      !this.props.data ?
+        [ { label: 'Add' } ] :
+        [
+          { href: note.get('url'), label: note.get('title') },
+          { label: 'Edit' }
+        ]
+    ))
+
 
     return <Breadcrumb crumbs={crumbs} />
   },

@@ -117,7 +117,9 @@ function getUserData(req) {
       , headers = {}
 
     headers.cookie = cookie.serialize('sessionid', sessionID);
-    headers.Accept = 'application/json'
+    headers.Accept = 'application/json';
+    headers.Host = req.headers.host;
+
 
     request.get({ url, headers }, function (err, response, body) {
       // TODO: Maybe, if status code is 403, invalidate the sessionid cookie?

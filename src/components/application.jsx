@@ -16,6 +16,7 @@ Application = React.createClass({
       , activeComponentProps
 
     activeComponentProps = _.omit(this.props, ['ActiveComponent', '__AUTHENTICATED_USER__']);
+    activeComponentProps.user = user;
 
     return (
       <div style={{ height: '100%' }}>
