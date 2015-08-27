@@ -190,6 +190,7 @@ router.fallbackHandler = function () {
     promise.catch(err => {
       let msg = '<h1>Server error</h1>';
 
+      // FIXME Actually render within the framework of the site
       logError(err);
 
       this.res.writeHead(500);
