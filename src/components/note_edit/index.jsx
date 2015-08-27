@@ -133,7 +133,7 @@ module.exports = React.createClass({
           <HTMLEditor
               ref="content"
               onChange={markup => this.handleValueChange({ markup })}
-              html={note.content} />
+              html={note.markup} />
           <br />
         </section>
 

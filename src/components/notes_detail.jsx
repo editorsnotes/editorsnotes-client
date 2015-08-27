@@ -2,7 +2,6 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , NoteSection = require('./note_section')
 
 module.exports = React.createClass({
   displayName: 'Note',
@@ -20,6 +19,11 @@ module.exports = React.createClass({
     ]);
 
     return <Breadcrumb crumbs={crumbs} />
+  },
+
+  renderMarkup: function () {
+    return <div dangerouslySetInnerHTML={{ __html: this.props.data.get('markup_html') }} />
+
   },
 
   render: function () {
@@ -113,13 +117,7 @@ module.exports = React.createClass({
         }
       </section>
 
-      <section id="note-description" dangerouslySetInnerHTML={{ __html: note.get('content') }} />
-
-      <section id="note-sections">
-        {note.get('sections').map(section =>
-          <NoteSection key={section.get('section_id')} section={section} />
-        )}
-      </section>
+      <section>{ this.renderMarkup() }</section>
 
     </div>
     )
