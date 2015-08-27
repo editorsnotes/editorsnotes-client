@@ -59,7 +59,20 @@ module.exports = React.createClass({
   },
 
   handleSave: function () {
-    console.log(this.state.note.toJS());
+    var cookie = require('cookie-cutter')
+      , isNew = !this.props.data
+      , method = isNew ? 'post' : 'put'
+      , url = isNew ? (this.props.project.get('url') + 'notes/') : this.props.data.get('url')
+
+    fetch(url, {
+      method,
+      credentials: 'same-origin',
+      headers: {
+        'Content-type': 'application/json; charset=utf-8',
+        'X-CSRFToken': cookie.get('csrftoken')
+      },
+      body: JSON.stringify(this.state.note)
+    });
   },
 
   render: function () {
