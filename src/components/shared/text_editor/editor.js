@@ -47,9 +47,36 @@ function getSectionRange(cm, start=null, line) {
 
 function updateDocumentMarks(cm, fromLine=0, toLine) {
   var checkLine = fromLine
-    , ranges = [];
+    , ranges = []
 
   if (toLine === undefined) toLine = cm.doc.lineCount();
+
+  /*
+  var cursor = cm.getCursor()
+  for (var i = fromLine; i <= toLine; i++) {
+    let tokens
+      , emptyReferenceTokens
+      , newEmptyReferenceToken
+
+    if (!cursor.line === i) return;
+
+    tokens =  cm.getLineTokens(i)
+    emptyReferenceTokens = tokens
+      .filter(t => t.type && t.type.indexOf('reference-empty') === 0)
+
+    if (!emptyReferenceTokens.length) return;
+
+    newEmptyReferenceToken = emptyReferenceTokens
+      .filter(t => t.end === cursor.ch)
+
+    if (newEmptyReferenceToken.length) {
+      let type = newEmptyReferenceToken[0].type.slice(16)
+
+      cm.handleAddReference(type || null);
+    }
+
+  }
+  */
 
   if (isInSection(cm, fromLine)) {
     let initialRange = getSectionRange(cm, null, fromLine);
@@ -75,15 +102,28 @@ function updateDocumentMarks(cm, fromLine=0, toLine) {
   // exist in cm._sectionMarks
 }
 
-module.exports = function (el, value='') {
+function checkEmptyReferences(cm, { to }) {
+  var token = cm.getTokenAt(to)
+
+  if (token.type && token.type.indexOf('reference-empty') === 0) {
+    let type = token.type.slice(16)
+
+    cm.handleAddReference(type);
+  }
+}
+
+module.exports = function (el, value='', opts={}) {
   var editor = CodeMirror(el, {
     value,
     mode: 'en-markdown',
     lineWrapping: true
   });
 
+  editor.on('inputRead', checkEmptyReferences)
+
   // CodeMirror.TextMarker instances, in order
   editor._sectionMarks = [];
+  editor._referenceMarks = [];
 
   editor.on('change', function (cm, { from, to }) {
     var fromLine = from.line
@@ -91,6 +131,8 @@ module.exports = function (el, value='') {
 
     updateDocumentMarks(cm, fromLine, toLine);
   });
+
+  editor.handleAddReference = opts.handleAddReference || (() => null);
 
   return editor;
 }

@@ -13,10 +13,24 @@ module.exports = React.createClass({
     return { editor: null }
   },
 
+  onAddEmptyReference(type) {
+    this.setState({ referenceHint: type || 'empty' });
+    this.state.editor.on('beforeChange', this.clearReferenceHint);
+  },
+
+  clearReferenceHint() {
+    this.setState({ referenceHint: null });
+    this.state.editor.off('beforeChange', this.clearReferenceHint);
+  },
+
   componentDidMount: function () {
     var codemirrorEditor = require('./editor')
-      , el = React.findDOMNode(this)
-      , editor = codemirrorEditor(el, this.props.html)
+      , el = React.findDOMNode(this.refs.content)
+      , editor
+
+    editor = codemirrorEditor(el, this.props.html, {
+      handleAddReference: this.onAddEmptyReference
+    });
 
     editor.display.wrapper.style.fontFamily = '"Times New Roman"';
     editor.display.wrapper.style.fontSize = '16px';
@@ -35,9 +49,29 @@ module.exports = React.createClass({
 
   render: function () {
     return (
-      <div>
+      <div className="row">
+        <div className="span7">
+          <div ref="content" />
+        </div>
+        <div className="span5">
+          <h3>References</h3>
+          <div>
+            {
+              this.state.referenceHint && (
+                  this.state.referenceHint === 'empty' ?
+                    <p>Type 'd' for document, 'n' for note, or 't' for topic</p> :
+                    <div>
+                      <label>
+                        <strong>Find { this.state.referenceHint }</strong>
+                        <br />
+                        <input />
+                      </label>
+                    </div>
+              )
+            }
+          </div>
+        </div>
       </div>
     )
-
   }
 });
