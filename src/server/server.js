@@ -113,7 +113,7 @@ function getUserData(req) {
   if (!sessionID) return Promise.resolve(null);
 
   return new Promise((resolve, reject) => {
-    var url = API_URL + '/me'
+    var url = API_URL + '/me/'
       , headers = {}
 
     headers.cookie = cookie.serialize('sessionid', sessionID);
