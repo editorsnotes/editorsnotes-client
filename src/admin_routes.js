@@ -7,7 +7,7 @@ function getJSONFromTrimmedPath(get, pathname) {
 }
 
 function getProjectJSON(get, pathname) {
-  return get(pathname.replace('notes/add/', ''), { 'Accept': 'application/json' })
+  return get(pathname.replace(/(notes|topics|documents)\/add\//, ''), { 'Accept': 'application/json' })
     .then(data => JSON.parse(data))
     .then(project => ({ project }))
 }
@@ -30,10 +30,12 @@ module.exports = {
   '/projects/:project_slug/documents/:id/edit/': {
     name: 'document_edit',
   },
+  */
   '/projects/:project_slug/topics/add/': {
     name: 'topic_add',
+    Component: require('./components/topic_edit'),
+    getData: getProjectJSON
   },
-  */
   '/projects/:project_slug/topics/:id/edit/': {
     name: 'topic_edit',
     Component: require('./components/topic_edit'),

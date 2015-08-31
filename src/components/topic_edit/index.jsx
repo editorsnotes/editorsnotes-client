@@ -8,7 +8,7 @@ var React = require('react')
 
 Topic = Immutable.Record({
   preferred_name: '',
-  summary: '',
+  markup: '',
   alternate_names: Immutable.List(),
   related_topics: Immutable.List()
 });
@@ -23,47 +23,26 @@ module.exports = React.createClass({
   renderBreadcrumb: function () {
     var Breadcrumb = require('../shared/breadcrumb.jsx')
       , topic = this.props.data
-      , project = topic.get('project')
+      , project = this.props.project || topic.get('project')
       , crumbs
 
     crumbs = Immutable.fromJS([
       { href: project.get('url'), label: project.get('name') },
       { href: project.get('url') + 'topics/', label: 'Topics' },
-      { href: topic.get('url'), label: topic.get('preferred_name') },
-      { label: 'Edit' }
     ]);
+
+    crumbs = crumbs.concat(Immutable.fromJS(
+      !topic ?
+        [ { label: 'Add' } ] :
+        [
+          { href: topic.get('url'), label: topic.get('preferred_name') },
+          { label: 'Edit' }
+        ]
+    ))
 
     return <Breadcrumb crumbs={crumbs} />
   },
-/*
-  getValue: function () {
-    return this.state.topic
-      .set('content', this.refs.content.getValue())
-      .update('related_topics', topics => topics.map(topic => topic.get('url')))
-      .update('license', license => license.get('url'))
-  },
 
-  handleAddSection(index, section) {
-    console.log(section.toJS(), index);
-  },
-
-  handleChange: function (e) {
-    var field = e.target.name
-      , value = e.target.value
-
-    if (field === 'is_private') {
-      value = value === 'true' ? true : false;
-    }
-
-    this.setState(prev => ({ topic: prev.topic.set(field, value) }));
-  },
-
-  handleSave: function () {
-    var topic = this.getValue()
-
-    console.log(topic.toJS());
-  },
-*/
   handleAlternateNameAdded: function (name) {
     this.setState(prev =>
       ({ topic: prev.topic.update('alternate_names',
@@ -75,6 +54,11 @@ module.exports = React.createClass({
       ({ topic: prev.topic.update('alternate_names',
         names => names.delete(names.indexOf(name))) }))
   },
+
+  handleValueChange(value) {
+    this.setState(prev => ({ topic: prev.topic.merge(value) }));
+  },
+
 
   render: function () {
     var MultipleTextInput = require('../shared/multiple_text_input.jsx')
@@ -112,18 +96,12 @@ module.exports = React.createClass({
             topics={topic.get('related_topics').toSet()} />
         </section>
 
-        <section id="topic-summary">
+        <section>
           <h3>Summary</h3>
           <HTMLEditor
-              ref="summary"
-              style={{
-                height: '200px',
-                width: '99%',
-                padding: '4px 6px',
-                border: '1px solid rgb(204, 204, 204)',
-                borderRadius: '4px'
-              }}
-              html={topic.summary} />
+            onChange={markup => this.handleValueChange({ markup })}
+            html={topic.markup} />
+          <br />
         </section>
 
         <section>
