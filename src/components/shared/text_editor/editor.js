@@ -102,12 +102,16 @@ function updateDocumentMarks(cm, fromLine=0, toLine) {
   // exist in cm._sectionMarks
 }
 
-function checkEmptyReferences(cm, { to }) {
+function checkEmptyReferences(cm, { to, text }) {
   var token = cm.getTokenAt(to)
 
   if (token.type && token.type.indexOf('reference-empty') === 0) {
-    let type = token.type.slice(16)
+    let isEmptyText = text.length === 1 && text[0] === ' '
+      , type
 
+    if (isEmptyText) return;
+
+    type = token.type.slice(16);
     cm.handleAddReference(type);
   }
 }
