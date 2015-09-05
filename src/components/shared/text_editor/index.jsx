@@ -4,28 +4,34 @@ var _ = require('underscore')
   , React = require('react')
   , Immutable = require('immutable')
 
+const FORM_COMPONENTS = {
+  note: require('../note_form.jsx'),
+  topic: require('../topic_edit.jsx')
+}
+
 module.exports = React.createClass({
   displayName: 'TextEditor',
 
   propTypes: {
-    project: React.PropTypes.instanceOf(Immutable.Map)
+    projectURL: React.PropTypes.string
   },
 
-  getDefaultProps: function () {
+  getDefaultProps() {
     return {
       html: '',
       style: {}
     }
   },
 
-  getInitialState: function () {
+  getInitialState() {
     return {
       editor: null,
       referenceHint: null,
       referenceSearch: '',
       matchingReferences: null,
       matchCount: null,
-      searchedText: null
+      searchedText: null,
+      addReferenceComponent: null
     }
   },
 
@@ -67,10 +73,18 @@ module.exports = React.createClass({
     this.state.editor.off('beforeChange', this.clearReferenceHint);
   },
 
+  handleAddReference(type) {
+    var Component = FORM_COMPONENTS[type]
+
+    this.setState({
+      addReferenceComponent: <Component projectURL={this.props.projectURL} />
+    });
+  },
+
   fetchMatchingReferences() {
     var type = this.state.referenceHint
       , searchedText = this.state.referenceSearch
-      , listURL = `${this.props.project.get('url')}${type}s/?q=${searchedText}`
+      , listURL = `${this.props.projectURL}${type}s/?q=${searchedText}`
       , opts
 
     opts = {
@@ -94,7 +108,7 @@ module.exports = React.createClass({
       })
   },
 
-  componentDidMount: function () {
+  componentDidMount() {
     var codemirrorEditor = require('./editor')
       , el = React.findDOMNode(this.refs.content)
       , editor
@@ -128,6 +142,7 @@ module.exports = React.createClass({
             onClick={this.handleAddReference.bind(null, this.state.referenceHint)}>
             Add new { this.state.referenceHint }
           </button>
+          { this.state.addReferenceComponent }
         </p>
       </div> :
       <div>
@@ -140,7 +155,7 @@ module.exports = React.createClass({
       </div>
   },
 
-  render: function () {
+  render() {
     var hint = this.state.referenceHint
       , showHintLabel = hint && hint !== 'empty'
 
