@@ -43,6 +43,12 @@ module.exports = React.createClass({
       .update('license', license => license.get('url'))
   },
 
+  getProjectURL() {
+    return this.props.data ?
+      this.props.data.get('url').replace('notes/', '') :
+      this.props.project.get('url')
+  },
+
   handleValueChange(value) {
     this.setState(prev => ({ note: prev.note.merge(value) }));
   },
@@ -79,6 +85,7 @@ module.exports = React.createClass({
     var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
       , HTMLEditor = require('../shared/text_editor/index.jsx')
       , note = this.state.note
+      , project = this.props.project || this.props.data.get('project')
 
     return (
       <div>
@@ -133,6 +140,7 @@ module.exports = React.createClass({
           <HTMLEditor
               ref="content"
               onChange={markup => this.handleValueChange({ markup })}
+              project={project}
               html={note.markup} />
           <br />
         </section>
