@@ -4,16 +4,21 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , Note = require('../../records/note')
 
 module.exports = React.createClass({
   displayName: 'NoteEdit',
 
+  propTypes: {
+    data: React.propTypes.instanceOf(Immutable.Map),
+    project: React.propTypes.instanceOf(Immutable.Map),
+  },
+
   getInitialState() {
-    var Note = require('../../records/note');
     return { note: new Note(this.props.data) }
   },
 
-  renderBreadcrumb: function () {
+  renderBreadcrumb() {
     var Breadcrumb = require('../shared/breadcrumb.jsx')
       , note = this.props.data
       , project = this.props.project || note.get('project')
@@ -37,38 +42,24 @@ module.exports = React.createClass({
     return <Breadcrumb crumbs={crumbs} />
   },
 
-  getValue: function () {
-    return this.state.note
-      .update('related_topics', topics => topics.map(topic => topic.get('url')))
-      .update('license', license => license.get('url'))
+  isNew() {
+    return !this.props.data
   },
 
   getProjectURL() {
-    return this.props.data ?
-      this.props.data.get('url').replace('notes/', '') :
-      this.props.project.get('url')
+    return this.isNew() ?
+      this.props.project.get('url') :
+      this.props.data.get('url').replace('notes/', '')
   },
 
-  handleValueChange(value) {
-    this.setState(prev => ({ note: prev.note.merge(value) }));
+  handleNoteChange(note) {
+    this.setState({ note });
   },
 
-  handleChange: function (e) {
-    var field = e.target.name
-      , value = e.target.value
-
-    if (field === 'is_private') {
-      value = value === 'true' ? true : false;
-    }
-
-    this.setState(prev => ({ note: prev.note.set(field, value) }));
-  },
-
-  handleSave: function () {
+  handleSave() {
     var cookie = require('cookie-cutter')
-      , isNew = !this.props.data
-      , method = isNew ? 'post' : 'put'
-      , url = isNew ? (this.props.project.get('url') + 'notes/') : this.props.data.get('url')
+      , method = this.isNew() ? 'post' : 'put'
+      , url = this.getProjectURL() + 'notes/'
 
     fetch(url, {
       method,
@@ -81,73 +72,25 @@ module.exports = React.createClass({
     });
   },
 
-  render: function () {
-    var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
-      , HTMLEditor = require('../shared/text_editor/index.jsx')
-      , note = this.state.note
-      , project = this.props.project || this.props.data.get('project')
+  render() {
+    var NoteForm = require('./note_form.jsx')
 
     return (
       <div>
-        {this.renderBreadcrumb()}
-        <header>
-          <h3>Title</h3>
-          <div data-error-target="title"></div>
-          <input
-              id="note-title"
-              name="title"
-              maxLength="80"
-              type="text"
-              value={note.title}
-              onChange={this.handleChange} />
-        </header>
+        { this.renderBreadcrumb() }
 
-        <section id="note-details">
-          <div id="note-about">
-            <div id="note-status">
-              <strong>This note is </strong>
-              <select
-                  name="status"
-                  value={note.status}
-                  onChange={this.handleChange}>
-                <option value={"open"}>Open</option>
-                <option value={"closed"}>Closed</option>
-                <option value={"hibernating"}>Hibernating</option>
-              </select>
-            </div>
-            <div id="note-related-topics">
-              <span>Related topics</span>
-              <RelatedTopicsSelector topics={note.get('related_topics').toSet()} />
-            </div>
-          </div>
-
-          <dl id="note-authorship">
-            <dt>Private</dt>
-            <dd>
-              <select
-                  name="is_private"
-                  id="note-private"
-                  value={note.is_private}
-                  onChange={this.handleChange}>
-                <option value={false}>No</option>
-                <option value={true}>Yes</option>
-              </select>
-            </dd>
-          </dl>
-        </section>
-
-        <section>
-          <HTMLEditor
-              ref="content"
-              onChange={markup => this.handleValueChange({ markup })}
-              project={project}
-              html={note.markup} />
-          <br />
-        </section>
+        <NoteForm
+            note={this.state.note}
+            projectURL={this.getProjectURL()}
+            onChange={this.handleNoteChange} />
 
         <section>
           <div className="well">
-            <button className="btn btn-primary btn-large" onClick={this.handleSave}>Save</button>
+            <button
+                className="btn btn-primary btn-large"
+                onClick={this.handleSave}>
+              Save
+            </button>
           </div>
         </section>
 
