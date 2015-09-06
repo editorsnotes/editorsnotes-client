@@ -47,7 +47,7 @@ module.exports = React.createClass({
   getProjectURL() {
     return this.isNew() ?
       this.props.project.get('url') :
-      this.props.data.get('url').replace('topics/', '')
+      this.props.data.get('url').replace(/\/topics\/.*/, '/')
   },
 
   handleTopicChange(topic) {
