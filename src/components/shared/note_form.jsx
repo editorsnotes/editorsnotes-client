@@ -7,9 +7,9 @@ module.exports = React.createClass({
   displayName: 'NoteForm',
 
   propTypes: {
-    note: React.propTypes.instanceOf(Note).isRequired,
-    projectURL: React.propTypes.string.isRequired,
-    onChange: React.propTypes.func.isRequired
+    note: React.PropTypes.instanceOf(Note).isRequired,
+    projectURL: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func.isRequired
   },
 
   handleChange(e) {
