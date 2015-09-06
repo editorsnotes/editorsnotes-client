@@ -44,3 +44,18 @@ msgstr "Please choose a password with 8 or more characters."
 
 msgid "passwords do not match"
 msgstr "The passwords do not match."
+
+msgid "References"
+msgstr "References"
+
+msgid "Type 'd' for document, 'n' for note, or 't' for topic."
+msgstr "Type 'd' for document, 'n' for note, or 't' for topic."
+
+msgid "Find topic"
+msgstr "Find topic"
+
+msgid "Find note"
+msgstr "Find note"
+
+msgid "Find document"
+msgstr "Find document"

@@ -1,19 +1,12 @@
 "use strict";
 
-var _ = require('underscore')
-  , React = require('react')
-  , Immutable = require('immutable')
-
-const FORM_COMPONENTS = {
-  note: require('../note_form.jsx'),
-  topic: require('../topic_form.jsx')
-}
+var React = require('react')
 
 module.exports = React.createClass({
   displayName: 'TextEditor',
 
   propTypes: {
-    projectURL: React.PropTypes.string
+    projectURL: React.PropTypes.string.isRequired
   },
 
   getDefaultProps() {
@@ -26,91 +19,20 @@ module.exports = React.createClass({
   getInitialState() {
     return {
       editor: null,
-      referenceHint: null,
-      referenceSearch: '',
-      matchingReferences: null,
-      matchCount: null,
-      searchedText: null,
-      addReferenceComponent: null
+      referenceType: null,
     }
-  },
-
-  componentWillMount() {
-    this.fetchMatchingReferences = _.debounce(this.fetchMatchingReferences, 250);
   },
 
   onAddEmptyReference(type) {
-    this.setState({ referenceHint: type || 'empty' });
-    this.state.editor.on('beforeChange', this.clearReferenceHint);
+    this.setState({ referenceType: type || 'empty' });
+    this.state.editor.on('beforeChange', this.clearReferenceType);
 
-    if (type) {
-      React.findDOMNode(this.refs.autocomplete).focus();
-    }
+    if (type) this.refs.referenceForm.focusAutocomplete();
   },
 
-  handleReferenceChange(e) {
-    var callback = e.target.value ?
-      this.fetchMatchingReferences :
-      this.resetSearchResults
-
-    this.setState({ referenceSearch: e.target.value }, callback);
-  },
-
-  resetSearchResults() {
-    this.setState({
-      matchingReferences: null,
-      matchCount: null,
-      searchedText: null
-    });
-  },
-
-  clearReferenceHint() {
-    this.setState({
-      referenceHint: null,
-      referenceSearch: '',
-    });
-    this.resetSearchResults()
-    this.state.editor.off('beforeChange', this.clearReferenceHint);
-  },
-
-  handleAddReference(type) {
-    var Component = FORM_COMPONENTS[type]
-      , addReferenceComponent
-
-    addReferenceComponent = (
-      <Component
-          projectURL={this.props.projectURL}
-          minimal={true} />
-    )
-
-    this.setState({ addReferenceComponent })
-  },
-
-  fetchMatchingReferences() {
-    var type = this.state.referenceHint
-      , searchedText = this.state.referenceSearch
-      , listURL = `${this.props.projectURL}${type}s/?q=${searchedText}`
-      , opts
-
-    opts = {
-      credentials: 'same-origin',
-      headers: { Accept: 'application/json' },
-    }
-
-    this.resetSearchResults();
-
-    fetch(listURL, opts)
-      .then(response => response.json())
-      .then(data => {
-        if (searchedText !== this.state.referenceSearch) return;
-
-
-        this.setState({
-          matchingReferences: data.results,
-          matchCount: data.count,
-          searchedText
-        })
-      })
+  clearReferenceType() {
+    this.setState({ referenceType: null });
+    this.state.editor.off('beforeChange', this.clearReferenceType);
   },
 
   componentDidMount() {
@@ -137,32 +59,9 @@ module.exports = React.createClass({
     this.setState({ editor });
   },
 
-  renderMatchingReferences() {
-    return this.state.matchingReferences.length === 0 ?
-      <div>
-        <p><em>No results for { this.state.referenceHint } "{ this.state.searchedText }"</em></p>
-        <p>
-          <button
-            className="btn btn-primary"
-            onClick={this.handleAddReference.bind(null, this.state.referenceHint)}>
-            Add new { this.state.referenceHint }
-          </button>
-          { this.state.addReferenceComponent }
-        </p>
-      </div> :
-      <div>
-        <p><em>{ this.state.matchCount } matches for { this.state.searchedText }</em></p>
-        <ul>
-          {
-            this.state.matchingReferences.map(result => <li>{ result.title }</li> )
-          }
-        </ul>
-      </div>
-  },
-
   render() {
-    var hint = this.state.referenceHint
-      , showHintLabel = hint && hint !== 'empty'
+    var References = require('./references.jsx')
+      , { referenceType } = this.state
 
     return (
       <div className="row">
@@ -170,29 +69,10 @@ module.exports = React.createClass({
           <div ref="content" />
         </div>
         <div className="span5">
-          <h3>References</h3>
-          <div>
-            {
-              hint === 'empty' && (
-                <p>Type 'd' for document, 'n' for note, or 't' for topic</p>
-              )
-            }
-
-            <div className={showHintLabel ? '' : 'hide'}>
-              <label>
-                <strong>Find { this.state.referenceHint }</strong>
-                <br />
-                <input
-                  type="text"
-                  ref="autocomplete"
-                  value={this.state.referenceSearch}
-                  onChange={this.handleReferenceChange} />
-              </label>
-
-              { this.state.matchingReferences && this.renderMatchingReferences() }
-            </div>
-
-          </div>
+          <References
+              ref="referenceForm"
+              type={referenceType}
+              onSelect={() => null} />
         </div>
       </div>
     )
