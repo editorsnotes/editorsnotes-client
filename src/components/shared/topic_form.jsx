@@ -9,7 +9,12 @@ module.exports = React.createClass({
   propTypes: {
     topic: React.PropTypes.instanceOf(Topic).isRequired,
     projectURL: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func.isRequired
+    onChange: React.PropTypes.func.isRequired,
+    minimal: React.PropTypes.bool
+  },
+
+  getDefaultProps() {
+    return { minimal: false }
   },
 
   handleAlternateNameAdded(name) {
@@ -63,13 +68,17 @@ module.exports = React.createClass({
             topics={topic.get('related_topics').toSet()} />
         </section>
 
-        <section>
-          <h3>Summary</h3>
-          <HTMLEditor
-            onChange={markup => this.handleValueChange({ markup })}
-            html={topic.markup} />
-          <br />
-        </section>
+        {
+          !this.props.minimal && (
+            <section>
+              <h3>Summary</h3>
+              <HTMLEditor
+                onChange={markup => this.handleValueChange({ markup })}
+                html={topic.markup} />
+              <br />
+            </section>
+          )
+        }
       </div>
     )
   }

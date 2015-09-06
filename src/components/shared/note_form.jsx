@@ -9,7 +9,12 @@ module.exports = React.createClass({
   propTypes: {
     note: React.PropTypes.instanceOf(Note).isRequired,
     projectURL: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func.isRequired
+    onChange: React.PropTypes.func.isRequired,
+    minimal: React.PropTypes.bool
+  },
+
+  getDefaultProps() {
+    return { minimal: false }
   },
 
   handleChange(e) {
@@ -82,14 +87,18 @@ module.exports = React.createClass({
           </dl>
         </section>
 
-        <section>
-          <HTMLEditor
-              ref="content"
-              onChange={markup => this.mergeValues({ markup })}
-              projectURL={projectURL}
-              html={note.markup} />
-          <br />
-        </section>
+        {
+          !this.props.minimal && (
+            <section>
+              <HTMLEditor
+                  ref="content"
+                  onChange={markup => this.mergeValues({ markup })}
+                  projectURL={projectURL}
+                  html={note.markup} />
+              <br />
+            </section>
+          )
+        }
       </div>
     )
   }

@@ -75,10 +75,15 @@ module.exports = React.createClass({
 
   handleAddReference(type) {
     var Component = FORM_COMPONENTS[type]
+      , addReferenceComponent
 
-    this.setState({
-      addReferenceComponent: <Component projectURL={this.props.projectURL} />
-    });
+    addReferenceComponent = (
+      <Component
+          projectURL={this.props.projectURL}
+          minimal={true} />
+    )
+
+    this.setState({ addReferenceComponent })
   },
 
   fetchMatchingReferences() {
