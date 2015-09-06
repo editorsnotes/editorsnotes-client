@@ -6,7 +6,7 @@ var _ = require('underscore')
 
 const FORM_COMPONENTS = {
   note: require('../note_form.jsx'),
-  topic: require('../topic_edit.jsx')
+  topic: require('../topic_form.jsx')
 }
 
 module.exports = React.createClass({

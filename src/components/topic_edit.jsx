@@ -2,7 +2,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Topic = require('../../records/topic')
+  , Topic = require('../records/topic')
 
 
 module.exports = React.createClass({
@@ -18,7 +18,7 @@ module.exports = React.createClass({
   },
 
   renderBreadcrumb() {
-    var Breadcrumb = require('../shared/breadcrumb.jsx')
+    var Breadcrumb = require('./shared/breadcrumb.jsx')
       , topic = this.props.data
       , project = this.props.project || topic.get('project')
       , crumbs
