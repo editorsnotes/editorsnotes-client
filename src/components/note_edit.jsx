@@ -57,19 +57,10 @@ module.exports = React.createClass({
   },
 
   handleSave() {
-    var cookie = require('cookie-cutter')
-      , method = this.isNew() ? 'post' : 'put'
-      , url = this.getProjectURL() + 'notes/'
+    var saveItem = require('../utils/save_item')
+      , id = this.isNew() ? null : this.props.data.get('id')
 
-    fetch(url, {
-      method,
-      credentials: 'same-origin',
-      headers: {
-        'Content-type': 'application/json; charset=utf-8',
-        'X-CSRFToken': cookie.get('csrftoken')
-      },
-      body: JSON.stringify(this.state.note)
-    });
+    saveItem('note', id, this.getProjectURL(), this.state.note)
   },
 
   render() {
