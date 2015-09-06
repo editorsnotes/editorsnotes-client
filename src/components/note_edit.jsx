@@ -65,13 +65,14 @@ module.exports = React.createClass({
 
   render() {
     var NoteForm = require('./shared/note_form.jsx')
+      , { note } = this.state
 
     return (
       <div>
         { this.renderBreadcrumb() }
 
         <NoteForm
-            note={this.state.note}
+            note={note}
             projectURL={this.getProjectURL()}
             onChange={this.handleNoteChange} />
 
