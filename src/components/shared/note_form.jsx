@@ -24,7 +24,7 @@ module.exports = React.createClass({
     this.props.onChange(updatedNote);
   },
 
-  mergeValue(value) {
+  mergeValues(value) {
     this.props.onChange(this.props.note.merge(value))
   },
 
@@ -85,7 +85,7 @@ module.exports = React.createClass({
         <section>
           <HTMLEditor
               ref="content"
-              onChange={markup => this.handleValueChange({ markup })}
+              onChange={markup => this.mergeValues({ markup })}
               projectURL={projectURL}
               html={note.markup} />
           <br />

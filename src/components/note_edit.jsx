@@ -4,14 +4,14 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Note = require('../../records/note')
+  , Note = require('../records/note')
 
 module.exports = React.createClass({
   displayName: 'NoteEdit',
 
   propTypes: {
-    data: React.propTypes.instanceOf(Immutable.Map),
-    project: React.propTypes.instanceOf(Immutable.Map),
+    data: React.PropTypes.instanceOf(Immutable.Map),
+    project: React.PropTypes.instanceOf(Immutable.Map),
   },
 
   getInitialState() {
@@ -19,7 +19,7 @@ module.exports = React.createClass({
   },
 
   renderBreadcrumb() {
-    var Breadcrumb = require('../shared/breadcrumb.jsx')
+    var Breadcrumb = require('./shared/breadcrumb.jsx')
       , note = this.props.data
       , project = this.props.project || note.get('project')
       , crumbs
@@ -73,7 +73,7 @@ module.exports = React.createClass({
   },
 
   render() {
-    var NoteForm = require('./note_form.jsx')
+    var NoteForm = require('./shared/note_form.jsx')
 
     return (
       <div>
