@@ -17,14 +17,7 @@ files = child_process
 
 data = files.reduce(function (acc, file) {
   var domain = 'messages_' + path.basename(file).replace('.po', '')
-    , poData = po2json.parseFileSync(file, { format: 'jed', domain: domain })
-
-  // Fix for jed format right now...
-  Object.keys(poData.locale_data[domain]).forEach(function (key) {
-    var val = poData.locale_data[domain][key];
-    if (!key) return;
-    if (val[0] === null) val.shift();
-  });
+    , poData = po2json.parseFileSync(file, { format: 'jed1.x', domain: domain })
 
   acc.locale_data[domain] = poData.locale_data[domain];
   return acc;

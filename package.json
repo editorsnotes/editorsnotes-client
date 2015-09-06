@@ -38,7 +38,7 @@
     "less": "^1.7.0",
     "node-underscorify": "0.0.14",
     "nunjucks": "^1.2.0",
-    "po2json": "^0.3.2",
+    "po2json": "^0.4.1",
     "testling": "^1.6.1",
     "typogr": "^0.6.5",
     "uglify-js": "^2.4.14"
