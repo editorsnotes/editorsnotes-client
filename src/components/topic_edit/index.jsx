@@ -1,26 +1,23 @@
 "use strict";
 
-/* eslint camelcase:0 */
-
 var React = require('react')
   , Immutable = require('immutable')
-  , Topic
+  , Topic = require('../../records/topic')
 
-Topic = Immutable.Record({
-  preferred_name: '',
-  markup: '',
-  alternate_names: Immutable.List(),
-  related_topics: Immutable.List()
-});
 
 module.exports = React.createClass({
   displayName: 'TopicEdit',
 
-  getInitialState: function () {
+  propTypes: {
+    data: React.PropTypes.instanceOf(Immutable.Map),
+    project: React.PropTypes.instanceOf(Immutable.Map),
+  },
+
+  getInitialState() {
     return { topic: new Topic(this.props.data) }
   },
 
-  renderBreadcrumb: function () {
+  renderBreadcrumb() {
     var Breadcrumb = require('../shared/breadcrumb.jsx')
       , topic = this.props.data
       , project = this.props.project || topic.get('project')
@@ -43,66 +40,39 @@ module.exports = React.createClass({
     return <Breadcrumb crumbs={crumbs} />
   },
 
-  handleAlternateNameAdded: function (name) {
-    this.setState(prev =>
-      ({ topic: prev.topic.update('alternate_names',
-        names => names.push(name)) }))
+  isNew() {
+    return !this.props.data
   },
 
-  handleAlternateNameRemoved: function (name) {
-    this.setState(prev =>
-      ({ topic: prev.topic.update('alternate_names',
-        names => names.delete(names.indexOf(name))) }))
+  getProjectURL() {
+    return this.isNew() ?
+      this.props.project.get('url') :
+      this.props.data.get('url').replace('topics/', '')
   },
 
-  handleValueChange(value) {
-    this.setState(prev => ({ topic: prev.topic.merge(value) }));
+  handleTopicChange(topic) {
+    this.setState({ topic });
+  },
+
+  handleSave() {
+    var saveItem = require('../utils/save_item')
+      , id = this.isNew() ? null : this.props.data.get('id')
+
+    saveItem('note', id, this.getProjectURL(), this.state.note)
   },
 
 
-  render: function () {
-    var MultipleTextInput = require('../shared/multiple_text_input.jsx')
-      , RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
-      , HTMLEditor = require('../shared/text_editor/index.jsx')
-      , topic = this.state.topic
+  render() {
+    var TopicForm = require('./shared/topic_form.jsx')
 
     return (
       <div>
-        {this.renderBreadcrumb()}
-        <header>
-          <h3>Preferred name</h3>
-          <div data-error-target="title"></div>
-          <input
-              id="topic-preferred-name"
-              name="preferred-name"
-              maxLength="80"
-              type="text"
-              value={topic.preferred_name}
-              onChange={this.handleChange} />
-        </header>
+        { this.renderBreadcrumb() }
 
-        <section id="topic-alternate-names">
-          <h3>Alternate names</h3>
-          <MultipleTextInput
-            values={topic.get('alternate_names').toList()}
-            onValueAdded={this.handleAlternateNameAdded}
-            onValueRemoved={this.handleAlternateNameRemoved}
-          />
-        </section>
-
-        <section id="topic-related-topics">
-          <h3>Related topics</h3>
-          <RelatedTopicsSelector
-            topics={topic.get('related_topics').toSet()} />
-        </section>
-
-        <section>
-          <h3>Summary</h3>
-          <HTMLEditor
-            onChange={markup => this.handleValueChange({ markup })}
-            html={topic.markup} />
-          <br />
-        </section>
+        <TopicForm
+            topic={this.state.topic}
+            projectURL={this.getProjectURL()}
+            onChange={this.handleTopicChange} />
 
         <section>
           <div className="well">
