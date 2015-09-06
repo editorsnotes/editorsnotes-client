@@ -197,17 +197,18 @@ module.exports = React.createClass({
 
 
   render() {
-    var { type, i18n } = this.props
+    var Translate = require('../translate.jsx')
+      , { type } = this.props
       , { searchText, matchResults } = this.state
       , show = type && type !== 'empty'
 
     return (
       <div>
-        <h3><Translate text={TEXT.referencesHeader} i18n={i18n} /></h3>
+        <h3><Translate text={TEXT.referencesHeader} /></h3>
 
         {
           type === 'empty' && (
-            <p><Translate text={TEXT.referenceHint} i18n={i18n} /></p>
+            <p><Translate text={TEXT.referenceHint} /></p>
           )
         }
 
@@ -215,7 +216,7 @@ module.exports = React.createClass({
           <label>
 
             <strong>
-              <Translate text={TEXT[`find${type}`]} i18n={i18n} />
+              <Translate text={TEXT[`find${type}`]} />
             </strong>
 
             <br />

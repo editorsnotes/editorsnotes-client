@@ -1,13 +1,11 @@
 "use strict";
 
 var React = require('react')
-  , Jed = require('jed')
 
 module.exports = React.createClass({
   displayName: 'Translate',
 
   propTypes: {
-    i18n: React.PropTypes.instanceOf(Jed).isRequired,
     text: React.PropTypes.string.isRequired,
     domain: React.PropTypes.string.isRequired
   },
@@ -17,7 +15,10 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var text = this.props.i18n
+    var { jed } = global.EditorsNotes
+      , text
+
+    text = jed
       .translate(this.props.text)
       .onDomain(this.props.domain)
       .fetch()

@@ -4,6 +4,11 @@ require('babel/register')({
   only: /src/
 });
 
+
+global.EditorsNotes = {};
+global.EditorsNotes.jed = require('./jed')
+
+
 var request = require('request')
   , server = require('./server')
 

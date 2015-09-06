@@ -5,7 +5,6 @@ var _ = require('underscore')
   , React = require('react')
   , Router = require('./router')
   , router = new Router()
-  , jed = require('./jed')
 
 /*
 function initLogin() {
@@ -57,8 +56,7 @@ router.fallbackHandler = function () {
 
     promise = promise
       .then(props => _.extend(props, {
-        ActiveComponent: config.Component,
-        i18n: jed
+        ActiveComponent: config.Component
       }))
       .then(render)
   }

@@ -24,7 +24,6 @@ module.exports = React.createClass({
           <td className="zotero-key">
             <Translate
                 text={creator.get('creatorType')}
-                i18n={this.props.i18n}
                 domain={'messages_zotero'} />
           </td>
           <td>{getName(creator)}</td>
@@ -35,13 +34,13 @@ module.exports = React.createClass({
       return (
         <tr key={value}>
           <td className="zotero-key">
-            <Translate text={field} i18n={this.props.i18n} domain={'messages_zotero'} />
+            <Translate text={field} domain={'messages_zotero'} />
           </td>
           <td>
             {
               field !== 'itemType' ?
                 value :
-                <Translate text={value} i18n={this.props.i18n} domain={'messages_zotero'} />
+                <Translate text={value} domain={'messages_zotero'} />
             }
           </td>
         </tr>

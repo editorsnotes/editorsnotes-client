@@ -39,7 +39,7 @@ module.exports = React.createClass({
         <header dangerouslySetInnerHTML={{ __html: doc.get('description') }} />
 
         <section id="info">
-          <ZoteroDisplay i18n={this.props.i18n} data={doc.get('zotero_data')} />
+          <ZoteroDisplay data={doc.get('zotero_data')} />
           <Links doc={doc} />
         </section>
 

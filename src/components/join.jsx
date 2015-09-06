@@ -2,7 +2,6 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Jed = require('jed')
   , Translate = require('./shared/translate.jsx')
 
 function createUser({ username, email, password }) {
@@ -19,7 +18,6 @@ var ValidatedInput = React.createClass({
   displayName: 'ValidatedInput',
 
   propTypes: {
-    i18n: React.PropTypes.instanceOf(Jed).isRequired,
     field: React.PropTypes.string.isRequired,
     type: React.PropTypes.string.isRequired,
     value: React.PropTypes.string,
@@ -37,8 +35,7 @@ var ValidatedInput = React.createClass({
       <div className={'control-group' + (this.props.errors ? ' error' : '')}>
         <label className="control-label">
           <Translate
-            text={this.props.label ? this.props.label : this.props.field}
-            i18n={this.props.i18n} />
+            text={this.props.label ? this.props.label : this.props.field} />
           <br/>
           <input
             type="text"
@@ -49,9 +46,7 @@ var ValidatedInput = React.createClass({
             this.props.errors === null ? null :
               <div className="help-inline">
                 { this.props.errors.map(message =>
-                    [<Translate
-                      text={message}
-                      i18n={this.props.i18n} />, ' '])
+                    [<Translate text={message} />, ' '])
                 }
               </div>
           }
@@ -120,26 +115,22 @@ module.exports = React.createClass({
 
         <form onSubmit={this.handleSubmit}>
           <ValidatedInput
-            i18n={this.props.i18n}
             field={'username'}
             value={this.state.user.username}
             errors={errorsFor('username')}
             onChange={this.handleChange} />
           <ValidatedInput
-            i18n={this.props.i18n}
             field={'email'}
             value={this.state.user.email}
             errors={errorsFor('email')}
             onChange={this.handleChange} />
           <ValidatedInput
-            i18n={this.props.i18n}
             field={'password'}
             type={'password'}
             value={this.state.user.passsword}
             errors={errorsFor('password')}
             onChange={this.handleChange} />
           <ValidatedInput
-            i18n={this.props.i18n}
             field={'confirm'}
             type={'password'}
             label={'confirm password'}

@@ -1,5 +1,8 @@
 "use strict";
 
+window.EditorsNotes = {}
+window.EditorsNotes.jed = require('./jed')
+
 var router = require('./client')
 
 require('whatwg-fetch');

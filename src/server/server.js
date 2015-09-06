@@ -8,7 +8,6 @@ var process = require('process')
   , React = require('react')
   , Immutable = require('immutable')
   , Router = require('../router')
-  , jed = require('./jed')
   , router = new Router()
 
 
@@ -177,8 +176,7 @@ router.fallbackHandler = function () {
           , component = hadError ? require('../components/error.jsx') : config.Component
 
         return _.extend(props, {
-          ActiveComponent: component,
-          i18n: jed
+          ActiveComponent: component
         })
       })
       .then(props => render(props, bootstrap))
