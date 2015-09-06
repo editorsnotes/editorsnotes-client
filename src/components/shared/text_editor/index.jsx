@@ -61,6 +61,7 @@ module.exports = React.createClass({
 
   render() {
     var References = require('./references.jsx')
+      , { projectURL } = this.props
       , { referenceType } = this.state
 
     return (
@@ -72,6 +73,7 @@ module.exports = React.createClass({
           <References
               ref="referenceForm"
               type={referenceType}
+              projectURL={projectURL}
               onSelect={() => null} />
         </div>
       </div>

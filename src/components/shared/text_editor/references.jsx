@@ -10,9 +10,14 @@ var _ = require('underscore')
 const TEXT = {
   referencesHeader: 'References',
   referenceHint: "Type 'd' for document, 'n' for note, or 't' for topic.",
+
   findnote: "Find note",
   findtopic: "Find topic",
   finddocument: "Find document",
+
+  addnote: 'Add note',
+  addtopic: 'Add topic',
+  adddocument: 'Add document',
 
 }
 
@@ -43,7 +48,8 @@ module.exports = React.createClass({
   displayName: 'ReferenceHint',
 
   propTypes: {
-    type: React.PropTypes.oneOf([null, 'empty', 'note', 'topic', 'document']).isRequired,
+    type: React.PropTypes.oneOf([null, 'empty', 'note', 'topic', 'document']),
+    projectURL: React.PropTypes.string.isRequired,
     onSelect: React.PropTypes.func.isRequired
   },
 
@@ -104,8 +110,8 @@ module.exports = React.createClass({
         if (searchText !== this.state.searchText) return;
 
         this.setState({
-          matchResults: data.results,
-          matchCount: data.count,
+          matchResults: data.get('results'),
+          matchCount: data.get('count'),
           searchedText: searchText
         });
       })
@@ -128,13 +134,15 @@ module.exports = React.createClass({
   },
 
   renderInlineAddForm() {
-    var { type, projectURL } = this.props
+    var Translate = require('../translate.jsx')
+      , { type, projectURL } = this.props
       , { inlineItem } = this.state
       , Form = FORM_COMPONENTS[type]
       , formProps = { [type]: inlineItem }
 
     return (
       <div>
+        <h2><Translate text={TEXT[`add${type}`]} /></h2>
         <Form
             projectURL={projectURL}
             minimal={true}
@@ -142,7 +150,11 @@ module.exports = React.createClass({
             {...formProps} />
         <div>
           <button className="btn btn-primary">Save</button>
-          <button className="btn btn-danger">Cancel</button>
+          <button
+              onClick={() => this.setState({ inlineItem: null })}
+              className="btn btn-danger">
+            Cancel
+          </button>
         </div>
       </div>
     )
@@ -151,6 +163,9 @@ module.exports = React.createClass({
   renderEmptyResults() {
     var { type } = this.props
       , { searchedText, inlineItem } = this.state
+
+    // TODO: Check response for _links indicating add permission and URL
+    // instead of building the URL manually
 
     return inlineItem ? this.renderInlineAddForm() : (
       <div>
@@ -190,7 +205,7 @@ module.exports = React.createClass({
   renderMatchResults() {
     var { matchResults } = this.state
 
-    return matchResults.length === 0 ?
+    return matchResults.size === 0 ?
       this.renderEmptyResults() :
       this.renderResultList()
   },
@@ -199,7 +214,7 @@ module.exports = React.createClass({
   render() {
     var Translate = require('../translate.jsx')
       , { type } = this.props
-      , { searchText, matchResults } = this.state
+      , { searchText, matchResults, inlineItem } = this.state
       , show = type && type !== 'empty'
 
     return (
@@ -213,11 +228,15 @@ module.exports = React.createClass({
         }
 
         <div className={ show ? '' : 'hide' }>
-          <label>
+          <label className={ inlineItem ? 'hide' : '' }>
 
-            <strong>
-              <Translate text={TEXT[`find${type}`]} />
-            </strong>
+          {
+            show && (
+              <strong>
+                <Translate text={TEXT[`find${type}`]} />
+              </strong>
+            )
+          }
 
             <br />
 
@@ -225,7 +244,7 @@ module.exports = React.createClass({
                 type="text"
                 ref="autocomplete"
                 value={searchText}
-                onChange={this.handleChange} />
+                onChange={this.handleAutocompleteChange} />
           </label>
 
           { matchResults && this.renderMatchResults() }

@@ -37,7 +37,7 @@ module.exports = React.createClass({
     var MultipleTextInput = require('./multiple_text_input.jsx')
       , RelatedTopicsSelector = require('./related_topic_selector.jsx')
       , HTMLEditor = require('./text_editor/index.jsx')
-      , { topic } = this.state
+      , { topic } = this.props
 
     return (
       <div>
