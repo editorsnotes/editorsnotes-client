@@ -37,7 +37,7 @@ module.exports = React.createClass({
     var MultipleTextInput = require('./multiple_text_input.jsx')
       , RelatedTopicsSelector = require('./related_topic_selector.jsx')
       , HTMLEditor = require('./text_editor/index.jsx')
-      , { topic } = this.props
+      , { topic, projectURL, minimal } = this.props
 
     return (
       <div>
@@ -68,17 +68,15 @@ module.exports = React.createClass({
             topics={topic.get('related_topics').toSet()} />
         </section>
 
-        {
-          !this.props.minimal && (
-            <section>
-              <h3>Summary</h3>
-              <HTMLEditor
-                onChange={markup => this.handleValueChange({ markup })}
-                html={topic.markup} />
-              <br />
-            </section>
-          )
-        }
+        <section>
+          <h3>Summary</h3>
+          <HTMLEditor
+              onChange={markup => this.mergeValues({ markup })}
+              projectURL={projectURL}
+              minimal={minimal}
+              html={topic.markup} />
+          <br />
+        </section>
       </div>
     )
   }

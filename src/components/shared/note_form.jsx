@@ -37,7 +37,7 @@ module.exports = React.createClass({
   render() {
     var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
       , HTMLEditor = require('../shared/text_editor/index.jsx')
-      , { note, projectURL } = this.props
+      , { note, projectURL, minimal } = this.props
 
     return (
       <div>
@@ -87,18 +87,15 @@ module.exports = React.createClass({
           </dl>
         </section>
 
-        {
-          !this.props.minimal && (
-            <section>
-              <HTMLEditor
-                  ref="content"
-                  onChange={markup => this.mergeValues({ markup })}
-                  projectURL={projectURL}
-                  html={note.markup} />
-              <br />
-            </section>
-          )
-        }
+        <section>
+          <HTMLEditor
+              ref="content"
+              onChange={markup => this.mergeValues({ markup })}
+              projectURL={projectURL}
+              minimal={minimal}
+              html={note.markup} />
+          <br />
+        </section>
       </div>
     )
   }
