@@ -17,20 +17,24 @@ module.exports = React.createClass({
     return { minimal: false }
   },
 
+  handleChange(e) {
+    this.props.onChange(this.props.topic.set('preferred_name', e.target.value));
+  },
+
   handleAlternateNameAdded(name) {
-    this.setState(prev => ({
-      topic: prev.topic.update('alternate_names', names => names.add(name))
-    }));
+    this.props.onChange(
+      this.props.topic
+        .update('alternate_names', names => names.add(name)));
   },
 
   handleAlternateNameRemoved(name) {
-    this.setState(prev =>({
-      topic: prev.topic.update('alternate_names', names => names.delete(name))
-    }))
+    this.props.onChange(
+      this.props.topic
+        .update('alternate_names', names => names.delete(name)));
   },
 
   mergeValues(value) {
-    this.setState(prev => ({ topic: prev.topic.merge(value) }));
+    this.props.onChange(this.props.topic.merge(value));
   },
 
   render() {
