@@ -13,24 +13,19 @@ function getProjectJSON(get, pathname) {
 }
 
 module.exports = {
-  '/projects/:project_slug/notes/:id/edit/': {
-    name: 'note_edit',
-    Component: require('./components/note_edit.jsx'),
-    getData: getJSONFromTrimmedPath
-  },
+  /* Notes */
   '/projects/:project_slug/notes/add/': {
     name: 'note_add',
     Component: require('./components/note_edit.jsx'),
     getData: getProjectJSON
   },
-  /*
-  '/projects/:project_slug/documents/add/': {
-    name: 'document_add',
+  '/projects/:project_slug/notes/:id/edit/': {
+    name: 'note_edit',
+    Component: require('./components/note_edit.jsx'),
+    getData: getJSONFromTrimmedPath
   },
-  '/projects/:project_slug/documents/:id/edit/': {
-    name: 'document_edit',
-  },
-  */
+
+  /* Topics */
   '/projects/:project_slug/topics/add/': {
     name: 'topic_add',
     Component: require('./components/topic_edit.jsx'),
@@ -40,5 +35,18 @@ module.exports = {
     name: 'topic_edit',
     Component: require('./components/topic_edit.jsx'),
     getData: getJSONFromTrimmedPath
-  }
+  },
+
+  /* Documents */
+  '/projects/:project_slug/documents/add/': {
+    name: 'document_add',
+    Component: require('./components/document_edit.jsx'),
+    getData: getProjectJSON
+  },
+  '/projects/:project_slug/documents/:id/edit/': {
+    name: 'document_edit',
+    Component: require('./components/document_edit.jsx'),
+    getData: getJSONFromTrimmedPath
+  },
+
 }
