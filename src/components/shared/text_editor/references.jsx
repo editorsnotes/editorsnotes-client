@@ -23,7 +23,8 @@ const TEXT = {
 
 const FORM_COMPONENTS = {
   note: require('../note_form.jsx'),
-  topic: require('../topic_form.jsx')
+  topic: require('../topic_form.jsx'),
+  document: require('../document_form.jsx'),
 }
 
 
@@ -31,7 +32,7 @@ const FORM_COMPONENTS = {
 function makeItem(type, text) {
   var Note = require('../../../records/note')
     , Topic = require('../../../records/topic')
-    , Document = null
+    , Document = require('../../../records/document')
 
   switch (type) {
   case 'note':
