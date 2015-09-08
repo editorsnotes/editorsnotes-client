@@ -2,7 +2,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Topic = require('../records/topic')
+  , Topic = require('../../records/topic')
 
 
 module.exports = React.createClass({
@@ -18,7 +18,7 @@ module.exports = React.createClass({
   },
 
   renderBreadcrumb() {
-    var Breadcrumb = require('./shared/breadcrumb.jsx')
+    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
       , topic = this.props.data
       , project = this.props.project || topic.get('project')
       , crumbs
@@ -55,7 +55,7 @@ module.exports = React.createClass({
   },
 
   handleSave() {
-    var saveItem = require('../utils/save_item')
+    var saveItem = require('../../utils/save_item')
       , id = this.isNew() ? null : this.props.data.get('id')
 
     saveItem('note', id, this.getProjectURL(), this.state.note)
@@ -63,7 +63,7 @@ module.exports = React.createClass({
 
 
   render() {
-    var TopicForm = require('./shared/topic_form.jsx')
+    var TopicForm = require('../shared/topic_form/component.jsx')
 
     return (
       <div>

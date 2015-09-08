@@ -5,7 +5,7 @@
 var _ = require('underscore')
   , React = require('react')
   , Immutable = require('immutable')
-
+  , Translate = require('../translate.jsx')
 
 const TEXT = {
   referencesHeader: 'References',
@@ -22,9 +22,9 @@ const TEXT = {
 }
 
 const FORM_COMPONENTS = {
-  note: require('../note_form.jsx'),
-  topic: require('../topic_form.jsx'),
-  document: require('../document_form.jsx'),
+  note: require('../note_form/component.jsx'),
+  topic: require('../topic_form/component.jsx'),
+  document: require('../document_form/component.jsx'),
 }
 
 
@@ -135,8 +135,7 @@ module.exports = React.createClass({
   },
 
   renderInlineAddForm() {
-    var Translate = require('../translate.jsx')
-      , { type, projectURL } = this.props
+    var { type, projectURL } = this.props
       , { inlineItem } = this.state
       , Form = FORM_COMPONENTS[type]
       , formProps = { [type]: inlineItem }
@@ -213,8 +212,7 @@ module.exports = React.createClass({
 
 
   render() {
-    var Translate = require('../translate.jsx')
-      , { type } = this.props
+    var { type } = this.props
       , { searchText, matchResults, inlineItem } = this.state
       , show = type && type !== 'empty'
 

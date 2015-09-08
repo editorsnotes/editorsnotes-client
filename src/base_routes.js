@@ -9,34 +9,34 @@ function getJSONFromPath(get, pathname) {
 module.exports = {
   '/': {
     name: 'home',
-    Component: require('./components/home.jsx')
+    Component: require('./components/home/component.jsx')
   },
   '/join/': {
     name: 'join',
-    Component: require('./components/join.jsx')
+    Component: require('./components/join/component.jsx')
   },
   '/login/': {
     name: 'login',
-    Component: require('./components/login.jsx')
+    Component: require('./components/login/component.jsx')
   },
   '/browse/': {
     name: 'browse',
-    Component: require('./components/browse.jsx'),
+    Component: require('./components/browse/component.jsx'),
     getData: getJSONFromPath
   },
   '/projects/:project_slug/notes/:id/': {
     name: 'notes_detail',
-    Component: require('./components/notes_detail.jsx'),
+    Component: require('./components/notes_detail/component.jsx'),
     getData: getJSONFromPath
   },
   '/projects/:project_slug/documents/:id/': {
     name: 'documents_detail',
-    Component: require('./components/documents_detail'),
+    Component: require('./components/documents_detail/component.jsx'),
     getData: getJSONFromPath
   },
   '/projects/:project_slug/topics/:id/': {
     name: 'topics_detail',
-    Component: require('./components/topics_detail.jsx'),
+    Component: require('./components/topics_detail/component.jsx'),
     getData: getJSONFromPath
   },
   /*

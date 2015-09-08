@@ -12,7 +12,7 @@ module.exports = React.createClass({
   displayName: 'DocumentDetail',
 
   renderBreadcrumb: function () {
-    var Breadcrumb = require('../shared/breadcrumb.jsx')
+    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
       , doc = this.props.data
       , project = doc.get('project')
       , crumbs

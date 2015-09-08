@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react')
-  , Topic = require('../../records/topic')
+  , Topic = require('../../../records/topic')
 
 module.exports = React.createClass({
   displayName: 'TopicForm',
@@ -38,9 +38,9 @@ module.exports = React.createClass({
   },
 
   render() {
-    var MultipleTextInput = require('./multiple_text_input.jsx')
-      , RelatedTopicsSelector = require('./related_topic_selector.jsx')
-      , HTMLEditor = require('./text_editor/index.jsx')
+    var MultipleTextInput = require('../multiple_text_input/component.jsx')
+      , RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
+      , HTMLEditor = require('../text_editor/component.jsx')
       , { topic, projectURL, minimal } = this.props
 
     return (

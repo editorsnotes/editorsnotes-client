@@ -2,7 +2,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Translate = require('./shared/translate.jsx')
+  , Translate = require('../shared/translate.jsx')
 
 function createUser({ username, email, password }) {
   return fetch('/users/', {
@@ -94,7 +94,7 @@ module.exports = React.createClass({
   },
 
   validates: function() {
-    var { validateUser } = require('../helpers/user')
+    var { validateUser } = require('../../helpers/user')
       , errors = validateUser(this.state.user)
 
     this.setState({ errors });

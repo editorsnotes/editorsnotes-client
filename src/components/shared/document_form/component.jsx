@@ -4,7 +4,8 @@ var React = require('react')
   , Immutable = require('immutable')
   , url = require('url')
   , zoteroToCSL = require('zotero-to-csl')
-  , Document = require('../../records/document')
+  , Document = require('../../../records/document')
+  , Translate = require('../translate.jsx')
 
 
 const ZOTERO_API_URL = 'https://api.zotero.org'
@@ -49,7 +50,7 @@ module.exports = React.createClass({
   },
 
   componentDidMount() {
-    var CitationGenerator = require('../../utils/citation_generator')
+    var CitationGenerator = require('../../../utils/citation_generator')
 
     this.setState({ citationGenerator: new CitationGenerator() });
 
@@ -115,7 +116,7 @@ module.exports = React.createClass({
   },
 
   handleZoteroChange(field, e) {
-    var { isEmptyItem } = require('../../helpers/zotero_data')
+    var { isEmptyItem } = require('../../../helpers/zotero_data')
       , { citationGenerator } = this.state
       , updatedDocument
       , cslData
@@ -140,8 +141,7 @@ module.exports = React.createClass({
   },
 
   renderZoteroCreator(creator, i) {
-    var Translate = require('./translate.jsx')
-      , { creatorTypes } = this.state
+    var { creatorTypes } = this.state
 
     return (
       <div key={`creator-${i}`}>
@@ -171,8 +171,6 @@ module.exports = React.createClass({
   },
 
   renderZoteroField(value, field) {
-    var Translate = require('./translate.jsx')
-
     if (field === 'creators') return value.map(this.renderZoteroCreator);
 
     return (

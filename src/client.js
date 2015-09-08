@@ -31,7 +31,7 @@ function initLogin() {
 */
 
 function render(props) {
-  var Application = require('./components/application.jsx')
+  var Application = require('./components/application/component.jsx')
     , el = document.body.querySelector('#react-app')
 
   return React.render(<Application {...props} />, el);

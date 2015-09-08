@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react')
+  , Translate = require('../shared/translate.jsx')
 
 function makeListItem(item) {
   return <li key={item.get('url')}><a href={item.get('url')}>{item.get('title')}</a></li>

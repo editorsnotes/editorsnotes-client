@@ -92,7 +92,7 @@ router.add(require('../base_routes'))
 router.add(require('../admin_routes'))
 
 function render(props, bootstrap) {
-  var Application = require('../components/application')
+  var Application = require('../components/application/component.jsx')
     , application = React.createElement(Application, props)
     , html = makeHTML(React.renderToString(application), bootstrap)
 
@@ -173,7 +173,7 @@ router.fallbackHandler = function () {
       })
       .then(props => {
         var hadError = props.data && props.data.has(FETCH_ERROR)
-          , component = hadError ? require('../components/error.jsx') : config.Component
+          , component = hadError ? require('../components/error/index.jsx') : config.Component
 
         return _.extend(props, {
           ActiveComponent: component
@@ -209,7 +209,7 @@ module.exports = {
                 , data = {}
 
               if (userData) data[USER_DATA] = props[USER_DATA] = Immutable.fromJS(userData);
-              props.ActiveComponent = require('../components/not_found.jsx');
+              props.ActiveComponent = require('../components/not_found/index.jsx');
 
               res.writeHead(404, { 'Content-Type': 'text/html' });
 

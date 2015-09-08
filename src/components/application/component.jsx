@@ -9,8 +9,8 @@ var _ = require('underscore')
 Application = React.createClass({
   displayName: 'EditorsNotesApplication',
   render: function () {
-    var Header = require('./header.jsx')
-      , Footer = require('./footer.jsx')
+    var Header = require('../header/component.jsx')
+      , Footer = require('../footer/component.jsx')
       , ActiveComponent = this.props.ActiveComponent
       , user = this.props.__AUTHENTICATED_USER__ || null
       , activeComponentProps

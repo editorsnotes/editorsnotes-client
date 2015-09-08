@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react')
-  , Note = require('../../records/note')
+  , Note = require('../../../records/note')
 
 module.exports = React.createClass({
   displayName: 'NoteForm',
@@ -35,8 +35,8 @@ module.exports = React.createClass({
 
 
   render() {
-    var RelatedTopicsSelector = require('../shared/related_topic_selector.jsx')
-      , HTMLEditor = require('../shared/text_editor/index.jsx')
+    var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
+      , HTMLEditor = require('../text_editor/component.jsx')
       , { note, projectURL, minimal } = this.props
 
     return (

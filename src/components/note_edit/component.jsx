@@ -4,7 +4,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Note = require('../records/note')
+  , Note = require('../../records/note')
 
 module.exports = React.createClass({
   displayName: 'NoteEdit',
@@ -19,7 +19,7 @@ module.exports = React.createClass({
   },
 
   renderBreadcrumb() {
-    var Breadcrumb = require('./shared/breadcrumb.jsx')
+    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
       , note = this.props.data
       , project = this.props.project || note.get('project')
       , crumbs
@@ -57,14 +57,14 @@ module.exports = React.createClass({
   },
 
   handleSave() {
-    var saveItem = require('../utils/save_item')
+    var saveItem = require('../../utils/save_item')
       , id = this.isNew() ? null : this.props.data.get('id')
 
     saveItem('note', id, this.getProjectURL(), this.state.note)
   },
 
   render() {
-    var NoteForm = require('./shared/note_form.jsx')
+    var NoteForm = require('../shared/note_form/component.jsx')
       , { note } = this.state
 
     return (

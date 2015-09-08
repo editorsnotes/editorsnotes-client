@@ -7,7 +7,7 @@ module.exports = React.createClass({
   displayName: 'TopicDetail',
 
   renderBreadcrumb: function () {
-    var Breadcrumb = require('./shared/breadcrumb.jsx')
+    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
       , topic = this.props.data
       , project = topic.get('project')
       , crumbs
@@ -22,7 +22,7 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var getLinks = require('../helpers/get_links')
+    var getLinks = require('../../helpers/get_links')
       , topic = this.props.data
       , links = getLinks(topic)
 
