@@ -1,0 +1,61 @@
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Editors' Notes\n"
+"Last-Translator: Patrick Golden\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+
+msgid "open"
+msgstr "Open"
+
+msgid "closed"
+msgstr "Closed"
+
+msgid "hibernating"
+msgstr "Hibernating"
+
+msgid "username"
+msgstr "Username"
+
+msgid "email"
+msgstr "Email"
+
+msgid "password"
+msgstr "Password"
+
+msgid "confirm password"
+msgstr "Confirm password"
+
+msgid "username is required"
+msgstr "Please choose a username."
+
+msgid "username must be ascii"
+msgstr "Please use only ASCII characters in your username."
+
+msgid "email must be valid"
+msgstr "Please enter a valid email address."
+
+msgid "password must be at least 8 characters"
+msgstr "Please choose a password with 8 or more characters."
+
+msgid "passwords do not match"
+msgstr "The passwords do not match."
+
+msgid "References"
+msgstr "References"
+
+msgid "Type 'd' for document, 'n' for note, or 't' for topic."
+msgstr "Type 'd' for document, 'n' for note, or 't' for topic."
+
+msgid "Find topic"
+msgstr "Find topic"
+
+msgid "Find note"
+msgstr "Find note"
+
+msgid "Find document"
+msgstr "Find document"
