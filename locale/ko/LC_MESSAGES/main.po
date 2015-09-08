@@ -1,13 +1,16 @@
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Editors' Notes\n"
-"Last-Translator: Patrick Golden\n"
-"Language: en\n"
+"Last-Translator: Yongsu Ahn\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
+"Plural-Forms: nplurals=1; plural=0;\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.4\n"
 
 msgid "open"
 msgstr "Open"

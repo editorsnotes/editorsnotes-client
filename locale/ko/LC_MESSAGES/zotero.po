@@ -1,13 +1,15 @@
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Djotero\n"
-"Last-Translator: Patrick Golden, generated from Zotero project localizations\n"
-"Language: en\n"
+"Last-Translator: Yongsu Ahn\n"
+"Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"X-Generator: Poedit 1.8.4\n"
 
 # automatically generated from Zotero locale files
 msgid "note"
@@ -712,4 +714,3 @@ msgstr "Cosponsor"
 # automatically generated from Zotero locale files
 msgid "bookAuthor"
 msgstr "Book Author"
-
