@@ -1,12 +1,20 @@
 "use strict";
 
 var React = require('react')
+  , Translate = require('../shared/translate.jsx')
+  , strings = require('./strings')
 
 module.exports = React.createClass({
   displayName: 'ScanList',
+
   getInitialState: function () {
-    return { viewer: null, currentPage: null, currentPageOverlay: null }
+    return {
+      viewer: null,
+      currentPage: null,
+      currentPageOverlay: null
+    }
   },
+
   componentDidMount: function () {
     // Initiate the scan viewer
     var leaflet = require('leaflet')
@@ -24,33 +32,36 @@ module.exports = React.createClass({
 
     this.setState({ viewer }, () => this.viewScan(this.props.scans.first()));
   },
+
   componentWillUnmount: function () {
     // Tear down the scan viewer
     if (this.state.viewer) this.state.viewer.remove();
   },
+
   handleClick: function (scan, index, e) {
     e.preventDefault();
     this.viewScan(scan);
     this.setState({ currentPage: index });
   },
+
   viewScan: function (scan) {
     var leaflet = require('leaflet')
-      , viewer = this.state.viewer
+      , { viewer, currentPageOverlay } = this.state
       , sw = viewer.unproject([0, scan.get('height')], viewer.getMaxZoom() - 3)
       , ne = viewer.unproject([scan.get('width'), 0], viewer.getMaxZoom() - 3)
       , bounds = new leaflet.LatLngBounds(sw, ne)
       , overlay = leaflet.imageOverlay(scan.get('image'), bounds)
 
-    if (this.state.currentPageOverlay) {
+    if (currentPageOverlay) {
       viewer.removeLayer(this.state.currentPageOverlay);
     }
 
-    overlay.addTo(this.state.viewer);
-    this.state.viewer.setMaxBounds(bounds);
-    this.state.viewer.fitBounds(bounds, { animate: false });
+    overlay.addTo(viewer);
+    viewer.setMaxBounds(bounds);
+    viewer.fitBounds(bounds, { animate: false });
 
-    if (this.state.viewer.getZoom() > 5) {
-      this.state.viewer.setZoom(5, { animate: false });
+    if (viewer.getZoom() > 5) {
+      viewer.setZoom(5, { animate: false });
     }
 
     this.setState({ currentPageOverlay: overlay });
@@ -58,7 +69,7 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div>
-        <h2>Scans</h2>
+        <h2><Translate text={strings.scans} /></h2>
         <div id="scanlist-container">
           <ul id="scan-list">
             {

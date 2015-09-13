@@ -5,6 +5,7 @@
 var React = require('react')
   , Immutable = require('immutable')
   , Document = require('../../records/document')
+  , commonStrings = require('../common_strings')
 
 module.exports = React.createClass({
   displayName: 'DocumentEdit',
@@ -26,15 +27,18 @@ module.exports = React.createClass({
 
     crumbs = Immutable.fromJS([
       { href: project.get('url'), label: project.get('name') },
-      { href: project.get('url') + 'documents/', label: 'Documents' },
+      {
+        href: project.get('url') + 'documents/',
+        label: <Translate text={commonStrings.document} number={1} />
+      }
     ]);
 
     crumbs = crumbs.concat(Immutable.fromJS(
       !this.props.data ?
-        [ { label: 'Add' } ] :
+        [ { label: <Translate text={commonStrings.add} /> } ] :
         [
           { href: document.get('url'), label: document.get('description') },
-          { label: 'Edit' }
+          { label: <Translate text={commonStrings.edit} /> }
         ]
     ))
 
@@ -81,7 +85,7 @@ module.exports = React.createClass({
             <button
                 className="btn btn-primary btn-large"
                 onClick={this.handleSave}>
-              Save
+              <Translate text={commonStrings.save} />
             </button>
           </div>
         </section>

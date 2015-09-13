@@ -1,15 +1,14 @@
 "use strict";
 
 var React = require('react')
-
-function title(str) {
-  return str[0].toUpperCase() + str.slice(1);
-}
+  , Translate = require('../shared/translate.jsx')
+  , commonStrings = require('../common_strings')
+  , strings = require('./strings')
 
 module.exports = React.createClass({
   displayName: 'DocumentCitations',
   render: function () {
-    var citations = this.props.citations
+    var { citations } = this.props
 
     return (
       <div>
@@ -17,11 +16,15 @@ module.exports = React.createClass({
         <ul>
         {
           citations.size === 0 ?
-            <p>This topic has not been cited.</p> :
+            <p>
+              <Translate text={strings.noCitations} />
+            </p> :
             citations.map(citation =>
               <li key={citation.hashCode()}>
-                {title(citation.get('item_type'))}: <a href={citation.get('item_url')}>
-                  {citation.get('item_name')}
+                <Translate text={commonStrings[citation.get('item_type')]} />
+                ': '
+                <a href={citation.get('item_url')}>
+                  { citation.get('item_name') }
                 </a>
                 {
                   !citation.get('content') ? '' :

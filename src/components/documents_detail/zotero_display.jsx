@@ -2,6 +2,7 @@
 
 var React = require('react')
   , Translate = require('../shared/translate.jsx')
+  , strings = require('./strings')
 
 function getName(creator) {
   return (
@@ -12,6 +13,7 @@ function getName(creator) {
 
 module.exports = React.createClass({
   displayName: 'ZoteroDisplay',
+
   renderZoteroField: function (value, field) {
     switch (field) {
     case 'tags':
@@ -47,13 +49,14 @@ module.exports = React.createClass({
       )
     }
   },
+
   render: function () {
     var zoteroData = this.props.data;
     return (
       <div id="zotero">
         {
           !zoteroData ?
-            <p>This document has no metadata.</p> :
+            <p><Translate text={strings.noMetadata} /></p> :
             <div id="zotero-information">
               <table className="table table-striped table-condensed table-bordered">
                 {zoteroData.map(this.renderZoteroField).valueSeq()}

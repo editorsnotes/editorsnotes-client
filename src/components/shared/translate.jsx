@@ -7,22 +7,29 @@ module.exports = React.createClass({
 
   propTypes: {
     text: React.PropTypes.string.isRequired,
-    domain: React.PropTypes.string.isRequired
+    number: React.PropTypes.number,
+    domain: React.PropTypes.string
   },
 
   getDefaultProps: function () {
-    return { domain: 'messages_main' }
+    return {
+      domain: 'messages_main'
+    }
   },
 
   render: function () {
     var { jed } = global.EditorsNotes
-      , text
+      , { text, number, domain } = this.props
+      , translated
 
-    text = jed
-      .translate(this.props.text)
-      .onDomain(this.props.domain)
-      .fetch()
+    translated = jed
+      .translate(text)
+      .onDomain(domain)
 
-    return <span>{text}</span>
+    translated = number ?
+      translated.fetch(number) :
+      translated.fetch()
+
+    return <span>{ translated }</span>
   }
 });

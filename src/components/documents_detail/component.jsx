@@ -7,6 +7,7 @@ var React = require('react')
   , RelatedTopics = require('./related_topics.jsx')
   , Citations = require('./citations.jsx')
   , Scans = require('./scans.jsx')
+  , commonStrings = require('../common_strings')
 
 module.exports = React.createClass({
   displayName: 'DocumentDetail',
@@ -19,7 +20,10 @@ module.exports = React.createClass({
 
     crumbs = Immutable.fromJS([
       { href: project.get('url'), label: project.get('name') },
-      { href: project.get('url') + 'documents/', label: 'Documents' },
+      {
+        href: project.get('url') + 'documents/',
+        label: <Translate text={commonStrings.document} number={1} />
+      },
       { label: doc.get('description') }
     ]);
 
