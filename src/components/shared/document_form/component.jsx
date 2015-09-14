@@ -95,7 +95,8 @@ module.exports = React.createClass({
     return (
       <div>
         <label>
-          Item Type
+          <strong>Item Type</strong>
+          <br />
           <select
               value={document.zotero_data ? document.zotero_data.get('itemType') : ''}
               onChange={this.handleSelectItemType}>
@@ -144,20 +145,18 @@ module.exports = React.createClass({
     var { creatorTypes } = this.state
 
     return (
-      <div key={`creator-${i}`}>
-        <label>
-          <select
-              value={creator.get('creatorType')}
-              onChange={this.handleZoteroChange.bind(null, ['creators', i, 'creatorType'])}>
-            {
-              creatorTypes.map(type =>
-                <option key={type.get('creatorType')} value={type.get('creatorType')}>
-                  <Translate text={type.get('creatorType')} domain='messages_zotero' />
-                </option>
-              )
-            }
-          </select>
-        </label>
+      <div className="zotero-row" key={`creator-${i}`}>
+        <select
+            value={creator.get('creatorType')}
+            onChange={this.handleZoteroChange.bind(null, ['creators', i, 'creatorType'])}>
+          {
+            creatorTypes.map(type =>
+              <option key={type.get('creatorType')} value={type.get('creatorType')}>
+                <Translate text={type.get('creatorType')} domain='messages_zotero' />
+              </option>
+            )
+          }
+        </select>
         {
           creator.delete('creatorType').map((value, field) =>
             <input
@@ -175,7 +174,7 @@ module.exports = React.createClass({
 
     return (
       <div key={field}>
-        <label>
+        <label className="zotero-row">
           <Translate
               text={field}
               domain='messages_zotero' />
@@ -208,6 +207,7 @@ module.exports = React.createClass({
       <div>
         <p dangerouslySetInnerHTML={{ __html: description }} />
         { itemTypes && this.renderItemTypeSelect() }
+        { document.zotero_data && <hr /> }
         { document.zotero_data && this.renderZoteroData() }
       </div>
     )

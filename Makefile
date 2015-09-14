@@ -4,7 +4,8 @@ JS_FILES = $(shell find src/ -type f -name *js -o -name *jsx)
 CSS_FILES = $(shell find style/ -regex ".*\(css\|less\)") \
 	    static/basscss.css \
 	    static/normalize.css \
-	    static/codemirror.css
+	    static/codemirror.css \
+	    style.css
 
 FONT_FILES = $(shell find style/ -wholename "*/font/*" -type f)
 
@@ -37,6 +38,7 @@ static/codemirror.css: static
 
 static/style.css: static $(CSS_FILES) static/font
 	node_modules/.bin/lessc ./style/main.less > static/style.css
+	node_modules/.bin/cssnext ./style.css >> static/style.css
 	
 static/font: $(FONT_FILES)
 	mkdir -p static/font && cp $(FONT_FILES) static/font
