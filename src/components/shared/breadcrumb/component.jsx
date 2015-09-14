@@ -14,14 +14,15 @@ module.exports = React.createClass({
     var truncatise = require('truncatise')
       , lastLabel = this.props.crumbs.last().get('label')
 
-    lastLabel = truncatise(lastLabel, {
-      TruncateBy: 'characters',
-      StripHTML: true,
-      Strict: false
-    });
+    if (typeof lastLabel === 'string') {
+      lastLabel = truncatise(lastLabel, {
+        TruncateBy: 'characters',
+        StripHTML: true,
+        Strict: false
+      });
 
-    lastLabel = lastLabel.replace(/&#?\d*\.{3}$/, '...');
-
+      lastLabel = lastLabel.replace(/&#?\d*\.{3}$/, '...');
+    }
 
     return (
       <ul className="breadcrumb-top">
@@ -38,7 +39,11 @@ module.exports = React.createClass({
           )
         }
 
-        <li className="active" dangerouslySetInnerHTML={{ __html: lastLabel }} />
+        {
+          typeof lastLabel === 'string' ?
+            <li className="active" dangerouslySetInnerHTML={{ __html: lastLabel }} /> :
+            <li className="active">{ lastLabel }</li>
+        }
       </ul>
     )
   }

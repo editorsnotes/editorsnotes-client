@@ -6,7 +6,10 @@ module.exports = React.createClass({
   displayName: 'Translate',
 
   propTypes: {
-    text: React.PropTypes.string.isRequired,
+    text: React.PropTypes.oneOfType([
+        React.PropTypes.string,
+        React.PropTypes.array
+      ]).isRequired,
     number: React.PropTypes.number,
     domain: React.PropTypes.string
   },
@@ -21,6 +24,10 @@ module.exports = React.createClass({
     var { jed } = global.EditorsNotes
       , { text, number, domain } = this.props
       , translated
+
+    if (Array.isArray(text)) {
+      text = text[0];
+    }
 
     translated = jed
       .translate(text)

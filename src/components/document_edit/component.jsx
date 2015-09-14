@@ -4,6 +4,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , Translate = require('../shared/translate.jsx')
   , Document = require('../../records/document')
   , commonStrings = require('../common_strings')
 
@@ -25,20 +26,20 @@ module.exports = React.createClass({
       , project = this.props.project || document.get('project')
       , crumbs
 
-    crumbs = Immutable.fromJS([
-      { href: project.get('url'), label: project.get('name') },
-      {
+    crumbs = Immutable.List([
+      Immutable.Map({ href: project.get('url'), label: project.get('name') }),
+      Immutable.Map({
         href: project.get('url') + 'documents/',
         label: <Translate text={commonStrings.document} number={1} />
-      }
+      })
     ]);
 
-    crumbs = crumbs.concat(Immutable.fromJS(
+    crumbs = crumbs.concat(Immutable.List(
       !this.props.data ?
-        [ { label: <Translate text={commonStrings.add} /> } ] :
+        [ Immutable.Map({ label: <Translate text={commonStrings.add} /> }) ] :
         [
-          { href: document.get('url'), label: document.get('description') },
-          { label: <Translate text={commonStrings.edit} /> }
+          Immutable.Map({ href: document.get('url'), label: document.get('description') }),
+          Immutable.Map({ label: <Translate text={commonStrings.edit} /> })
         ]
     ))
 
