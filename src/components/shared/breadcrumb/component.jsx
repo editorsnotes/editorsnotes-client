@@ -27,8 +27,8 @@ module.exports = React.createClass({
     return (
       <ul className="breadcrumb-top">
         {
-          this.props.crumbs.pop().map(crumb =>
-            <li key={crumb.hashCode()}>
+          this.props.crumbs.pop().map((crumb, i) =>
+            <li key={i}>
               <a href={crumb.get('href')}>
                 {crumb.get('label')}
               </a>
