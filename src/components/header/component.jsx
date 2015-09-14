@@ -9,7 +9,7 @@ module.exports = React.createClass({
         <div className="navbar-inner">
           <div className="container">
             <ul className="nav">
-              <li><a className="brand" href="/">Editors' Notes</a></li>
+              <li><a className="brand" href="/">Working Notes</a></li>
               <li className="divider-vertical"></li>
               <li><a href="/browse/">Browse</a></li>
               <li><a href="/about/">About</a></li>
