@@ -1,7 +1,10 @@
 "use strict";
 
-window.EditorsNotes = {}
-window.EditorsNotes.jed = require('./jed')
+var EventEmitter = require('events')
+
+window.EditorsNotes = {};
+window.EditorsNotes.jed = require('./jed');
+window.EditorsNotes.events = new EventEmitter();
 
 var router = require('./client')
 

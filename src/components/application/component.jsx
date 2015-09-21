@@ -8,6 +8,16 @@ var _ = require('underscore')
 
 Application = React.createClass({
   displayName: 'EditorsNotesApplication',
+
+  getInitialState() {
+    return { loading: false }
+  },
+
+  componentDidMount() {
+    window.EditorsNotes.events.on('loadstart', () => this.setState({ loading: true }));
+    window.EditorsNotes.events.on('loadstop', () => this.setState({ loading: false }));
+  },
+
   render: function () {
     var Header = require('../header/component.jsx')
       , Footer = require('../footer/component.jsx')
@@ -21,7 +31,7 @@ Application = React.createClass({
     return (
       <div style={{ height: '100%' }}>
         <div className="main-wrapper">
-          <Header user={user} />
+          <Header user={user} loading={this.state.loading} />
 
           <div data-fixme="main-wrap" className="container">
             {/* FIXME: messages
