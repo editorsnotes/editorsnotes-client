@@ -58,6 +58,7 @@ module.exports = React.createClass({
     return {
       searchText: '',
 
+      fetching: false,
       matchResults: null,
       matchCount: null,
       searchedText: null,
@@ -95,6 +96,7 @@ module.exports = React.createClass({
     var { type, projectURL } = this.props
       , { searchText } = this.state
       , listURL = `${projectURL}${type}s/?q=${searchText}`
+      , stopSpinner = resp => { this.setState({ fetching: false }); return resp }
       , opts
 
     opts = {
@@ -104,7 +106,10 @@ module.exports = React.createClass({
 
     this.resetSearchResults();
 
+    this.setState({ fetching: true });
+
     fetch(listURL, opts)
+      .then(stopSpinner, stopSpinner)
       .then(response => response.json())
       .then(Immutable.fromJS)
       .then(data => {
@@ -134,6 +139,14 @@ module.exports = React.createClass({
     this.setState({ searchText: e.target.value }, callback);
   },
 
+  handleSave() {
+    var saveItem = require('../../../utils/save_item')
+      , { type, projectURL } = this.props
+      , { inlineItem } = this.state
+
+    saveItem(type, null, projectURL, inlineItem);
+  },
+
   renderInlineAddForm() {
     var { type, projectURL } = this.props
       , { inlineItem } = this.state
@@ -149,10 +162,14 @@ module.exports = React.createClass({
             onChange={item => this.setState({ inlineItem: item })}
             {...formProps} />
         <div>
-          <button className="btn btn-primary">Save</button>
           <button
-              onClick={() => this.setState({ inlineItem: null })}
-              className="btn btn-danger">
+              onClick={this.handleSave}
+              className="btn btn-primary">
+            Save
+          </button>
+          <button
+              className="btn btn-danger"
+              onClick={() => this.setState({ inlineItem: null })}>
             Cancel
           </button>
         </div>
@@ -183,6 +200,31 @@ module.exports = React.createClass({
     )
   },
 
+  handleSelect(item, e) {
+    var { onSelect } = this.props
+
+    if (e) e.preventDefault();
+
+    onSelect(item);
+  },
+
+  renderResultItem(result, i) {
+    var { type } = this.props
+      , anchorOpts = { onClick: this.handleSelect.bind(null, result), href: '#' }
+      , anchor
+
+    if (type === 'document') {
+      anchorOpts.dangerouslySetInnerHTML = { __html: result.get('description') }
+      anchor = <a {...anchorOpts} />
+    } else {
+      let text = result.get(type === 'topic' ? 'preferred_name' : 'title')
+
+      anchor = <a {...anchorOpts}>{ text }</a>
+    }
+
+    return <li key={i}>{ anchor }</li>
+  },
+
   renderResultList() {
     var { matchCount, matchResults, searchedText } = this.state
 
@@ -192,11 +234,7 @@ module.exports = React.createClass({
           <em>{ matchCount } matches for { searchedText }</em>
         </p>
         <ul>
-          {
-            matchResults.map((result, i) =>
-              <li key={i}>{ result.get('title') }</li>
-            )
-          }
+          { matchResults.map(this.renderResultItem) }
         </ul>
       </div>
     )
@@ -212,7 +250,8 @@ module.exports = React.createClass({
 
 
   render() {
-    var { type } = this.props
+    var Spinner = require('../spinner/component.jsx')
+      , { type } = this.props
       , { searchText, matchResults, inlineItem } = this.state
       , show = type && type !== 'empty'
 
@@ -244,6 +283,7 @@ module.exports = React.createClass({
                 ref="autocomplete"
                 value={searchText}
                 onChange={this.handleAutocompleteChange} />
+            <Spinner spin={this.state.fetching} />
           </label>
 
           { matchResults && this.renderMatchResults() }

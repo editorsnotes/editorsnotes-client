@@ -66,6 +66,11 @@ module.exports = React.createClass({
     this.setState({ editor });
   },
 
+  handleReferenceSelect(item) {
+    this.state.editor.focus();
+    this.state.editor.doc.replaceSelection(item.get('id') + ' ');
+  },
+
   render() {
     var References = require('./references.jsx')
       , { projectURL, minimal } = this.props
@@ -83,7 +88,7 @@ module.exports = React.createClass({
                   ref="referenceForm"
                   type={referenceType}
                   projectURL={projectURL}
-                  onSelect={() => null} />
+                  onSelect={this.handleReferenceSelect} />
             </div>
           )
         }
