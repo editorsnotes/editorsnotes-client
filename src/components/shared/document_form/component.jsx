@@ -38,6 +38,7 @@ module.exports = React.createClass({
     document: React.PropTypes.instanceOf(Document).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     minimal: React.PropTypes.bool
   },
 
@@ -199,12 +200,18 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { document } = this.props
+    var FieldErrors = require('../field_errors.jsx')
+      , GeneralErrors = require('../general_errors.jsx')
+      , { document, errors } = this.props
       , { itemTypes } = this.state
       , description = document.description || '<em>Fill in document metadata to generate citation.</em>'
 
     return (
       <div>
+        <GeneralErrors errors={errors.delete('description')} />
+
+        <FieldErrors errors={errors.get('description')} />
+
         <p dangerouslySetInnerHTML={{ __html: description }} />
         { itemTypes && this.renderItemTypeSelect() }
         { document.zotero_data && <hr /> }

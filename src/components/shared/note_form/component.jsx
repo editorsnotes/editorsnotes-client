@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
   , Note = require('../../../records/note')
 
 module.exports = React.createClass({
@@ -10,6 +11,7 @@ module.exports = React.createClass({
     note: React.PropTypes.instanceOf(Note).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     minimal: React.PropTypes.bool
   },
 
@@ -33,17 +35,22 @@ module.exports = React.createClass({
     this.props.onChange(this.props.note.merge(value))
   },
 
-
   render() {
     var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
       , HTMLEditor = require('../text_editor/component.jsx')
-      , { note, projectURL, minimal } = this.props
+      , FieldErrors = require('../field_errors.jsx')
+      , GeneralErrors = require('../general_errors.jsx')
+      , { note, projectURL, minimal, errors } = this.props
 
     return (
       <div>
+
+        <GeneralErrors
+            errors={errors.delete('title').delete('markup')} />
+
         <header>
           <h3>Title</h3>
-          <div data-error-target="title"></div>
+          <FieldErrors errors={errors.get('title')} />
           <input
               id="note-title"
               name="title"
@@ -88,6 +95,7 @@ module.exports = React.createClass({
         </section>
 
         <section>
+          <FieldErrors errors={errors.get('markup')} />
           <HTMLEditor
               ref="content"
               onChange={markup => this.mergeValues({ markup })}

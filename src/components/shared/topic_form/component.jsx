@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
   , Topic = require('../../../records/topic')
 
 module.exports = React.createClass({
@@ -10,6 +11,7 @@ module.exports = React.createClass({
     topic: React.PropTypes.instanceOf(Topic).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     minimal: React.PropTypes.bool
   },
 
@@ -41,13 +43,19 @@ module.exports = React.createClass({
     var MultipleTextInput = require('../multiple_text_input/component.jsx')
       , RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
       , HTMLEditor = require('../text_editor/component.jsx')
-      , { topic, projectURL, minimal } = this.props
+      , FieldErrors = require('../field_errors.jsx')
+      , GeneralErrors = require('../general_errors.jsx')
+      , { topic, projectURL, minimal, errors } = this.props
 
     return (
       <div>
+        <GeneralErrors errors={errors.delete('preferred_name')} />
+
         <header>
           <h3>Preferred name</h3>
-          <div data-error-target="title"></div>
+
+          <FieldErrors errors={errors.get('preferred_name')} />
+
           <input
               id="topic-preferred-name"
               name="preferred-name"

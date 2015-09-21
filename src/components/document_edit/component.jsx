@@ -7,54 +7,20 @@ var React = require('react')
   , Translate = require('../shared/translate.jsx')
   , Document = require('../../records/document')
   , commonStrings = require('../common_strings')
+  , standaloneForm = require('../shared/standalone_form.jsx')
+  , DocumentEdit
 
-module.exports = React.createClass({
-  displayName: 'DocumentEdit',
-
+DocumentEdit = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map),
-    project: React.PropTypes.instanceOf(Immutable.Map),
+    loading: React.PropTypes.bool.isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    projectURL: React.PropTypes.string.isRequired,
+    saveAndRedirect: React.PropTypes.func.isRequired
   },
 
   getInitialState() {
     return { document: new Document(this.props.data) }
-  },
-
-  renderBreadcrumb() {
-    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
-      , document = this.props.data
-      , project = this.props.project || document.get('project')
-      , crumbs
-
-    crumbs = Immutable.List([
-      Immutable.Map({ href: project.get('url'), label: project.get('name') }),
-      Immutable.Map({
-        href: project.get('url') + 'documents/',
-        label: <Translate text={commonStrings.document} number={1} />
-      })
-    ]);
-
-    crumbs = crumbs.concat(Immutable.List(
-      !this.props.data ?
-        [ Immutable.Map({ label: <Translate text={commonStrings.add} /> }) ] :
-        [
-          Immutable.Map({ href: document.get('url'), label: document.get('description') }),
-          Immutable.Map({ label: <Translate text={commonStrings.edit} /> })
-        ]
-    ))
-
-
-    return <Breadcrumb crumbs={crumbs} />
-  },
-
-  isNew() {
-    return !this.props.data
-  },
-
-  getProjectURL() {
-    return this.isNew() ?
-      this.props.project.get('url') :
-      this.props.data.get('url').replace(/\/documents\/.*/, '/')
   },
 
   handleDocumentChange(document) {
@@ -62,36 +28,38 @@ module.exports = React.createClass({
   },
 
   handleSave() {
-    var saveItem = require('../../utils/save_item')
-      , id = this.isNew() ? null : this.props.data.get('id')
+    var { saveAndRedirect } = this.props
+      , { document } = this.state
 
-    saveItem('document', id, this.getProjectURL(), this.state.document)
+    saveAndRedirect(document);
   },
 
   render() {
     var DocumentForm = require('../shared/document_form/component.jsx')
+      , { loading, errors, projectURL } = this.props
       , { document } = this.state
 
     return (
       <div>
-        { this.renderBreadcrumb() }
-
         <DocumentForm
             document={document}
-            projectURL={this.getProjectURL()}
+            errors={errors}
+            projectURL={projectURL}
             onChange={this.handleDocumentChange} />
 
         <section>
           <div className="well">
             <button
                 className="btn btn-primary btn-large"
+                disabled={loading}
                 onClick={this.handleSave}>
               <Translate text={commonStrings.save} />
             </button>
           </div>
         </section>
-
       </div>
     )
   }
 });
+
+module.exports = standaloneForm(DocumentEdit, 'document');

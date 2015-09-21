@@ -4,52 +4,23 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , Translate = require('../shared/translate.jsx')
+  , standaloneForm = require('../shared/standalone_form.jsx')
+  , commonStrings = require('../common_strings')
   , Note = require('../../records/note')
+  , NoteEdit
 
-module.exports = React.createClass({
-  displayName: 'NoteEdit',
-
+NoteEdit = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map),
-    project: React.PropTypes.instanceOf(Immutable.Map),
+    loading: React.PropTypes.bool.isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    projectURL: React.PropTypes.string.isRequired,
+    saveAndRedirect: React.PropTypes.func.isRequired
   },
 
   getInitialState() {
     return { note: new Note(this.props.data) }
-  },
-
-  renderBreadcrumb() {
-    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
-      , note = this.props.data
-      , project = this.props.project || note.get('project')
-      , crumbs
-
-    crumbs = Immutable.fromJS([
-      { href: project.get('url'), label: project.get('name') },
-      { href: project.get('url') + 'notes/', label: 'Notes' },
-    ]);
-
-    crumbs = crumbs.concat(Immutable.fromJS(
-      !this.props.data ?
-        [ { label: 'Add' } ] :
-        [
-          { href: note.get('url'), label: note.get('title') },
-          { label: 'Edit' }
-        ]
-    ))
-
-
-    return <Breadcrumb crumbs={crumbs} />
-  },
-
-  isNew() {
-    return !this.props.data
-  },
-
-  getProjectURL() {
-    return this.isNew() ?
-      this.props.project.get('url') :
-      this.props.data.get('url').replace(/\/notes\/.*/, '/')
   },
 
   handleNoteChange(note) {
@@ -57,36 +28,38 @@ module.exports = React.createClass({
   },
 
   handleSave() {
-    var saveItem = require('../../utils/save_item')
-      , id = this.isNew() ? null : this.props.data.get('id')
+    var { saveAndRedirect } = this.props
+      , { note } = this.state
 
-    saveItem('note', id, this.getProjectURL(), this.state.note)
+    saveAndRedirect(note);
   },
 
   render() {
     var NoteForm = require('../shared/note_form/component.jsx')
+      , { loading, errors, projectURL } = this.props
       , { note } = this.state
 
     return (
       <div>
-        { this.renderBreadcrumb() }
-
         <NoteForm
             note={note}
-            projectURL={this.getProjectURL()}
+            errors={errors}
+            projectURL={projectURL}
             onChange={this.handleNoteChange} />
 
         <section>
           <div className="well">
             <button
                 className="btn btn-primary btn-large"
+                disabled={loading}
                 onClick={this.handleSave}>
-              Save
+              <Translate text={commonStrings.save} />
             </button>
           </div>
         </section>
-
       </div>
     )
   }
 });
+
+module.exports = standaloneForm(NoteEdit, 'note')
