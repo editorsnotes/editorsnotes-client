@@ -209,7 +209,7 @@ module.exports = {
                 , data = {}
 
               if (userData) data[USER_DATA] = props[USER_DATA] = Immutable.fromJS(userData);
-              props.ActiveComponent = require('../components/not_found/index.jsx');
+              props.ActiveComponent = require('../components/main/not_found/component.jsx');
 
               res.writeHead(404, { 'Content-Type': 'text/html' });
 
