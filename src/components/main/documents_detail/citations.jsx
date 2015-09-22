@@ -1,8 +1,8 @@
 "use strict";
 
 var React = require('react')
-  , Translate = require('../shared/translate.jsx')
-  , commonStrings = require('../common_strings')
+  , Translate = require('../../shared/translate.jsx')
+  , commonStrings = require('../../common_strings')
   , strings = require('./strings')
 
 module.exports = React.createClass({

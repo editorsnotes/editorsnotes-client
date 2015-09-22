@@ -4,10 +4,10 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Translate = require('../shared/translate.jsx')
-  , standaloneForm = require('../shared/standalone_form.jsx')
-  , commonStrings = require('../common_strings')
-  , Note = require('../../records/note')
+  , Translate = require('../../shared/translate.jsx')
+  , standaloneForm = require('../../util/standalone_form.jsx')
+  , commonStrings = require('../../common_strings')
+  , Note = require('../../../records/note')
   , NoteEdit
 
 NoteEdit = React.createClass({
@@ -35,7 +35,7 @@ NoteEdit = React.createClass({
   },
 
   render() {
-    var NoteForm = require('../shared/note_form/component.jsx')
+    var NoteForm = require('../../shared/note_form/component.jsx')
       , { loading, errors, projectURL } = this.props
       , { note } = this.state
 

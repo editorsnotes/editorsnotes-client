@@ -7,13 +7,13 @@ var React = require('react')
   , RelatedTopics = require('./related_topics.jsx')
   , Citations = require('./citations.jsx')
   , Scans = require('./scans.jsx')
-  , commonStrings = require('../common_strings')
+  , commonStrings = require('../../common_strings')
 
 module.exports = React.createClass({
   displayName: 'DocumentDetail',
 
   renderBreadcrumb: function () {
-    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
+    var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , doc = this.props.data
       , project = doc.get('project')
       , crumbs
@@ -31,7 +31,7 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var getLinks = require('../../helpers/get_links')
+    var getLinks = require('../../../helpers/get_links')
       , doc = this.props.data
       , links = getLinks(doc)
 

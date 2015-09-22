@@ -19,8 +19,8 @@ Application = React.createClass({
   },
 
   render: function () {
-    var Header = require('../header/component.jsx')
-      , Footer = require('../footer/component.jsx')
+    var Header = require('./main/header/component.jsx')
+      , Footer = require('./main/footer/component.jsx')
       , ActiveComponent = this.props.ActiveComponent
       , user = this.props.__AUTHENTICATED_USER__ || null
       , activeComponentProps

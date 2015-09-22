@@ -1,9 +1,9 @@
 "use strict";
 
 var React = require('react')
-  , Translate = require('../shared/translate.jsx')
+  , Translate = require('../../shared/translate.jsx')
   , strings = require('./strings')
-  , commonStrings = require('../common_strings')
+  , commonStrings = require('../../common_strings')
 
 module.exports = React.createClass({
   displayName: 'DocumentRelatedTopics',

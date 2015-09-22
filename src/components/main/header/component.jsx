@@ -8,7 +8,7 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var Spinner = require('../shared/spinner/component.jsx')
+    var Spinner = require('../../shared/spinner/component.jsx')
       , { loading } = this.props
 
     return (

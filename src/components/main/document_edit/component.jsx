@@ -1,15 +1,16 @@
 "use strict";
 
+/* eslint camelcase:0 */
+
 var React = require('react')
   , Immutable = require('immutable')
-  , Translate = require('../shared/translate.jsx')
-  , standaloneForm = require('../shared/standalone_form.jsx')
-  , commonStrings = require('../common_strings')
-  , Topic = require('../../records/topic')
-  , TopicEdit
+  , Translate = require('../../shared/translate.jsx')
+  , Document = require('../../../records/document')
+  , commonStrings = require('../../common_strings')
+  , standaloneForm = require('../../util/standalone_form.jsx')
+  , DocumentEdit
 
-
-TopicEdit = React.createClass({
+DocumentEdit = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map),
     loading: React.PropTypes.bool.isRequired,
@@ -19,32 +20,32 @@ TopicEdit = React.createClass({
   },
 
   getInitialState() {
-    return { topic: new Topic(this.props.data) }
+    return { document: new Document(this.props.data) }
   },
 
-  handleTopicChange(topic) {
-    this.setState({ topic });
+  handleDocumentChange(document) {
+    this.setState({ document });
   },
 
   handleSave() {
     var { saveAndRedirect } = this.props
-      , { topic } = this.state
+      , { document } = this.state
 
-    saveAndRedirect(topic);
+    saveAndRedirect(document);
   },
 
   render() {
-    var TopicForm = require('../shared/topic_form/component.jsx')
+    var DocumentForm = require('../../shared/document_form/component.jsx')
       , { loading, errors, projectURL } = this.props
-      , { topic } = this.state
+      , { document } = this.state
 
     return (
       <div>
-        <TopicForm
-            topic={topic}
+        <DocumentForm
+            document={document}
             errors={errors}
             projectURL={projectURL}
-            onChange={this.handleTopicChange} />
+            onChange={this.handleDocumentChange} />
 
         <section>
           <div className="well">
@@ -56,10 +57,9 @@ TopicEdit = React.createClass({
             </button>
           </div>
         </section>
-
       </div>
     )
   }
 });
 
-module.exports = standaloneForm(TopicEdit, 'topic')
+module.exports = standaloneForm(DocumentEdit, 'document');

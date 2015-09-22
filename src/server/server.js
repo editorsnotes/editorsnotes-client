@@ -92,7 +92,7 @@ router.add(require('../base_routes'))
 router.add(require('../admin_routes'))
 
 function render(props, bootstrap) {
-  var Application = require('../components/application/component.jsx')
+  var Application = require('../components/application.jsx')
     , application = React.createElement(Application, props)
     , html = makeHTML(React.renderToString(application), bootstrap)
 

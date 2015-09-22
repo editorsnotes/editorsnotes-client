@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react')
-  , Translate = require('../shared/translate.jsx')
+  , Translate = require('../../shared/translate.jsx')
   , strings = require('./strings')
 
 module.exports = React.createClass({

@@ -2,7 +2,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Translate = require('./translate.jsx')
+  , Translate = require('../shared/translate.jsx')
   , editableComponent = require('./editable_component.jsx')
   , commonStrings = require('../common_strings')
 

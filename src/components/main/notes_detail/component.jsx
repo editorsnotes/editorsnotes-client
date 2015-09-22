@@ -7,7 +7,7 @@ module.exports = React.createClass({
   displayName: 'Note',
 
   renderBreadcrumb: function () {
-    var Breadcrumb = require('../shared/breadcrumb/component.jsx')
+    var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , note = this.props.data
       , project = note.get('project')
       , crumbs
@@ -27,7 +27,7 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var getLinks = require('../../helpers/get_links')
+    var getLinks = require('../../../helpers/get_links')
       , note = this.props.data
       , links = getLinks(note)
 
