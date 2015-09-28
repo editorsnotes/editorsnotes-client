@@ -9,7 +9,10 @@ function getJSONFromPath(get, pathname) {
 module.exports = {
   '/': {
     name: 'home',
-    Component: require('./components/main/home/component.jsx')
+    Component: require('./components/main/home/component.jsx'),
+    getData: function (get) {
+      return getJSONFromPath(get, '/notes/')
+    }
   },
   '/browse/': {
     name: 'browse',

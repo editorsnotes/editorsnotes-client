@@ -2,10 +2,12 @@
 
 var React = require('react')
   , UserHomepage
+  , NonUserHomepage
 
 UserHomepage = React.createClass({
   render: function () {
     var { user } = this.props
+
     return (
       <div className="row">
         <div className="span6">
@@ -14,7 +16,7 @@ UserHomepage = React.createClass({
           <hr />
 
           <div>
-            { this.props.user.get('project_roles').map((role, i) =>
+            { user.get('project_roles').map((role, i) =>
                 <div key={i}>
                   { role.get('project') }
                   <ul>
@@ -39,11 +41,12 @@ UserHomepage = React.createClass({
   }
 });
 
-module.exports = React.createClass({
-  displayName: 'Homepage',
-  render: function () {
-    return this.props.user ?
-      <UserHomepage {...this.props} /> :
+
+NonUserHomepage = React.createClass({
+  render() {
+    var { data } = this.props
+
+    return (
       <div>
         <h1>Working Notes</h1>
         <p className="large">
@@ -51,9 +54,36 @@ module.exports = React.createClass({
         </p>
 
         <h2>Sign up</h2>
-        <p><a href="/auth/signup">Create an account</a></p>
+        <p><a href="/auth/account/create">Create an account</a></p>
 
         <h2>Recently edited notes</h2>
+        <ul>
+        {
+          data.get('results').map(note =>
+            <li key={note.get('id')}>
+              <a href={note.get('url')}>{ note.get('title') }</a>
+              {' (by '}
+              <a href={note.getIn(['project', 'url'])}>
+               { note.getIn(['project', 'name']) }
+              </a>
+              {')'}
+            </li>
+          )
+        }
+        </ul>
       </div>
+    )
+  }
+});
+
+
+module.exports = React.createClass({
+  displayName: 'Homepage',
+
+  render() {
+    var { user } = this.props
+      , HomeComponent = user ? UserHomepage : NonUserHomepage
+
+    return <HomeComponent {...this.props} />
   }
 });
