@@ -28,31 +28,31 @@ UserHomepage = React.createClass({
       , { activity } = this.state
 
     return (
-      <div className="row">
-        <div className="span6">
+      <div>
+        <div>
           <a href="/auth/account/">Account settings</a>
-
           <hr />
+        </div>
 
-          <div>
+        <div className="row">
+          <div className="span6">
+            <h3>My projects</h3>
             { user.get('project_roles').map((role, i) =>
                 <div key={i}>
-                  { role.get('project') }
-                  <ul>
-                    <li>
-                      <a href={ role.get('project_url') + 'notes/add/' }>
+                  <h3><a href={role.get('project_url')}>{ role.get('project') }</a></h3>
+                  <div>
+                    <a className="btn btn-primary" href={ role.get('project_url') + 'notes/add/' }>
                       Add note
-                      </a>
-                    </li>
-                  </ul>
+                    </a>
+                  </div>
                 </div>
               )
             }
           </div>
-        </div>
-        <div className="span6">
-          <h3>Recent activity</h3>
-          <ActivityList activities={activity} />
+          <div className="span6">
+            <h3>Recent activity</h3>
+            <ActivityList activities={activity} />
+          </div>
         </div>
       </div>
     )
