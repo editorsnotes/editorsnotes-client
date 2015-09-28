@@ -52,11 +52,16 @@ module.exports = React.createClass({
 
   componentDidMount() {
     var CitationGenerator = require('../../../utils/citation_generator')
+      , { document } = this.props
 
     this.setState({ citationGenerator: new CitationGenerator() });
 
     fetchZoteroJSON('/itemTypes')
       .then(itemTypes => this.setState({ itemTypes }))
+
+    if (document.hasIn(['zotero_data', 'itemType'])) {
+      this.fetchItemTemplates(document.getIn(['zotero_data', 'itemType']));
+    }
   },
 
   getDefaultProps() {
@@ -151,11 +156,15 @@ module.exports = React.createClass({
             value={creator.get('creatorType')}
             onChange={this.handleZoteroChange.bind(null, ['creators', i, 'creatorType'])}>
           {
-            creatorTypes.map(type =>
-              <option key={type.get('creatorType')} value={type.get('creatorType')}>
-                <Translate text={type.get('creatorType')} domain='messages_zotero' />
-              </option>
-            )
+            !creatorTypes ?
+              <option value={creator.get('creatorType')}>
+                  <Translate text={creator.get('creatorType')} domain='messages_zotero' />
+              </option> :
+              creatorTypes.map(type =>
+                <option key={type.get('creatorType')} value={type.get('creatorType')}>
+                  <Translate text={type.get('creatorType')} domain='messages_zotero' />
+                </option>
+              )
           }
         </select>
         {
