@@ -153,6 +153,8 @@ module.exports = React.createClass({
       , Form = FORM_COMPONENTS[type]
       , formProps = { [type]: inlineItem }
 
+    // FIXME: Show errors correctly
+
     return (
       <div>
         <h2><Translate text={TEXT[`add${type}`]} /></h2>
@@ -160,6 +162,7 @@ module.exports = React.createClass({
             projectURL={projectURL}
             minimal={true}
             onChange={item => this.setState({ inlineItem: item })}
+            errors={Immutable.Map()}
             {...formProps} />
         <div>
           <button
