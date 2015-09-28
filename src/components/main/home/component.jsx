@@ -1,12 +1,31 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
   , UserHomepage
   , NonUserHomepage
 
 UserHomepage = React.createClass({
-  render: function () {
-    var { user } = this.props
+  getInitialState() {
+    return { activity: Immutable.List() }
+  },
+
+  componentDidMount() {
+    var getLinks = require('../../../helpers/get_links')
+      , { user } = this.props
+      , activityURL = getLinks(user).getIn(['activity', 'href'])
+
+    fetch(activityURL, { headers: { Accept: 'application/json' }})
+      .then(response => response.json())
+      .then(data => data.activity)
+      .then(Immutable.fromJS)
+      .then(activity => this.setState({ activity }))
+  },
+
+  render() {
+    var ActivityList = require('./activity_list.jsx')
+      , { user } = this.props
+      , { activity } = this.state
 
     return (
       <div className="row">
@@ -32,9 +51,8 @@ UserHomepage = React.createClass({
           </div>
         </div>
         <div className="span6">
-          <pre>
-          { JSON.stringify(this.props.user, true, '  ') }
-          </pre>
+          <h3>Recent activity</h3>
+          <ActivityList activities={activity} />
         </div>
       </div>
     )
