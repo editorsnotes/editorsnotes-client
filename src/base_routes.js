@@ -11,14 +11,6 @@ module.exports = {
     name: 'home',
     Component: require('./components/main/home/component.jsx')
   },
-  '/join/': {
-    name: 'join',
-    Component: require('./components/main/join/component.jsx')
-  },
-  '/login/': {
-    name: 'login',
-    Component: require('./components/main/login/component.jsx')
-  },
   '/browse/': {
     name: 'browse',
     Component: require('./components/main/browse/component.jsx'),
