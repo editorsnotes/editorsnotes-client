@@ -57,10 +57,10 @@ module.exports = React.createClass({
         }
 
         {
-          !topic.get('summary') ? null :
+          !topic.get('markup_html') ? null :
             <section>
               <h2>Summary</h2>
-              <div dangerouslySetInnerHTML={{ __html: topic.get('summary') }} />
+              <div dangerouslySetInnerHTML={{ __html: topic.get('markup_html') }} />
             </section>
         }
 
