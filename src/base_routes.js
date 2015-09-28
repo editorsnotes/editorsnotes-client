@@ -19,6 +19,11 @@ module.exports = {
     Component: require('./components/main/browse/component.jsx'),
     getData: getJSONFromPath
   },
+  '/projects/:project_slug/': {
+    name: 'projects_detail',
+    Component: require('./components/main/projects_detail/component.jsx'),
+    getData: getJSONFromPath
+  },
 
   '/projects/:project_slug/notes/': {
     name: 'notes_list',
