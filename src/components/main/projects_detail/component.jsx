@@ -22,8 +22,6 @@ module.exports = React.createClass({
   render: function () {
     var project = this.props.data
 
-    console.log(project.toJS())
-
     return (
     <div id="project">
 
