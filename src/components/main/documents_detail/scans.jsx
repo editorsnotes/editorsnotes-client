@@ -69,7 +69,6 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div>
-        <h2><Translate text={strings.scans} /></h2>
         <div id="scanlist-container">
           <ul id="scan-list">
             {

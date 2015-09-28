@@ -7,7 +7,9 @@ var React = require('react')
   , RelatedTopics = require('./related_topics.jsx')
   , Citations = require('./citations.jsx')
   , Scans = require('./scans.jsx')
+  , Translate = require('../../shared/translate.jsx')
   , commonStrings = require('../../common_strings')
+  , strings = require('./strings')
 
 module.exports = React.createClass({
   displayName: 'DocumentDetail',
@@ -18,13 +20,13 @@ module.exports = React.createClass({
       , project = doc.get('project')
       , crumbs
 
-    crumbs = Immutable.fromJS([
-      { href: project.get('url'), label: project.get('name') },
-      {
+    crumbs = Immutable.List([
+      Immutable.Map({ href: project.get('url'), label: project.get('name') }),
+      Immutable.Map({
         href: project.get('url') + 'documents/',
         label: <Translate text={commonStrings.document} number={1} />
-      },
-      { label: doc.get('description') }
+      }),
+      Immutable.Map({ label: doc.get('description') })
     ]);
 
     return <Breadcrumb crumbs={crumbs} />
@@ -66,7 +68,14 @@ module.exports = React.createClass({
 
         <Citations citations={doc.get('cited_by')} />
 
-        <Scans scans={doc.get('scans')} />
+        <div>
+          <h2><Translate text={strings.scans} /></h2>
+          {
+            doc.get('scans').size === 0 ?
+              <Translate text={strings.noScans} /> :
+              <Scans scans={doc.get('scans')} />
+          }
+        </div>
       </div>
     )
   }

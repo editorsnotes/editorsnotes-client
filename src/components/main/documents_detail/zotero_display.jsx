@@ -17,8 +17,9 @@ module.exports = React.createClass({
   renderZoteroField: function (value, field) {
     switch (field) {
     case 'tags':
-      return null;
     case 'notes':
+    case 'relations':
+    case 'collections':
       return null;
     case 'creators':
       return value.map(creator => (

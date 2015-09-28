@@ -13,27 +13,27 @@ module.exports = React.createClass({
     return (
       <div>
         <h2>Cited by</h2>
-        <ul>
         {
           citations.size === 0 ?
             <p>
               <Translate text={strings.noCitations} />
             </p> :
-            citations.map(citation =>
-              <li key={citation.hashCode()}>
-                <Translate text={commonStrings[citation.get('item_type')]} />
-                ': '
-                <a href={citation.get('item_url')}>
-                  { citation.get('item_name') }
-                </a>
-                {
-                  !citation.get('content') ? '' :
-                    <p dangerouslySetInnerHTML={{ __html: citation.get('content') }} />
-                }
-              </li>
-            )
+            <ul>
+              citations.map(citation =>
+                <li key={citation.hashCode()}>
+                  <Translate text={commonStrings[citation.get('item_type')]} />
+                  ': '
+                  <a href={citation.get('item_url')}>
+                    { citation.get('item_name') }
+                  </a>
+                  {
+                    !citation.get('content') ? '' :
+                      <p dangerouslySetInnerHTML={{ __html: citation.get('content') }} />
+                  }
+                </li>
+              )
+            </ul>
         }
-        </ul>
       </div>
     )
   }
