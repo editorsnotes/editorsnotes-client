@@ -144,7 +144,15 @@ module.exports = React.createClass({
       , { type, projectURL } = this.props
       , { inlineItem } = this.state
 
-    saveItem(type, null, projectURL, inlineItem);
+    saveItem(type, null, projectURL, inlineItem)
+      .then(resp => resp.json())
+      .then(item => {
+        if (item.id) {
+          this.props.onSelect(Immutable.fromJS(item));
+          this.setState({ inlineItem: null });
+          this.resetSearchResults();
+        }
+      });
   },
 
   renderInlineAddForm() {
