@@ -51,6 +51,8 @@ function updateDocumentMarks(cm, fromLine=0, toLine) {
 
   if (toLine === undefined) toLine = cm.doc.lineCount();
 
+
+
   /*
   var cursor = cm.getCursor()
   for (var i = fromLine; i <= toLine; i++) {
@@ -117,7 +119,10 @@ function checkEmptyReferences(cm, { to, text }) {
 }
 
 module.exports = function (el, value='', opts={}) {
-  var editor = CodeMirror(el, {
+  var updateInlineReferences = require('./cm_update_references')
+    , editor
+
+  editor = CodeMirror(el, {
     value,
     mode: 'en-markdown',
     lineWrapping: true
@@ -127,14 +132,17 @@ module.exports = function (el, value='', opts={}) {
 
   // CodeMirror.TextMarker instances, in order
   editor._sectionMarks = [];
-  editor._referenceMarks = [];
 
   editor.on('change', function (cm, { from, to }) {
     var fromLine = from.line
       , toLine = to.line
 
     updateDocumentMarks(cm, fromLine, toLine);
+    updateInlineReferences(cm, fromLine, toLine);
   });
+
+  // Update references on editor initialization
+  updateInlineReferences(editor, 0, editor.doc.lineCount() - 1);
 
   editor.handleAddReference = opts.handleAddReference || (() => null);
 
