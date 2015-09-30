@@ -22,10 +22,11 @@ module.exports = function makeListFetchingComponent(Component, pause=250) {
       this.fetchList = _.debounce(this.fetchList, pause)
     },
 
-    onFetchFinish(resp, searchedText) {
+    onFetchFinish(searchedText, resp) {
       var handleResponse = require('../../utils/handle_response')
+        , { lastSearchedText } = this.state
 
-      if (searchedText !== this.state.lastSearchedText) return null
+      if (searchedText !== lastSearchedText) return null
 
       this.setState({ listResultsLoading: false });
 
@@ -46,6 +47,11 @@ module.exports = function makeListFetchingComponent(Component, pause=250) {
       return url.format(parsed);
     },
 
+    // FIXME: Better handlin'
+    handleError(e) {
+      throw e;
+    },
+
     fetchList(listURL, query, params={}) {
       var formattedURL = this.buildURL(listURL, query, params)
         , onFetchFinish = this.onFetchFinish.bind(null, query)
@@ -56,8 +62,6 @@ module.exports = function makeListFetchingComponent(Component, pause=250) {
         headers: { Accept: 'application/json' },
       }
 
-      this.resetSearchResults();
-
       this.setState({
         listResultsLoading: true,
         lastSearchedText: query
@@ -65,14 +69,15 @@ module.exports = function makeListFetchingComponent(Component, pause=250) {
 
       fetch(formattedURL, opts)
         .then(onFetchFinish, onFetchFinish)
-        .then(response => response && (
-          response.json()
+        .then(response => {
+          return response && response.json()
             .then(Immutable.fromJS)
             .then(data => this.setState({
                 listResults: data,
+                listResultsText: query,
                 lastSearchedText: null
             }))
-        ))
+        })
         .catch(this.handleError)
     },
 

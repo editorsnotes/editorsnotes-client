@@ -3,6 +3,7 @@
 var React = require('react')
   , Immutable = require('immutable')
   , ListFetching = require('../../util/list_fetching.jsx')
+  , Translate = require('../translate.jsx')
   , strings = require('./strings')
   , ReferenceSearch
 
@@ -16,7 +17,7 @@ ReferenceSearch = React.createClass({
     /* provided by ListFetching */
     fetchList: React.PropTypes.func.isRequired,
     listResultsLoading: React.PropTypes.bool.isRequired,
-    listResults: React.PropTypes.instanceOf(Immutable.List),
+    listResults: React.PropTypes.instanceOf(Immutable.Map),
     listResultsText: React.PropTypes.string
   },
 
@@ -37,7 +38,7 @@ ReferenceSearch = React.createClass({
       */
 
   handleAutocompleteChange(e) {
-    var { searchText } = e.target
+    var searchText = e.target.value
       , { type, projectURL, fetchList } = this.props
 
     this.setState({ searchText });
@@ -72,8 +73,8 @@ ReferenceSearch = React.createClass({
   },
 
   renderListItem(result) {
-    var { type } = this.props
-      , anchorOpts = { onClick: this.handleSelect.bind(null, result), href: '' }
+    var { type, onSelect } = this.props
+      , anchorOpts = { onClick: onSelect.bind(null, result), href: '' }
       , anchor
 
     if (type === 'document') {
@@ -96,13 +97,14 @@ ReferenceSearch = React.createClass({
         <p>
           <em>{ listResults.get('count') } matches for { listResultsText }</em>
         </p>
-        <ul>{ listResults.get('results').map(this.renderResultItem) }</ul>
+        <ul>{ listResults.get('results').map(this.renderListItem) }</ul>
       </div>
     )
   },
 
   render() {
-    var { type, listResultsLoading, listResults } = this.props
+    var Spinner = require('../spinner/component.jsx')
+      , { type, listResultsLoading, listResults } = this.props
       , { searchText } = this.state
 
     return (
@@ -123,12 +125,12 @@ ReferenceSearch = React.createClass({
           searchText && listResults && (
             <div>
               {
-                listResults.size === 0 ?
+                listResults.get('count') === 0 ?
                   this.renderEmptyResults() :
                   this.renderListResults()
               }
 
-              this.renderAddInlineButton()
+              { this.renderAddInlineButton() }
             </div>
           )
         }

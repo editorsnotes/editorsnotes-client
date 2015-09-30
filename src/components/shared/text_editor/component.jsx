@@ -30,8 +30,6 @@ module.exports = React.createClass({
   onAddEmptyReference(type) {
     this.setState({ referenceType: type || 'empty' });
     this.state.editor.on('beforeChange', this.clearReferenceType);
-
-    if (type) this.refs.referenceForm.focusAutocomplete();
   },
 
   clearReferenceType() {
@@ -85,7 +83,6 @@ module.exports = React.createClass({
           !minimal && (
             <div className="span5">
               <References
-                  ref="referenceForm"
                   type={referenceType}
                   projectURL={projectURL}
                   onSelect={this.handleReferenceSelect} />

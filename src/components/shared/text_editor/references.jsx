@@ -35,7 +35,9 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { type, projectURL } = this.props
+    var ReferenceSearch = require('./reference_search.jsx')
+      , AddInlineItem = require('./add_inline_item.jsx')
+      , { type, projectURL } = this.props
       , { addingInlineItem } = this.state
       , show = type && type !== 'empty'
 
@@ -55,12 +57,14 @@ module.exports = React.createClass({
                   projectURL={projectURL} />
             </div>
 
-            <AddInlineItem
-                onSelect={this.handleSelect}
-                onCancel={() => this.setState({ addingInlineItem: null })}
-                type={type}
-                projectURL={projectURL}
-                initialText={addingInlineItem} />
+            { addingInlineItem !== null && (
+              <AddInlineItem
+                  onSelect={this.handleSelect}
+                  onCancel={() => this.setState({ addingInlineItem: null })}
+                  type={type}
+                  projectURL={projectURL}
+                  initialText={addingInlineItem} />
+            )}
           </div>
         )}
       </div>
