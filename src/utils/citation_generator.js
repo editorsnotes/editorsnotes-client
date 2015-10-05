@@ -11,7 +11,7 @@ CSL.debug = function () { return; }
 function CitationGenerator(style, locale) {
   style = style || 'chicago-fullnote-bibliography';
   locale = locale || 'en-US';
-  this.bibdata = {};
+  this.items = {};
   this.engine = this.createEngine(style, locale);
 }
 
@@ -19,7 +19,7 @@ CitationGenerator.prototype = {
   createEngine: function (style, locale) {
     var that = this
       , sys = {
-        retrieveItem: function (id) { return that.bibdata[id] },
+        retrieveItem: function (id) { return that.items[id] },
         retrieveLocale: function (locale) { return locales[locale] }
       }
     return new CSL.Engine(sys, styles[style], locale);
@@ -33,7 +33,7 @@ CitationGenerator.prototype = {
       if (!cslItem.hasOwnProperty('id')) {
         cslItem.id = data.length > 1 ? _.uniqueId('CSL-ITEM-') : 'ITEM';
       }
-      this.bibdata[cslItem.id] = cslItem;
+      this.items[cslItem.id] = cslItem;
       citationItems.push({ 'id': cslItem.id });
     }, this);
 

@@ -27,6 +27,8 @@ function hasNotBeenMarked(cm, token) {
 }
 
 module.exports = function updateInlineReferences(cm, fromLine, toLine) {
+  var { getReferenceLabel, getInlineCitation } = cm
+
   Immutable.Range(fromLine, toLine + 1)
     .toList()
     .map(line => Immutable.List(
@@ -40,8 +42,27 @@ module.exports = function updateInlineReferences(cm, fromLine, toLine) {
         }))
         .filter(hasNotBeenMarked.bind(null, cm))))
     .flatten(true)
-    .forEach(ref => cm.doc.markText(ref.startPos, ref.endPos, {
-      css: "color: red;", // FIXME: Placeholder
-      atomic: true
-    }))
+    .forEach(ref => {
+      var replacementEl = document.createElement('span')
+        , labelPromise
+
+      replacementEl.style.background = '#ccc';
+      replacementEl.style.padding = '1px 4px';
+      replacementEl.style.borderRadius = '4px';
+
+      if (ref.itemType === 'document') {
+        labelPromise = getInlineCitation(ref.itemID);
+      } else {
+        labelPromise = getReferenceLabel(ref.itemType, ref.itemID);
+      }
+
+      labelPromise
+        .then(label => {
+          replacementEl.innerText = label;
+
+          cm.doc.markText(ref.startPos, ref.endPos, {
+            replacedWith: replacementEl
+          })
+        })
+    })
 }

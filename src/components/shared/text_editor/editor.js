@@ -120,6 +120,7 @@ function checkEmptyReferences(cm, { to, text }) {
 
 module.exports = function (el, value='', opts={}) {
   var updateInlineReferences = require('./cm_update_references')
+    , { projectURL, handleAddReference } = opts
     , editor
 
   editor = CodeMirror(el, {
@@ -141,10 +142,18 @@ module.exports = function (el, value='', opts={}) {
     updateInlineReferences(cm, fromLine, toLine);
   });
 
+  // Add a few of our own specific attributes and callbacks to the editor
+  editor.projectURL = projectURL
+
+  editor.getReferenceLabel = opts.getReferenceLabel;
+  editor.getInlineCitation = opts.getInlineCitation;
+  editor.getFullCitation = opts.getFullCitation;
+
+  editor.handleAddReference = handleAddReference || (() => null);
+
   // Update references on editor initialization
   updateInlineReferences(editor, 0, editor.doc.lineCount() - 1);
 
-  editor.handleAddReference = opts.handleAddReference || (() => null);
 
   return editor;
 }
