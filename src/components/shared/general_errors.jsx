@@ -18,7 +18,7 @@ module.exports = React.createClass({
         {
           errors.map((fieldErrors, fieldName) =>
             <div key={fieldName}>
-              <h4>{ fieldName }</h4>
+              { fieldName !== 'NON_FIELD_ERRORS' && <h4>{ fieldName }</h4> }
               <ul>
                 { fieldErrors.map((err, i) => <li key={i}>{ err }</li>) }
               </ul>

@@ -1,7 +1,7 @@
 "use strict";
 
 function getJSONFromTrimmedPath(get, pathname) {
-  return get(pathname.replace(/edit\/$/, ''), { 'Accept': 'application/json' })
+  return get(pathname.replace(/edit\/$/, '?embed_style=nested'), { 'Accept': 'application/json' })
     .then(data => JSON.parse(data))
     .then(data => ({ data }))
 }

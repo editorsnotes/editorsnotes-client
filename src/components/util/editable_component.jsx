@@ -5,6 +5,20 @@
 var React = require('react')
   , Immutable = require('immutable')
 
+function typeFromRecord(record) {
+  var Note = require('../../records/note')
+    , Topic = require('../../records/topic')
+    , Document = require('../../records/document')
+
+  if (record instanceof Document) return 'document';
+  if (record instanceof Topic) return 'topic';
+  if (record instanceof Note) return 'note';
+
+  throw new Error('Could not detect item type from record.');
+}
+
+// TODO: Decide on API. Should type be hardcoded, or should it be determined
+// by record type?
 module.exports = function makeEditableComponent(Component, type) {
   var EditableComponent = React.createClass({
     getInitialState() {
@@ -17,6 +31,8 @@ module.exports = function makeEditableComponent(Component, type) {
     save(id, projectURL, data) {
       var saveItem = require('../../utils/save_item')
         , handleResponse = require('../../utils/handle_response')
+
+      type = type || typeFromRecord(data);
 
       this.setState({
         errors: Immutable.Map(),
@@ -34,7 +50,7 @@ module.exports = function makeEditableComponent(Component, type) {
     },
 
     handleSaveError(err) {
-      var errorObj = err.data || { [type]: [err.message] || err.toString() }
+      var errorObj = err.data || { NON_FIELD_ERRORS: [err.message] || err.toString() }
         , errors = Immutable.fromJS(errorObj)
 
       this.setState({ errors });

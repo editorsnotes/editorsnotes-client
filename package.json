@@ -10,6 +10,7 @@
     "browserify": "^10.2.6",
     "codemirror": "^5.6.0",
     "cssnext": "^1.8.3",
+    "editorsnotes-markup-renderer": "^1.1.0",
     "immutable": "^3.7.3",
     "leaflet": "^0.7.3",
     "location-bar": "^2.0.0",
