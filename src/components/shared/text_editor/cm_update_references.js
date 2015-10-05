@@ -58,7 +58,7 @@ module.exports = function updateInlineReferences(cm, fromLine, toLine) {
 
       labelPromise
         .then(label => {
-          replacementEl.innerText = label;
+          replacementEl.textContent = label;
 
           cm.doc.markText(ref.startPos, ref.endPos, {
             replacedWith: replacementEl
