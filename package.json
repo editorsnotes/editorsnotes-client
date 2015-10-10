@@ -41,8 +41,6 @@
     "jedify": "0.0.1",
     "less": "^1.7.0",
     "minimist": "^1.2.0",
-    "node-underscorify": "0.0.14",
-    "nunjucks": "^1.2.0",
     "po2json": "^0.4.1",
     "testling": "^1.6.1",
     "typogr": "^0.6.5",
@@ -58,37 +56,11 @@
         }
       ],
       "browserify-shim",
-      "node-underscorify",
       "jedify",
       "brfs"
     ]
   },
-  "browser": {
-    "jquery-ui": "./lib/jquery/jquery-ui-1.10.4.custom.js",
-    "jquery-ui-touch-punch": "./lib/jquery/jquery.ui.touch-punch.js",
-    "jquery-timeago": "./lib/jquery/jquery.timeago.js",
-    "jquery-bootstrap": "./lib/jquery/bootstrap.min.js",
-    "jquery-babbq": "./lib/jquery/jquery.ba-bbq.min.js",
-    "sinon-event": "sinon/lib/sinon/util/event",
-    "sinon-fakeserver": "sinon/lib/sinon/util/fake_server",
-    "sinon-fakexhr": "sinon/lib/sinon/util/fake_xml_http_request"
-  },
   "browserify-shim": {
-    "jquery-ui": {
-      "depends": "jquery"
-    },
-    "jquery-ui-touch-punch": {
-      "depends": "jquery"
-    },
-    "jquery-timeago": {
-      "depends": "jquery"
-    },
-    "jquery-bootstrap": {
-      "depends": "jquery"
-    },
-    "jquery-babbq": {
-      "depends": "jquery"
-    },
     "citeproc": "global:CSL"
   },
   "scripts": {
