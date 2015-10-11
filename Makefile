@@ -1,4 +1,4 @@
-BROWSERIFY_OPTS = src/index-base.js -o static/bundle.js
+BROWSERIFY_OPTS = src/main.js -o static/bundle.js
 
 JS_FILES = $(shell find src/ -type f -name *js -o -name *jsx)
 CSS_FILES = $(shell find style/ -regex ".*\(css\|less\)") \
