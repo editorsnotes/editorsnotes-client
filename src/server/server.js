@@ -44,19 +44,26 @@ const fetchFn = function (req, pathname, headers={}) {
       } else if (response.statusCode === 200) {
         resolve(body);
       } else {
-        let msg
+        let errorMessage
+          , message
 
-        msg = 'Request resulted in non-200 status code\n. Request content:';
-        msg += JSON.stringify(response, true, ' ');
+        errorMessage = 'Request resulted in non-200 status code\n. Request content:';
+        errorMessage += JSON.stringify(response, true, ' ');
 
-        logError(msg);
+        logError(errorMessage);
 
-        resolve(JSON.stringify({
-          [FETCH_ERROR]: {
-            statusCode: response.statusCode,
-            message: JSON.parse(body).detail
-          }
-        }));
+        try {
+          message = JSON.parse(body).detail;
+          resolve(JSON.stringify({
+            [FETCH_ERROR]: {
+              message,
+              statusCode: response.statusCode
+            }
+          }));
+        } catch (e) {
+          reject(body);
+        }
+
       }
     });
   });
@@ -173,7 +180,7 @@ router.fallbackHandler = function () {
       })
       .then(props => {
         var hadError = props.data && props.data.has(FETCH_ERROR)
-          , component = hadError ? require('../components/error/index.jsx') : config.Component
+          , component = hadError ? require('../components/main/error/component.jsx') : config.Component
 
         return _.extend(props, {
           ActiveComponent: component
@@ -192,7 +199,9 @@ router.fallbackHandler = function () {
       logError(err);
 
       this.res.writeHead(500);
-      this.res.end(makeHTML(msg));
+      this.res.end(makeHTML(
+        msg +
+        `<iframe height=100% width=100% src="data:text/html;charset=utf-8,${encodeURI(err)}" />`))
     });
   }
 }

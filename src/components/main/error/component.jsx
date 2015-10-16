@@ -10,7 +10,6 @@ module.exports = React.createClass({
     return (
       <div>
         <h1>{ error.get('statusCode') } Error</h1>
-        <p>{ error.get('message') }</p>
       </div>
     )
   }
