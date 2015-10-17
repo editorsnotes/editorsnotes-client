@@ -24,8 +24,9 @@ module.exports = function (Component, type) {
 
     renderBreadcrumb() {
       var Breadcrumb = require('../shared/breadcrumb/component.jsx')
+        , { getEmbedded } = require('../../helpers/api')
         , { data } = this.props
-        , project = this.props.project || data.get('project')
+        , project = this.props.project || getEmbedded(data, 'project')
         , crumbs
 
       crumbs = Immutable.List([
@@ -55,7 +56,7 @@ module.exports = function (Component, type) {
     getProjectURL() {
       return this.isNew() ?
         this.props.project.get('url') :
-        this.props.data.get('url').match(/.*?\/projects\/[^\/]+\//)[0]
+        this.props.data.get('project')
     },
 
     handleSaveSuccess(response) {

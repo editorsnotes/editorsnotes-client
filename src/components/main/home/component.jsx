@@ -26,6 +26,11 @@ UserHomepage = React.createClass({
     var ActivityList = require('./activity_list.jsx')
       , { user } = this.props
       , { activity } = this.state
+      , projects
+
+    projects = user
+      .get('projects')
+      .map(url => user.get('_embedded').get(url))
 
     return (
       <div>
@@ -37,11 +42,12 @@ UserHomepage = React.createClass({
         <div className="row">
           <div className="span6">
             <h3>My projects</h3>
-            { user.get('project_roles').map((role, i) =>
+            {
+              projects.map((project, i) =>
                 <div key={i}>
-                  <h3><a href={role.get('project_url')}>{ role.get('project') }</a></h3>
+                  <h3><a href={project.get('url')}>{ project.get('name') }</a></h3>
                   <div>
-                    <a className="btn btn-primary" href={ role.get('project_url') + 'notes/add/' }>
+                    <a className="btn btn-primary" href={project.get('notes') + 'add/'}>
                       Add note
                     </a>
                   </div>

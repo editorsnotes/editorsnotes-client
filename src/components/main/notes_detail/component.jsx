@@ -9,7 +9,7 @@ module.exports = React.createClass({
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , note = this.props.data
-      , project = note.get('project')
+      , project = note.get('_embedded').get(note.get('project'))
       , crumbs
 
     crumbs = Immutable.fromJS([
@@ -28,6 +28,7 @@ module.exports = React.createClass({
 
   render: function () {
     var getLinks = require('../../../helpers/get_links')
+      , { getEmbedded } = require('../../../helpers/api')
       , note = this.props.data
       , links = getLinks(note)
 
@@ -66,8 +67,8 @@ module.exports = React.createClass({
         <dl id="note-authorship" className="dl-horizontal">
           <dt>Project</dt>
           <dd>
-            <a href={note.getIn(['project, url'])}>
-              {note.getIn(['project', 'name'])}
+            <a href={getEmbedded(note, 'project').get('url')}>
+              { getEmbedded(note, 'project').get('name') }
             </a>
           </dd>
 
@@ -93,8 +94,10 @@ module.exports = React.createClass({
           <dd>
             <ul className="unstyled">
               {
-                note.get('updaters').map(author =>
-                  <li key={author}><a href={author.get('url')}>{author.get('display_name')}</a></li>
+                getEmbedded(note, 'updaters').map(author =>
+                  <li key={author}>
+                    <a href={author.get('url')}>{author.get('display_name')}</a>
+                  </li>
                 )
               }
             </ul>
