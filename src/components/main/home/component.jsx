@@ -79,22 +79,6 @@ NonUserHomepage = React.createClass({
 
         <h2>Sign up</h2>
         <p><a href="/auth/account/create">Create an account</a></p>
-
-        <h2>Recently edited notes</h2>
-        <ul>
-        {
-          data.get('results').map(note =>
-            <li key={note.get('id')}>
-              <a href={note.get('url')}>{ note.get('title') }</a>
-              {' (by '}
-              <a href={note.getIn(['project', 'url'])}>
-               { note.getIn(['project', 'name']) }
-              </a>
-              {')'}
-            </li>
-          )
-        }
-        </ul>
       </div>
     )
   }
