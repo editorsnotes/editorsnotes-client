@@ -2,8 +2,6 @@
 
 var _ = require('underscore')
   , React = require('react')
-  , { DragDropContext } = require('react-dnd')
-  , HTML5Backend = require('react-dnd/modules/backends/HTML5')
   , Application
 
 Application = React.createClass({
@@ -62,4 +60,4 @@ Application = React.createClass({
   }
 });
 
-module.exports = DragDropContext(HTML5Backend)(Application);
+module.exports = Application;
