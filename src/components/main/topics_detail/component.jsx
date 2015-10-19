@@ -2,14 +2,22 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , HydraAware = require('../../util/hydra_aware.jsx')
+  , TopicDetail
 
-module.exports = React.createClass({
+TopicDetail = React.createClass({
   displayName: 'TopicDetail',
+
+  propTypes: {
+    data: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    canReplace: React.PropTypes.func.isRequired
+  },
 
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
+      , { getEmbedded } = require('../../../helpers/api')
       , topic = this.props.data
-      , project = topic.get('project')
+      , project = getEmbedded(topic, 'project')
       , crumbs
 
     crumbs = Immutable.fromJS([
@@ -22,9 +30,9 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var getLinks = require('../../../helpers/get_links')
-      , topic = this.props.data
-      , links = getLinks(topic)
+    var { data, canReplace } = this.props
+      , { getEmbedded, getType, getDisplayTitle } = require('../../../helpers/api')
+      , topic = data
 
     return (
       <div>
@@ -37,10 +45,11 @@ module.exports = React.createClass({
         </p>
 
         {
-          !links.has('edit') ? null :
+          canReplace() && (
             <div className="well">
-              <btn className="btn">Edit topic</btn>
+              <a href="edit/" className="btn">Edit topic</a>
             </div>
+          )
         }
         {
           !topic.get('alternate_names').size ? null :
@@ -64,7 +73,25 @@ module.exports = React.createClass({
             </section>
         }
 
+        <h2>Referenced by</h2>
+        <ul>
+        {
+          getEmbedded(topic, 'referenced_by').map(item =>
+              <li>
+                { getType(item) }:
+                {' '}
+                <a href={item.get('url')}>
+                  { getDisplayTitle(item) }
+                </a>
+              </li>
+          )
+        }
+        </ul>
+
+
       </div>
     )
   }
 });
+
+module.exports = HydraAware(TopicDetail);

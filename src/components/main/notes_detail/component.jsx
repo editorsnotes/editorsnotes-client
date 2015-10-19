@@ -2,14 +2,19 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , HydraAwareComponent = require('../../util/hydra_aware.jsx')
+  , NoteDetail
 
-module.exports = React.createClass({
-  displayName: 'Note',
+NoteDetail = React.createClass({
+  propTypes: {
+    data: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    canReplace: React.PropTypes.func.isRequired
+  },
 
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , note = this.props.data
-      , project = note.get('_embedded').get(note.get('project'))
+      , project = note.get('embedded').get(note.get('project'))
       , crumbs
 
     crumbs = Immutable.fromJS([
@@ -27,10 +32,9 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var getLinks = require('../../../helpers/get_links')
+    var { data, canReplace } = this.props
       , { getEmbedded } = require('../../../helpers/api')
-      , note = this.props.data
-      , links = getLinks(note)
+      , note = data
 
     return (
     <div id="note">
@@ -109,7 +113,7 @@ module.exports = React.createClass({
         </dl>
 
         {
-          !links.has('edit') ? '' :
+          canReplace() && (
             <div className="row">
               <div
                   className="span12 container"
@@ -117,6 +121,7 @@ module.exports = React.createClass({
                 <a href={note.get('url') + 'edit/'} className="btn btn-default">Edit note</a>
               </div>
             </div>
+          )
         }
       </section>
 
@@ -126,3 +131,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = HydraAwareComponent(NoteDetail)

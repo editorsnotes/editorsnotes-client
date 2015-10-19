@@ -13,11 +13,11 @@ UserHomepage = React.createClass({
   componentDidMount() {
     var getLinks = require('../../../helpers/get_links')
       , { user } = this.props
-      , activityURL = getLinks(user).getIn(['activity', 'href'])
+      , activityURL = user.get('activity')
 
     fetch(activityURL, { headers: { Accept: 'application/json' }})
       .then(response => response.json())
-      .then(data => data.activity)
+      .then(data => data.results)
       .then(Immutable.fromJS)
       .then(activity => this.setState({ activity }))
   },
@@ -30,7 +30,7 @@ UserHomepage = React.createClass({
 
     projects = user
       .get('projects')
-      .map(url => user.get('_embedded').get(url))
+      .map(url => user.get('embedded').get(url))
 
     return (
       <div>
