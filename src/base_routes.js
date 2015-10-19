@@ -10,9 +10,7 @@ module.exports = {
   '/': {
     name: 'home',
     Component: require('./components/main/home/component.jsx'),
-    getData: function (get) {
-      return getJSONFromPath(get, '/notes/')
-    }
+    getData: getJSONFromPath
   },
   '/browse/': {
     name: 'browse',

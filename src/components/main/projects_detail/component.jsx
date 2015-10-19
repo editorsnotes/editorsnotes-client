@@ -33,9 +33,9 @@ module.exports = React.createClass({
           <p>{project.get('description')}</p>
         </div>
         <ul>
-          <li><a href={project.get('notes_url')}>All notes</a></li>
-          <li><a href={project.get('topics_url')}>All topics</a></li>
-          <li><a href={project.get('documents_url')}>All documents</a></li>
+          <li><a href={project.get('notes')}>All notes</a></li>
+          <li><a href={project.get('topics')}>All topics</a></li>
+          <li><a href={project.get('documents')}>All documents</a></li>
         </ul>
       </section>
     </div>

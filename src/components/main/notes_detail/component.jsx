@@ -2,14 +2,19 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , HydraAwareComponent = require('../../util/hydra_aware.jsx')
+  , NoteDetail
 
-module.exports = React.createClass({
-  displayName: 'Note',
+NoteDetail = React.createClass({
+  propTypes: {
+    data: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    canReplace: React.PropTypes.func.isRequired
+  },
 
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , note = this.props.data
-      , project = note.get('project')
+      , project = note.get('embedded').get(note.get('project'))
       , crumbs
 
     crumbs = Immutable.fromJS([
@@ -27,9 +32,9 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var getLinks = require('../../../helpers/get_links')
-      , note = this.props.data
-      , links = getLinks(note)
+    var { data, canReplace } = this.props
+      , { getEmbedded } = require('../../../helpers/api')
+      , note = data
 
     return (
     <div id="note">
@@ -66,8 +71,8 @@ module.exports = React.createClass({
         <dl id="note-authorship" className="dl-horizontal">
           <dt>Project</dt>
           <dd>
-            <a href={note.getIn(['project, url'])}>
-              {note.getIn(['project', 'name'])}
+            <a href={getEmbedded(note, 'project').get('url')}>
+              { getEmbedded(note, 'project').get('name') }
             </a>
           </dd>
 
@@ -93,8 +98,10 @@ module.exports = React.createClass({
           <dd>
             <ul className="unstyled">
               {
-                note.get('updaters').map(author =>
-                  <li key={author}><a href={author.get('url')}>{author.get('display_name')}</a></li>
+                getEmbedded(note, 'updaters').map(author =>
+                  <li key={author}>
+                    <a href={author.get('url')}>{author.get('display_name')}</a>
+                  </li>
                 )
               }
             </ul>
@@ -106,7 +113,7 @@ module.exports = React.createClass({
         </dl>
 
         {
-          !links.has('edit') ? '' :
+          canReplace() && (
             <div className="row">
               <div
                   className="span12 container"
@@ -114,6 +121,7 @@ module.exports = React.createClass({
                 <a href={note.get('url') + 'edit/'} className="btn btn-default">Edit note</a>
               </div>
             </div>
+          )
         }
       </section>
 
@@ -123,3 +131,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = HydraAwareComponent(NoteDetail)

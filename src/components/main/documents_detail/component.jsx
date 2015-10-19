@@ -16,8 +16,9 @@ module.exports = React.createClass({
 
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
+      , { getEmbedded } = require('../../../helpers/api')
       , doc = this.props.data
-      , project = doc.get('project')
+      , project = getEmbedded(doc, 'project')
       , crumbs
 
     crumbs = Immutable.List([
