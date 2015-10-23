@@ -1,8 +1,7 @@
-/*
 @import "normalize.css";
-@import "bascss";
+@import "basscss";
 @import "codemirror/lib/codemirror.css";
-*/
+
 
 /** Zotero items **/
 .zotero-row {
