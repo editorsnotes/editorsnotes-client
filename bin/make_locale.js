@@ -8,7 +8,7 @@ var fs = require('fs')
 
 function getTranslationsFromFiles() {
   stringsFiles = child_process
-    .execSync('find ./src/components -name strings.js', { encoding: 'utf-8' })
+    .execSync('find ../src/components -name strings.js', { encoding: 'utf-8' })
     .trim()
     .split('\n')
 
@@ -61,7 +61,7 @@ function getTranslationsFromFiles() {
 
 function getExistingTranslation() {
   try {
-    var poString = fs.readFileSync(`./locale/${lang}/LC_MESSAGES/main.po`, 'utf8')
+    var poString = fs.readFileSync(`../locale/${lang}/LC_MESSAGES/main.po`, 'utf8')
       , poData = gettextParser.po.parse(poString)
 
     return poData
