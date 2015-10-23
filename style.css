@@ -1,5 +1,7 @@
 @import "normalize.css";
 @import "basscss";
+@import "font-awesome";
+@import "openwebicons/css/openwebicons.css";
 @import "codemirror/lib/codemirror.css";
 
 
