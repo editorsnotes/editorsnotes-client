@@ -29,11 +29,14 @@
     "zotero-to-csl": "^1.0.1"
   },
   "devDependencies": {
+    "babel-plugin-react-transform": "^1.1.1",
     "brfs": "1.0.0",
+    "browserify-hmr": "^0.3.1",
     "browserify-shim": "^3.8.2",
     "clean-css": "^3.1.9",
     "cookie": "^0.1.2",
     "cookie-cutter": "^0.1.1",
+    "envify": "^3.4.0",
     "factor-bundle": "^2.3.3",
     "gettext-parser": "^1.1.1",
     "jed": "^1.1.0",
@@ -41,6 +44,9 @@
     "less": "^1.7.0",
     "minimist": "^1.2.0",
     "po2json": "^0.4.1",
+    "react-transform-catch-errors": "^1.0.0",
+    "react-transform-hmr": "^1.0.1",
+    "redbox-react": "^1.1.1",
     "testling": "^1.6.1",
     "typogr": "^0.6.5",
     "uglify-js": "^2.4.14"
@@ -51,9 +57,10 @@
         "babelify",
         {
           "sourceMapRelative": ".",
-          "only": "src/**"
+          "ignore": "lib/**/**"
         }
       ],
+      "envify",
       "browserify-shim",
       "jedify",
       "brfs"
