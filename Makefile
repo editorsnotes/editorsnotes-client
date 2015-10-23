@@ -24,9 +24,8 @@ watch:
 	node_modules/.bin/watchify $(BROWSERIFY_INFILE) -o $(BROWSERIFY_OUTFILE) -dv
 
 
-# watch-styleguide:
-# 	node_modules/.bin/watchify -p browserify-hmr $(BROWSERIFY_OPTS) -dv
-
+watch-styleguide: static/style.css
+	./bin/watch-styleguide.sh
 
 
 #############
