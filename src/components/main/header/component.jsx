@@ -3,6 +3,8 @@
 var React = require('react')
 
 module.exports = React.createClass({
+  displayName: 'Header',
+
   propTypes: {
     loading: React.PropTypes.bool.isRequired
   },

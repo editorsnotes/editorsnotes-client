@@ -18,12 +18,18 @@ StyleGuideComponent = React.createClass({
 
   render() {
     var { Component, componentProps } = this.props
+      , { displayName } = Component
 
     return (
-      <div>
-        <h2>{ Component.name }</h2>
+      <div id={displayName} className="py3 border-bottom">
+        <h2 className="p0 m0">
+          <a className="absolute mxn2" href={`#${displayName}`}>#</a>
+          <span>{ displayName }</span>
+        </h2>
         <h3>Example</h3>
-        <Component {...componentProps} />
+        <div className="px2">
+          <Component {...componentProps} />
+        </div>
       </div>
     )
   }
@@ -35,7 +41,10 @@ module.exports = React.createClass({
       , RelatedTopicSelector = require('../src/components/shared/related_topic_selector/component.jsx')
 
     return (
-      <div>
+      <div className="px4">
+        <div>
+          <h1>Working Notes style guide</h1>
+        </div>
         <StyleGuideComponent
             Component={Header}
             componentProps={{
