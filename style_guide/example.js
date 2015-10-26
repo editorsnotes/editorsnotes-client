@@ -30,5 +30,21 @@ module.exports = [
         }
       }
     ]
+  },
+
+  {
+    Component: require('../src/components/shared/breadcrumb/component.jsx'),
+    examples: [
+      {
+        title: '',
+        props: {
+          crumbs: Immutable.List([
+            Immutable.Map({ label: 'First', href: '#' }),
+            Immutable.Map({ label: 'Second', href: '#' }),
+            Immutable.Map({ label: 'A very ' + 'long, '.repeat(20) + 'title', href: '#' }),
+          ])
+        }
+      }
+    ]
   }
 ]
