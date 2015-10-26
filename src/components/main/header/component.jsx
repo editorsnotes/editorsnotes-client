@@ -42,7 +42,11 @@ module.exports = React.createClass({
             </div>
 
             <form action="/search/" method="get">
-              <input type="text" name="q" x-search-target="topics" placeholder="Search" />
+              <input
+                  type="text"
+                  className="field"
+                  name="q"
+                  placeholder="Search" />
             </form>
 
             { /* <Spinner spin={loading} /> */ }

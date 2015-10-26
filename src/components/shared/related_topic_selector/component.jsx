@@ -15,7 +15,7 @@ module.exports = React.createClass({
       <div>
         <input
             type="text"
-            className="mb1"
+            className="field mb1"
             style={{ width: '350px' }}
             placeholder="Begin typing to search for topics." />
         {
