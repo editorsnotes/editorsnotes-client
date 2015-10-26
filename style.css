@@ -4,6 +4,20 @@
 @import "openwebicons/css/openwebicons.css";
 @import "codemirror/lib/codemirror.css";
 
+/****************************
+ * Style variable overrides *
+ ****************************/
+
+:root {
+    font-size: 14px;
+    --body-font-size: 14px;
+}
+
+
+
+/**************
+ * Components *
+ **************/
 
 /** Zotero items **/
 .zotero-row {
