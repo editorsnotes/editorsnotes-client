@@ -1,54 +1,63 @@
-BROWSERIFY_OPTS = src/main.js -o static/bundle.js
+###############
+#  Variables  #
+###############
+
+NPM_BIN=node_modules/.bin
+
+BROWSERIFY_INFILE = src/main.js
+BROWSERIFY_OUTFILE = static/bundle.js
 
 JS_FILES = $(shell find src/ -type f -name *js -o -name *jsx)
-CSS_FILES = $(shell find style/ -regex ".*\(css\|less\)") \
-	    static/basscss.css \
-	    static/normalize.css \
-	    static/codemirror.css \
-	    style.css
+FONT_FILES = ./node_modules/font-awesome/fonts/* \
+	     ./node_modules/openwebicons/font/*
 
-FONT_FILES = $(shell find style/ -wholename "*/font/*" -type f)
 
-# ------------------ #
+
+###################
+#  Phony targets  #
+###################
 
 all: \
 	static/bundle.min.js \
 	static/style.min.css
 
 
+watch:
+	$(NPM_BIN)/watchify $(BROWSERIFY_INFILE) -o $(BROWSERIFY_OUTFILE) -dv
+
+
+watch-styleguide: static/style.css
+	NODE_ENV=styleguide ./bin/watch-styleguide.sh
+
+
+#############
+#  Targets  #
+#############
+
 static:
-	mkdir -p static
+	mkdir -p $@
 
 
-static/bundle.js: static $(JS_FILES)
-	node_modules/.bin/browserify $(BROWSERIFY_OPTS)
+$(BROWSERIFY_OUTFILE): $(BROWSERIFY_INFILE) static $(JS_FILES)
+	NODE_ENV=production $(NPM_BIN)/browserify $< -o $@
+
 
 static/bundle.min.js: static/bundle.js
-	node_modules/.bin/uglifyjs -c -- static/bundle.js > static/bundle.min.js
+	$(NPM_BIN)/uglifyjs -c warnings=false -- $< > $@
 
 
-static/basscss.css: static
-	echo '@import "basscss";' | node_modules/.bin/cssnext > static/basscss.css
+static/style.css: static style.css static/fonts
+	# sed command is to replace url() paths for fonts in compiled CSS
+	$(NPM_BIN)/cssnext -U ./style.css \
+		| sed -e 's|../fonts\?/|fonts/|g' \
+		> $@
 
-static/normalize.css: static
-	echo '@import "normalize.css";' | node_modules/.bin/cssnext > static/normalize.css
+static/fonts: $(FONT_FILES)
+	mkdir -p static/fonts && cp $(FONT_FILES) $@
 
-static/codemirror.css: static
-	echo '@import "codemirror/lib/codemirror.css";' | node_modules/.bin/cssnext > static/codemirror.css
-
-static/style.css: static $(CSS_FILES) static/font
-	node_modules/.bin/lessc ./style/main.less > static/style.css
-	node_modules/.bin/cssnext ./style.css >> static/style.css
-	
-static/font: $(FONT_FILES)
-	mkdir -p static/font && cp $(FONT_FILES) static/font
 
 static/style.min.css: static/style.css
-	node_modules/.bin/cleancss static/style.css -o static/style.min.css
+	$(NPM_BIN)/cleancss $< -o $@
 
 
-watch:
-	node_modules/.bin/watchify $(BROWSERIFY_OPTS) -dv
-
-
-.PHONY: all watch
+.PHONY: all watch watch-styleguide

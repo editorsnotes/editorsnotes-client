@@ -18,8 +18,8 @@ module.exports = React.createClass({
     var { errors } = this.props
 
     return errors.size > 0 && (
-      <div className="alert alert-danger">
-        <ul>
+      <div className="px2 py1 bg-red rounded">
+        <ul className="m0">
           { errors.map((err, i) => <li key={i}>{ err }</li>) }
         </ul>
       </div>

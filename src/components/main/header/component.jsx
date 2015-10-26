@@ -3,8 +3,30 @@
 var React = require('react')
 
 module.exports = React.createClass({
+  displayName: 'Header',
+
   propTypes: {
     loading: React.PropTypes.bool.isRequired
+  },
+
+  renderAuth() {
+    var { user } = this.props
+
+    return !user ?
+      <a href="/auth/signin" className="silver">Sign in</a> :
+      <div>
+        <span key={1} className="silver">Logged in as </span>
+        <a key={2} href={user.get('url')} className="silver bold">
+          { user.get('display_name') }
+        </a>
+        {
+          /*
+        <span key={3}>
+          <a href="/auth/signout">Sign out</a>
+        </span>
+          */
+        }
+      </div>
   },
 
   render: function () {
@@ -12,43 +34,27 @@ module.exports = React.createClass({
       , { loading } = this.props
 
     return (
-      <div className="navbar">
-        <div className="navbar-inner">
-          <div className="container">
-            <ul className="nav">
-              <li><a className="brand" href="/">Working Notes</a></li>
-              <li><Spinner spin={loading} /></li>
-              {
-                /*
-                <li><a href="/browse/">Browse</a></li>
-                <li><a href="/about/">About</a></li>
-                */
-              }
-              <li className="divider-vertical"></li>
-              <form className="navbar-search" action="/search/" method="get">
-                <input type="text" className="search-query search-autocomplete" name="q" x-search-target="topics" placeholder="Search" />
-              </form>
-            </ul>
-
-              <ul className="nav pull-right">
-                {
-                  !this.props.user ?
-                    <li><a href="/auth/signin">Log in</a></li> :
-                    [
-                      <li key="logged-in-user">
-                        <p className="navbar-text">
-                          Logged in as {this.props.user.get('display_name')}
-                        </p>
-                      </li>,
-                      <li key="log-out">
-                        <a href="/auth/signout" onClick={this.handleLogOut}>Log out</a>
-                      </li>
-                    ]
-                }
-              </ul>
+      <nav className="bg-black mb2">
+        <div className="px3 py1 bg-lighten-1">
+          <div className="container flex flex-center flex-justify">
+            <div className="h2">
+              <a className="silver" href="/">Working Notes</a>
             </div>
+
+            <form action="/search/" method="get">
+              <input
+                  type="text"
+                  className="field"
+                  name="q"
+                  placeholder="Search" />
+            </form>
+
+            { /* <Spinner spin={loading} /> */ }
+
+            { this.renderAuth() }
           </div>
         </div>
+      </nav>
     )
   }
 });

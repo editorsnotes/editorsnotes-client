@@ -25,24 +25,22 @@ module.exports = React.createClass({
     }
 
     return (
-      <ul className="breadcrumb-top">
+      <ul className="list-reset">
         {
           this.props.crumbs.pop().map((crumb, i) =>
-            <li key={i}>
+            <li className="inline-block" key={i}>
               <a href={crumb.get('href')}>
                 {crumb.get('label')}
               </a>
-              <span className="divider">
-                {' > '}
-              </span>
+              <span className="inline-block px1 gray muted"> > </span>
             </li>
           )
         }
 
         {
           typeof lastLabel === 'string' ?
-            <li className="active" dangerouslySetInnerHTML={{ __html: lastLabel }} /> :
-            <li className="active">{ lastLabel }</li>
+            <li className="inline-block gray" dangerouslySetInnerHTML={{ __html: lastLabel }} /> :
+            <li className="inline-block gray">{ lastLabel }</li>
         }
       </ul>
     )

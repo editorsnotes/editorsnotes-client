@@ -11,8 +11,7 @@ UserHomepage = React.createClass({
   },
 
   componentDidMount() {
-    var getLinks = require('../../../helpers/get_links')
-      , { user } = this.props
+    var { user } = this.props
       , activityURL = user.get('activity')
 
     fetch(activityURL, { headers: { Accept: 'application/json' }})
@@ -24,13 +23,12 @@ UserHomepage = React.createClass({
 
   render() {
     var ActivityList = require('./activity_list.jsx')
-      , { user } = this.props
+      , { getEmbedded } = require('../../../helpers/api')
+      , { user, data } = this.props
       , { activity } = this.state
       , projects
 
-    projects = user
-      .get('projects')
-      .map(url => user.get('embedded').get(url))
+    projects = data.get('affiliated_projects')
 
     return (
       <div>
@@ -68,8 +66,6 @@ UserHomepage = React.createClass({
 
 NonUserHomepage = React.createClass({
   render() {
-    var { data } = this.props
-
     return (
       <div>
         <h1>Working Notes</h1>

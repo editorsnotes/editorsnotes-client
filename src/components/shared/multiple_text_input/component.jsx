@@ -29,6 +29,7 @@ module.exports = React.createClass({
       <div className="multiple-text-input">
         <input
           type="text"
+          className="field"
           style={{ width: '350px' }}
           placeholder="Enter a new alternate name and press return to add it."
           onKeyDown={this.handleKeyDown}
@@ -36,10 +37,10 @@ module.exports = React.createClass({
         {
           this.props.values.map((value, i) =>
             <div key={'value-' + i} className="multiple-text-input-value">
-              <span className="destroy"
+              <a href="#" className="destroy mr1"
                 onClick={this.props.onValueRemoved.bind(null, value)}>
                 <i className="fa fa-minus-circle" />
-              </span>
+              </a>
               {value}
             </div>
           )

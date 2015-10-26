@@ -12,11 +12,11 @@ module.exports = React.createClass({
     embeddedItems: React.PropTypes.instanceOf(Immutable.Map),
     html: React.PropTypes.string,
     minimal: React.PropTypes.bool,
+    noCodeMirror: React.PropTypes.bool,
   },
 
   getDefaultProps() {
     return {
-      html: '',
       style: {},
       minimal: false
     }
@@ -57,7 +57,7 @@ module.exports = React.createClass({
   getItemFromID(itemType, itemID) {
     var cslFromDocuments = require('editorsnotes-markup-renderer/lib/csl_from_documents')
       , { projectURL } = this.props
-      , { embeddedItems, citationGenerator } = this.state
+      , { embeddedItems } = this.state
       , item
       , promise
 
@@ -139,10 +139,12 @@ module.exports = React.createClass({
   componentDidMount() {
     var codemirrorEditor = require('./editor')
       , CitationGenerator = require('../../../utils/citation_generator')
-      , { html, minimal, onChange } = this.props
+      , { html, minimal, onChange, noCodeMirror } = this.props
       , el = React.findDOMNode(this.refs.content)
       , opts = {}
       , editor
+
+    if (noCodeMirror) return;
 
     this.setState({
       citationGenerator: new CitationGenerator('chicago-author-date')
@@ -160,10 +162,13 @@ module.exports = React.createClass({
 
     editor.display.wrapper.style.fontFamily = '"Times New Roman"';
     editor.display.wrapper.style.fontSize = '16px';
+    editor.display.wrapper.style.lineHeight = '16px';
+
     editor.display.wrapper.style.height = 'auto';
-    editor.display.wrapper.style.border = '1px solid #ccc';
-    editor.display.wrapper.style.padding = '1em';
-    editor.display.scroller.style.minHeight = '360px';
+    editor.display.scroller.style.minHeight = '558px';
+
+    //editor.display.wrapper.style.border = '1px solid #ccc';
+    // editor.display.wrapper.style.padding = '1em';
 
     editor.refresh();
 
@@ -179,17 +184,19 @@ module.exports = React.createClass({
 
   render() {
     var References = require('./references.jsx')
-      , { projectURL, minimal } = this.props
-      , { referenceType } = this.state
+      , { projectURL, minimal, html } = this.props
+      , { referenceType, editor } = this.state
 
     return (
-      <div className="row">
-        <div className={minimal ? "span12" : "span7"}>
-          <div ref="content" />
+      <div className="bg-gray py2 px1 flex" style={{ justifyContent: 'center' }}>
+        <div className="TextEditor-editor col-12 p3 border bg-white">
+          <div ref="content">
+          </div>
         </div>
+
         {
           !minimal && (
-            <div className="span5">
+            <div className="TextEditor-references col-12 p3 border bg-white">
               <References
                   type={referenceType}
                   projectURL={projectURL}

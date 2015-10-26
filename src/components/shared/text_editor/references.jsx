@@ -43,7 +43,7 @@ module.exports = React.createClass({
 
     return (
       <div>
-        <h3><Translate text={strings.referencesHeader} /></h3>
+        <h3 className="m0"><Translate text={strings.referencesHeader} /></h3>
 
         { type === 'empty' && <p><Translate text={strings.referenceHint} /></p> }
 
