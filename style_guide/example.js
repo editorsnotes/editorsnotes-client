@@ -87,4 +87,19 @@ module.exports = [
 
     ]
   },
+
+  {
+    Component: require('../src/components/shared/multiple_text_input/component.jsx'),
+    examples: [
+      {
+        title: '',
+        props: {
+          values: Immutable.List(['first', 'second', 'third']),
+          onValueAdded: () => null,
+          onValueRemoved: () => null,
+        }
+      }
+    ]
+  },
+
 ]
