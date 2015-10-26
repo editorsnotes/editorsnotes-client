@@ -1,6 +1,6 @@
 {
   "env": {
-    "development": {
+    "styleguide": {
       "plugins": [
 	"react-display-name",
         "react-transform"

@@ -27,7 +27,7 @@ watch:
 
 
 watch-styleguide: static/style.css
-	./bin/watch-styleguide.sh
+	NODE_ENV=styleguide ./bin/watch-styleguide.sh
 
 
 #############
