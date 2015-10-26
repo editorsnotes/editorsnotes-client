@@ -1,3 +1,5 @@
+/* eslint camelcase:0 */
+
 var Immutable = require('immutable')
 
 module.exports = [
@@ -61,5 +63,28 @@ module.exports = [
         }
       }
     ]
-  }
+  },
+
+  {
+    Component: require('../src/components/shared/text_editor/component.jsx'),
+    examples: [
+      {
+        title: 'Without reference box',
+        props: {
+          minimal: true,
+          noCodeMirror: true,
+          html: 'This is the content.'
+        }
+      },
+
+      {
+        title: 'With reference box',
+        props: {
+          noCodeMirror: true,
+          html: 'This is the content.'
+        }
+      },
+
+    ]
+  },
 ]
