@@ -1,7 +1,6 @@
 "use strict";
 
 var React = require('react')
-  , Immutable = require('immutable')
   , StyleGuideComponent
 
 StyleGuideComponent = React.createClass({
@@ -9,7 +8,7 @@ StyleGuideComponent = React.createClass({
 
   propTypes: {
     Component: React.PropTypes.element.isRequired,
-    componentProps: React.PropTypes.object,
+    examples: React.PropTypes.array,
   },
 
   getDefaultProps() {
@@ -17,7 +16,7 @@ StyleGuideComponent = React.createClass({
   },
 
   render() {
-    var { Component, componentProps } = this.props
+    var { Component, examples } = this.props
       , { displayName } = Component
 
     return (
@@ -26,10 +25,20 @@ StyleGuideComponent = React.createClass({
           <a className="absolute mxn2" href={`#${displayName}`}>#</a>
           <span>{ displayName }</span>
         </h2>
-        <h3>Example</h3>
-        <div className="px2">
-          <Component {...componentProps} />
-        </div>
+
+        {
+          examples.map(example =>
+            <div>
+              <h3>
+                Example{example.title && ': ' + example.title}
+              </h3>
+              <div className="px2">
+                <Component {...example.props} />
+              </div>
+            </div>
+          )
+        }
+
       </div>
     )
   }
@@ -37,33 +46,14 @@ StyleGuideComponent = React.createClass({
 
 module.exports = React.createClass({
   render() {
-    var Header = require('../src/components/main/header/component.jsx')
-      , RelatedTopicSelector = require('../src/components/shared/related_topic_selector/component.jsx')
+    var guides = require('./example')
 
     return (
       <div className="px4">
         <div>
           <h1>Working Notes style guide</h1>
         </div>
-        <StyleGuideComponent
-            Component={Header}
-            componentProps={{
-              loading: false,
-              user: Immutable.Map({
-                url: '/',
-                display_name: 'Patrick Golden'
-              })
-            }} />
-
-
-        <StyleGuideComponent
-            Component={RelatedTopicSelector}
-            componentProps={{
-              topics: Immutable.Set([
-                Immutable.Map({ id: 1, preferred_name: 'Emma Goldman' }),
-                Immutable.Map({ id: 2, preferred_name: 'Alexander Berkman' })
-              ])
-            }} />
+        { guides.map(guide => <StyleGuideComponent {...guide} />) }
       </div>
     )
   }
