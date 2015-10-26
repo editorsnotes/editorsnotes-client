@@ -46,5 +46,20 @@ module.exports = [
         }
       }
     ]
+  },
+
+  {
+    Component: require('../src/components/shared/field_errors.jsx'),
+    examples: [
+      {
+        title: '',
+        props: {
+          errors: Immutable.List([
+            'First error',
+            'Second error'
+          ])
+        }
+      }
+    ]
   }
 ]
