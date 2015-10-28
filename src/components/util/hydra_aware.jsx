@@ -15,7 +15,7 @@ module.exports = function makeHydraLinkAware(Component) {
       return data
         .get('hydra:operation')
         .some(operation => (
-          operation.get('type') === `hydra:${type}ResourceOperation`))
+          operation.get('@type') === `hydra:${type}ResourceOperation`))
     },
 
     canCreate() {
