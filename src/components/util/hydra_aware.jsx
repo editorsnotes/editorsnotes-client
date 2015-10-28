@@ -13,7 +13,7 @@ module.exports = function makeHydraLinkAware(Component) {
       var { data } = this.props
 
       return data
-        .get('hydra:operation')
+        .get('hydra:operation', Immutable.List())
         .some(operation => (
           operation.get('@type') === `hydra:${type}ResourceOperation`))
     },
