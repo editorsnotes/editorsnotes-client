@@ -99,8 +99,9 @@ router.add(require('../admin_routes'))
 
 function render(props, bootstrap) {
   var Application = require('../components/application.jsx')
+    , { renderToString } = require('react-dom/server')
     , application = React.createElement(Application, props)
-    , html = makeHTML(React.renderToString(application), bootstrap)
+    , html = makeHTML(renderToString(application), bootstrap)
 
   return html;
 }

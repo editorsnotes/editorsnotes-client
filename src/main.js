@@ -19,11 +19,13 @@ window.EditorsNotes.events = new EventEmitter();
 
 
 /* Function that will render the whole application */
-function render(props) {
+function renderApplication(props) {
   var Application = require('./components/application.jsx')
-    , el = document.body.querySelector('#react-app')
+    , { render } = require('react-dom')
 
-  return React.render(<Application {...props} />, el);
+  return render(
+      React.createElement(Application, props),
+      document.body.querySelector('#react-app'))
 }
 
 
@@ -54,7 +56,7 @@ router.fallbackHandler = function () {
 
     promise = promise
       .then(props => _.extend(props, { ActiveComponent: config.Component }))
-      .then(render)
+      .then(renderApplication)
   }
 }
 

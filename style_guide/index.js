@@ -1,3 +1,5 @@
+"use strict";
+
 var React = require('react')
   , TestComponent = require('./component.jsx')
 
@@ -6,7 +8,9 @@ window.EditorsNotes = {
 }
 
 window.onload = function () {
-  React.render(
+  var { render } = require('react-dom')
+
+  render(
     React.createElement(TestComponent, null),
     document.getElementById('main')
   );
