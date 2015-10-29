@@ -9,9 +9,15 @@
  ****************************/
 
 :root {
-    font-size: 14px;
-    --body-font-size: 14px;
+    font-size: 13px;
+    --body-font-size: 13px;
+
+    --light-gray: #f5f5f5;
+    --green: green;
 }
+
+.lightgray { color: var(--light-gray); }
+.bg-lightgray { background-color: var(--light-gray); }
 
 
 
@@ -39,6 +45,16 @@
 
 .CodeMirror-scroll:hover {
     cursor: text;
+}
+
+/* Note heading */
+.NoteInformation--Heading {
+    width: 90px;
+    text-align: right;
+}
+
+.NoteInformation--Item {
+    margin-left: 100px;
 }
 
 /** Zotero items **/

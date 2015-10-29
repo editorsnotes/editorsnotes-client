@@ -1,3 +1,5 @@
+"use strict";
+
 /* eslint camelcase:0 */
 
 var Immutable = require('immutable')
@@ -97,6 +99,48 @@ module.exports = [
           values: Immutable.List(['first', 'second', 'third']),
           onValueAdded: () => null,
           onValueRemoved: () => null,
+        }
+      }
+    ]
+  },
+
+  {
+    Component: require('../src/components/main/notes_detail/information.jsx'),
+    examples: [
+      {
+        title: '',
+        props: {
+          canReplace: () => false,
+          note: Immutable.fromJS({
+            title: 'A note',
+            project: '#aproject',
+            status: 'open',
+            updaters: [
+              '#anauthor',
+              '#anotherauthor'
+            ],
+            related_topics: [],
+            last_updated: 'December 3',
+            license: {
+              url: '#alicense',
+              name: 'The license',
+              symbols: 'c'
+            },
+            embedded: {
+              '#aproject': {
+                url: '#aproject',
+                name: 'The Emma Goldman Papers'
+              },
+              '#anauthor': {
+                url: '#anauthor',
+                display_name: 'Patrick Golden'
+              },
+              '#anotherauthor': {
+                url: '#anotherauthor',
+                display_name: 'Ryan Shaw'
+              }
+            }
+          }),
         }
       }
     ]

@@ -39,15 +39,13 @@ NoteDetail = React.createClass({
       <div>
         { this.renderBreadcrumb() }
 
-        <header>
-          <h2>{ data.get('title') }</h2>
-        </header>
-
         <section>
           <NoteInformation
               canReplace={canReplace}
               note={data} />
         </section>
+
+        <hr />
 
         <section>
           { this.renderMarkup() }
