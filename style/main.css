@@ -13,9 +13,9 @@
  **************/
 
 /* Text editor */
-.TextEditor-editor {
-    min-height: 40rem;
-    max-width: 24rem;
+.TextEditor--editor {
+    min-height: 480px;
+    max-width: 600px;
 
     font-size: 16px;
     font-family: serif;
@@ -23,8 +23,8 @@
     box-shadow: 0px 2px 10px -2px #111;
 }
 
-.TextEditor-references {
-    max-width: 14rem;
+.TextEditor--references {
+    max-width: 360px;
     max-height: 100vh;
 
     box-shadow: 0px 2px 10px -2px #111;

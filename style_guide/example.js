@@ -75,7 +75,7 @@ module.exports = [
         props: {
           minimal: true,
           noCodeMirror: true,
-          html: 'This is the content.'
+          html: 'This line of text, this very line here, is precisely, no more and no less than, 94 characters.'
         }
       },
 
@@ -83,7 +83,7 @@ module.exports = [
         title: 'With reference box',
         props: {
           noCodeMirror: true,
-          html: 'This is the content.'
+          html: 'This line of text, this very line here, is precisely, no more and no less than, 94 characters.'
         }
       },
 

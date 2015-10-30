@@ -165,7 +165,7 @@ module.exports = React.createClass({
     editor.display.wrapper.style.lineHeight = '16px';
 
     editor.display.wrapper.style.height = 'auto';
-    editor.display.scroller.style.minHeight = '558px';
+    editor.display.scroller.style.minHeight = '480px';
 
     //editor.display.wrapper.style.border = '1px solid #ccc';
     // editor.display.wrapper.style.padding = '1em';
@@ -189,14 +189,15 @@ module.exports = React.createClass({
 
     return (
       <div className="bg-gray py2 px1 flex" style={{ justifyContent: 'center' }}>
-        <div className="TextEditor-editor col-12 p3 border bg-white">
+        <div className="TextEditor--editor col-12 p4 border bg-white">
           <div ref="content">
+            { !editor && html }
           </div>
         </div>
 
         {
           !minimal && (
-            <div className="TextEditor-references col-12 p3 border bg-white">
+            <div className="TextEditor--references col-12 ml3 p4 border bg-white">
               <References
                   type={referenceType}
                   projectURL={projectURL}
