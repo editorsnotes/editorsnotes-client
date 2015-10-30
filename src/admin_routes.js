@@ -18,7 +18,7 @@ module.exports = {
     name: 'note_add',
     Component: require('./components/main/note_edit/component.jsx'),
     getData: function () {
-      return getJSONFromTrimmedPath.apply(null, arguments)
+      return getProjectJSON.apply(null, arguments)
         .then(ret => {
           ret.noContainer = true;
           return ret;
