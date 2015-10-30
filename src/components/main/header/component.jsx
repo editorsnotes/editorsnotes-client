@@ -30,11 +30,13 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    var Spinner = require('../../shared/spinner/component.jsx')
-      , { loading } = this.props
+    var classnames = require('classnames')
+      , { noContainer } = this.props
 
     return (
-      <nav className="bg-black mb2">
+      <nav className={classnames('bg-black', {
+        mb2: !noContainer
+      })}>
         <div className="px3 py1 bg-lighten-1">
           <div className="container flex flex-center flex-justify">
             <div className="h2">

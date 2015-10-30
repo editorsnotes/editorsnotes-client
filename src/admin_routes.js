@@ -17,12 +17,24 @@ module.exports = {
   '/projects/:project_slug/notes/add/': {
     name: 'note_add',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: getProjectJSON
+    getData: function () {
+      return getJSONFromTrimmedPath.apply(null, arguments)
+        .then(ret => {
+          ret.noContainer = true;
+          return ret;
+        })
+    }
   },
   '/projects/:project_slug/notes/:id/edit/': {
     name: 'note_edit',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: getJSONFromTrimmedPath
+    getData: function () {
+      return getJSONFromTrimmedPath.apply(null, arguments)
+        .then(ret => {
+          ret.noContainer = true;
+          return ret;
+        })
+    }
   },
 
   /* Topics */

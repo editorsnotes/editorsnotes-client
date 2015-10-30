@@ -17,9 +17,11 @@ Application = React.createClass({
   },
 
   render: function () {
-    var Header = require('./main/header/component.jsx')
+    var classnames = require('classnames')
+      , Header = require('./main/header/component.jsx')
       , Footer = require('./main/footer/component.jsx')
-      , ActiveComponent = this.props.ActiveComponent
+      , { ActiveComponent, noContainer } = this.props
+      , { loading } = this.state
       , user = this.props.__AUTHENTICATED_USER__ || null
       , activeComponentProps
 
@@ -28,7 +30,10 @@ Application = React.createClass({
 
     return (
       <div className="flex flex-column" style={{ minHeight: '100vh' }}>
-        <Header user={user} loading={this.state.loading} />
+        <Header
+            user={user}
+            loading={loading}
+            noContainer={noContainer} />
         {/* FIXME: messages
 
         {% if messages %}
@@ -44,7 +49,9 @@ Application = React.createClass({
         */}
 
         <main className="flex-grow">
-          <div className="container">
+          <div className={classnames({
+            container: !noContainer
+          })}>
             <ActiveComponent {...activeComponentProps} />
           </div>
         </main>
