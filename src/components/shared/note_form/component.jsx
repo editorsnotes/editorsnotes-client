@@ -43,56 +43,69 @@ module.exports = React.createClass({
       , { note, projectURL, minimal, errors } = this.props
 
     return (
-      <div>
+      <div className="bg-lightgray">
+        <div className="container">
+          <GeneralErrors
+              errors={errors.delete('title').delete('markup')} />
 
-        <GeneralErrors
-            errors={errors.delete('title').delete('markup')} />
+          <header className="clearfix">
+            <div className="col col-6">
+              <div className="mb2">
+                <FieldErrors errors={errors.get('title')} />
+                <label>
+                  <span className="h4 bold block">
+                    Title
+                  </span>
+                  <input
+                      name="title"
+                      className="field col-10 h3"
+                      maxLength="80"
+                      type="text"
+                      value={note.title}
+                      onChange={this.handleChange} />
+                </label>
+              </div>
 
-        <header>
-          <h3>Title</h3>
-          <FieldErrors errors={errors.get('title')} />
-          <input
-              id="note-title"
-              name="title"
-              maxLength="80"
-              type="text"
-              value={note.title}
-              onChange={this.handleChange} />
-        </header>
+              <div className="mb2">
+                <label>
+                  <span className="h4 bold block">
+                    Status
+                  </span>
+                  <select
+                      className="col-3"
+                      name="status"
+                      value={note.status}
+                      onChange={this.handleChange}>
+                    <option value={"open"}>Open</option>
+                    <option value={"closed"}>Closed</option>
+                    <option value={"hibernating"}>Hibernating</option>
+                  </select>
+                </label>
+              </div>
 
-        <section id="note-details">
-          <div id="note-about">
-            <div id="note-status">
-              <strong>This note is </strong>
-              <select
-                  name="status"
-                  value={note.status}
-                  onChange={this.handleChange}>
-                <option value={"open"}>Open</option>
-                <option value={"closed"}>Closed</option>
-                <option value={"hibernating"}>Hibernating</option>
-              </select>
+              <div className="mb2">
+                <label>
+                  <span className="h4 bold block">
+                    Private
+                  </span>
+                  <select
+                      className="col-3"
+                      name="is_private"
+                      value={note.is_private}
+                      onChange={this.handleChange}>
+                    <option value={false}>No</option>
+                    <option value={true}>Yes</option>
+                  </select>
+                </label>
+              </div>
             </div>
-            <div id="note-related-topics">
-              <span>Related topics</span>
+
+            <div className="col col-6">
+              <span className="h4 bold block">Related topics</span>
               <RelatedTopicsSelector topics={note.get('related_topics').toSet()} />
             </div>
-          </div>
-
-          <dl id="note-authorship">
-            <dt>Private</dt>
-            <dd>
-              <select
-                  name="is_private"
-                  id="note-private"
-                  value={note.is_private}
-                  onChange={this.handleChange}>
-                <option value={false}>No</option>
-                <option value={true}>Yes</option>
-              </select>
-            </dd>
-          </dl>
-        </section>
+          </header>
+        </div>
 
         <section>
           <FieldErrors errors={errors.get('markup')} />

@@ -76,8 +76,10 @@ module.exports = function (Component, type) {
 
     render() {
       return (
-        <div>
-          { this.renderBreadcrumb() }
+        <div className="bg-lightgray py2">
+          <div className="container">
+            { this.renderBreadcrumb() }
+          </div>
 
           <Component
               {...this.props}
