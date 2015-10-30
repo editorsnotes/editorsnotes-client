@@ -1,24 +1,11 @@
 @import "normalize.css";
 @import "basscss";
 @import "font-awesome";
-@import "openwebicons/css/openwebicons.css";
-@import "codemirror/lib/codemirror.css";
+@import "openwebicons/css/openwebicons";
+@import "codemirror/lib/codemirror";
 
-/****************************
- * Style variable overrides *
- ****************************/
-
-:root {
-    font-size: 13px;
-    --body-font-size: 13px;
-
-    --light-gray: #f5f5f5;
-    --green: green;
-}
-
-.lightgray { color: var(--light-gray); }
-.bg-lightgray { background-color: var(--light-gray); }
-
+@import "./variables";
+@import "./colors";
 
 
 /**************

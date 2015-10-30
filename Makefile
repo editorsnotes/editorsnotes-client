@@ -46,9 +46,9 @@ static/bundle.min.js: static/bundle.js
 	$(NPM_BIN)/uglifyjs -c warnings=false -- $< > $@
 
 
-static/style.css: static style.css static/fonts
+static/style.css: static static/fonts style/main.css
 	# sed command is to replace url() paths for fonts in compiled CSS
-	$(NPM_BIN)/cssnext -U ./style.css \
+	$(NPM_BIN)/cssnext -U ./style/main.css \
 		| sed -e 's|../fonts\?/|fonts/|g' \
 		> $@
 

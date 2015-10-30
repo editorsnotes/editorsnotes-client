@@ -1,0 +1,8 @@
+/* Our own custom colors */
+
+:root {
+    --light-gray: #f5f5f5;
+}
+
+.lightgray { color: var(--light-gray); }
+.bg-lightgray { background-color: var(--light-gray); }
