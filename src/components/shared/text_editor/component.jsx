@@ -137,10 +137,11 @@ module.exports = React.createClass({
   },
 
   componentDidMount() {
-    var codemirrorEditor = require('./editor')
+    var { findDOMNode } = require('react-dom')
+      , codemirrorEditor = require('./editor')
       , CitationGenerator = require('../../../utils/citation_generator')
       , { html, minimal, onChange, noCodeMirror } = this.props
-      , el = React.findDOMNode(this.refs.content)
+      , el = findDOMNode(this.refs.content)
       , opts = {}
       , editor
 
@@ -184,14 +185,14 @@ module.exports = React.createClass({
 
   render() {
     var References = require('./references.jsx')
-      , { projectURL, minimal, html } = this.props
+      , { projectURL, minimal, html, noCodeMirror } = this.props
       , { referenceType, editor } = this.state
 
     return (
       <div className="bg-gray py2 px1 flex" style={{ justifyContent: 'center' }}>
         <div className="TextEditor--editor col-12 p4 border bg-white">
           <div ref="content">
-            { !editor && html }
+            { noCodeMirror && html }
           </div>
         </div>
 
