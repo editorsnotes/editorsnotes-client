@@ -27,7 +27,9 @@ module.exports = React.createClass({
     var { activities } = this.props
 
     return activities.size > 0 && (
-      <div>{ activities.map(this.renderAction) }</div>
+      <div>
+        { activities.map(this.renderAction) }
+      </div>
     )
   }
 });

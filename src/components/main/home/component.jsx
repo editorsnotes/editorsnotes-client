@@ -7,7 +7,10 @@ var React = require('react')
 
 UserHomepage = React.createClass({
   getInitialState() {
-    return { activity: Immutable.List() }
+    var { localStorage } = global
+      , activity = localStorage ? JSON.parse(localStorage.myActivity || '[]') : []
+
+    return { activity }
   },
 
   componentDidMount() {
@@ -16,7 +19,12 @@ UserHomepage = React.createClass({
 
     fetch(activityURL, { headers: { Accept: 'application/json' }})
       .then(response => response.json())
-      .then(data => data.results)
+      .then(data => {
+        var activity = data.results;
+
+        window.localStorage.myActivity = JSON.stringify(activity);
+        return Immutable.fromJS(activity);
+      })
       .then(Immutable.fromJS)
       .then(activity => this.setState({ activity }))
   },
@@ -37,8 +45,8 @@ UserHomepage = React.createClass({
           <hr />
         </div>
 
-        <div className="row">
-          <div className="span6">
+        <div className="clearfix">
+          <div className="col col-6">
             <h3>My projects</h3>
             {
               projects.map((project, i) =>
@@ -53,7 +61,7 @@ UserHomepage = React.createClass({
               )
             }
           </div>
-          <div className="span6">
+          <div className="col col-6">
             <h3>Recent activity</h3>
             <ActivityList activities={activity} />
           </div>
