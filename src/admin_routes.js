@@ -12,29 +12,28 @@ function getProjectJSON(get, pathname) {
     .then(project => ({ project }))
 }
 
+function noContainer(fn) {
+  return function () {
+    return fn.apply(null, arguments)
+      .then(ret => {
+        ret.noContainer = true;
+        return ret;
+      });
+  }
+}
+
 module.exports = {
   /* Notes */
   '/projects/:project_slug/notes/add/': {
     name: 'note_add',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: function () {
-      return getProjectJSON.apply(null, arguments)
-        .then(ret => {
-          ret.noContainer = true;
-          return ret;
-        })
-    }
+    getData: noContainer(getProjectJSON)
   },
+
   '/projects/:project_slug/notes/:id/edit/': {
     name: 'note_edit',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: function () {
-      return getJSONFromTrimmedPath.apply(null, arguments)
-        .then(ret => {
-          ret.noContainer = true;
-          return ret;
-        })
-    }
+    getData: noContainer(getJSONFromTrimmedPath)
   },
 
   /* Topics */
