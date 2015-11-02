@@ -65,14 +65,16 @@ module.exports = React.createClass({
                       onChange={this.handleChange} />
                 </label>
               </div>
+            </div>
 
+            <div className="col col-3 px2">
               <div className="mb2">
                 <label>
                   <span className="h4 bold block">
                     Status
                   </span>
                   <select
-                      className="col-3"
+                      className="col-12"
                       name="status"
                       value={note.status}
                       onChange={this.handleChange}>
@@ -82,14 +84,16 @@ module.exports = React.createClass({
                   </select>
                 </label>
               </div>
+            </div>
 
+            <div className="col col-3 px2">
               <div className="mb2">
                 <label>
                   <span className="h4 bold block">
                     Private
                   </span>
                   <select
-                      className="col-3"
+                      className="col-12"
                       name="is_private"
                       value={note.is_private}
                       onChange={this.handleChange}>
