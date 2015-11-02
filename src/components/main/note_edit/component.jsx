@@ -20,11 +20,25 @@ NoteEdit = React.createClass({
   },
 
   getInitialState() {
-    return { note: new Note(this.props.data) }
+    var { getEmbedded } = require('../../../helpers/api')
+      , { data } = this.props
+      , embeddedItems
+
+    embeddedItems = data ?
+      getEmbedded(data, 'references').toSet() :
+      Immutable.Set()
+
+    return { note: new Note(data), embeddedItems }
   },
 
   handleNoteChange(note) {
     this.setState({ note });
+  },
+
+  handleAddEmbeddedItem(item) {
+    this.setState(prev => ({
+      embeddedItems: prev.embeddedItems.add(item)
+    }));
   },
 
   handleSave() {
@@ -37,15 +51,19 @@ NoteEdit = React.createClass({
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
       , { loading, errors, projectURL } = this.props
-      , { note } = this.state
+      , { note, embeddedItems } = this.state
 
     return (
       <div>
         <NoteForm
             note={note}
+            embeddedItems={embeddedItems}
+
             errors={errors}
             projectURL={projectURL}
-            onChange={this.handleNoteChange} />
+
+            onChange={this.handleNoteChange}
+            onAddEmbeddedItem={this.handleAddEmbeddedItem} />
 
         <section>
           <div className="well">

@@ -9,10 +9,15 @@ module.exports = React.createClass({
 
   propTypes: {
     note: React.PropTypes.instanceOf(Note).isRequired,
+    embeddedItems: React.PropTypes.instanceOf(Immutable.Set).isRequired,
+
     projectURL: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    minimal: React.PropTypes.bool
+
+    onChange: React.PropTypes.func.isRequired,
+    onAddEmbeddedItem: React.PropTypes.func.isRequired,
+
+    minimal: React.PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -40,7 +45,7 @@ module.exports = React.createClass({
       , HTMLEditor = require('../text_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
-      , { note, projectURL, minimal, errors } = this.props
+      , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem } = this.props
 
     return (
       <div className="bg-lightgray">
@@ -115,10 +120,14 @@ module.exports = React.createClass({
           <FieldErrors errors={errors.get('markup')} />
           <HTMLEditor
               ref="content"
-              onChange={markup => this.mergeValues({ markup })}
               projectURL={projectURL}
               minimal={minimal}
-              html={note.markup} />
+
+              html={note.markup}
+              embeddedItems={embeddedItems}
+
+              onChange={markup => this.mergeValues({ markup })}
+              onAddEmbeddedItem={onAddEmbeddedItem} />
           <br />
         </section>
       </div>
