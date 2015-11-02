@@ -9,7 +9,10 @@ module.exports = React.createClass({
   propTypes: {
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
-    embeddedItems: React.PropTypes.instanceOf(Immutable.Map),
+
+    embeddedItems: React.PropTypes.instanceOf(Immutable.Set),
+    onAddEmbeddedItem: React.PropTypes.func,
+
     html: React.PropTypes.string,
     minimal: React.PropTypes.bool,
     noCodeMirror: React.PropTypes.bool,
@@ -26,23 +29,19 @@ module.exports = React.createClass({
     return {
       editor: null,
       referenceType: null,
-      embeddedItems: Immutable.Map({
-        note: Immutable.OrderedSet(),
-        topic: Immutable.OrderedSet(),
-        document: Immutable.OrderedSet()
-      })
     }
   },
 
-  componentWillMount() {
-    var { embeddedItems } = this.props
+  componentDidMount() {
+    var { noCodeMirror } = this.props
 
-    if (!embeddedItems) return;
+    if (noCodeMirror) return;
 
-    this.setState(prev => ({
-      embeddedItems: prev.embeddedItems.map((set, itemType) => set.union(embeddedItems.get(itemType)))
-    }));
+    this.initCitationEngine();
+    setTimeout(this.refreshCiteprocEngine, 0);
+    setTimeout(this.initCodeMirror, 0);
   },
+
 
   onAddEmptyReference(type) {
     this.setState({ referenceType: type || 'empty' });
@@ -54,64 +53,53 @@ module.exports = React.createClass({
     this.state.editor.off('beforeChange', this.clearReferenceType);
   },
 
-  getItemFromID(itemType, itemID) {
+  refreshCiteprocEngine() {
     var cslFromDocuments = require('editorsnotes-markup-renderer/lib/csl_from_documents')
-      , { projectURL } = this.props
-      , { embeddedItems } = this.state
+      , { embeddedItems } = this.props
+      , { citationGenerator } = this.state
+      , documentsByURL
+
+    documentsByURL = embeddedItems
+      .filter(item => item.get('type').indexOf('Document') !== -1)
+      .toMap()
+      .mapKeys((key, item) => item.get('id'))
+
+    citationGenerator.items = cslFromDocuments(documentsByURL.toJS())
+    citationGenerator.engine.updateItems(documentsByURL.keySeq().toJS())
+  },
+
+  getItemFromURL(itemURL) {
+    var apiFetch = require('../../../utils/api_fetch')
+      , { embeddedItems, onAddEmbeddedItem } = this.props
       , item
       , promise
 
-    item = embeddedItems
-      .get(itemType)
-      .find(_item => _item.get('id') === itemID)
+    item = embeddedItems.find(_item => _item.get('url') === itemURL);
 
     if (item) {
       promise = Promise.resolve(item);
     } else {
-      let opts = {
-        credentials: 'same-origin',
-        headers: {
-          Accept: 'application/json; charset=utf-8'
-        }
-      }
-
-      promise = fetch(`${projectURL}${itemType}s/${itemID}/`, opts)
+      promise = apiFetch(itemURL)
         .then(resp => resp.json())
         .then(Immutable.fromJS)
-        .then(fetchedItem => new Promise(resolve => {
-          this.setState(prev => ({
-            embeddedItems: prev.embeddedItems.update(itemType, set => set.add(fetchedItem))
-          }), () => {
-            if (itemType === 'document') {
-              let documentsByID
-                , itemIDs
-
-              documentsByID = this.state.embeddedItems
-                .get('document')
-                .toMap()
-                .mapKeys((key, item) => item.get('id'))
-                .toJS()
-
-              itemIDs = this.state.embeddedItems
-                .get('document')
-                .map(_item => _item.get('id'))
-                .toJS()
-
-              this.state.citationGenerator.items = cslFromDocuments(documentsByID);
-              this.state.citationGenerator.engine.updateItems(itemIDs);
-            }
-            resolve(fetchedItem);
-          });
-        }));
+        .then(onAddEmbeddedItem)
+        .then(() => setTimeout(this.refreshCiteprocEngine, 0))
     }
 
     return promise;
   },
 
+  getEmbeddedItem(itemType, itemID) {
+    var { projectURL } = this.props
+      , itemURL = `${projectURL}${itemType}s/${itemID}/`
+
+    return this.getItemFromURL(itemURL);
+  },
+
   getReferenceLabel(itemType, itemID) {
     var resolveItemText = require('editorsnotes-markup-renderer/lib/resolve_item_text')
 
-    return this.getItemFromID(itemType, itemID)
+    return this.getEmbeddedItem(itemType, itemID)
       .then(item => {
         var id = item.get('id')
           , data = { [itemType]: { [id]: item.toJS() }}
@@ -122,9 +110,10 @@ module.exports = React.createClass({
 
   getInlineCitation(itemID) {
     var makeInlineCitation = require('editorsnotes-markup-renderer/lib/make_inline_citation')
+      , { citationGenerator } = this.state
 
-    return this.getItemFromID('document', itemID)
-      .then(item => makeInlineCitation(this.state.citationGenerator.engine, [item.toJS()]))
+    return this.getEmbeddedItem('document', itemID)
+      .then(item => makeInlineCitation(citationGenerator.engine, [item.toJS()]))
       .then(({ citations }) => citations[0]);
   },
 
@@ -132,34 +121,36 @@ module.exports = React.createClass({
     var makeBibliographyEntry = require('editorsnotes-markup-renderer/lib/make_bibliography_entry')
       , { citationGenerator } = this.state
 
-    return this.getItemFromID('document', itemID)
+    return this.getEmbeddedItem('document', itemID)
       .then(item => makeBibliographyEntry(citationGenerator.engine, item.toJS()))
   },
 
-  componentDidMount() {
-    var { findDOMNode } = require('react-dom')
-      , codemirrorEditor = require('./editor')
-      , CitationGenerator = require('../../../utils/citation_generator')
-      , { html, minimal, onChange, noCodeMirror } = this.props
-      , el = findDOMNode(this.refs.content)
-      , opts = {}
-      , editor
-
-    if (noCodeMirror) return;
+  initCitationEngine() {
+    var CitationGenerator = require('../../../utils/citation_generator')
 
     this.setState({
       citationGenerator: new CitationGenerator('chicago-author-date')
     });
+  },
 
-    if (!minimal) {
-      opts.handleAddReference = this.onAddEmptyReference;
+  initCodeMirror() {
+    var { findDOMNode } = require('react-dom')
+      , codemirrorEditor = require('./editor')
+      , { html, minimal, onChange } = this.props
+      , cmOpts
+      , editor
+
+    cmOpts = {
+      getReferenceLabel: this.getReferenceLabel,
+      getInlineCitation: this.getInlineCitation,
+      getFullCitation: this.getFullCitation
     }
 
-    opts.getReferenceLabel = this.getReferenceLabel;
-    opts.getInlineCitation = this.getInlineCitation;
-    opts.getFullCitation = this.getFullCitation;
+    if (!minimal) {
+      cmOpts.handleAddReference = this.onAddEmptyReference;
+    }
 
-    editor = codemirrorEditor(el, html, opts);
+    editor = codemirrorEditor(findDOMNode(this.refs.content), html, cmOpts);
 
     editor.display.wrapper.style.fontFamily = '"Times New Roman"';
     editor.display.wrapper.style.fontSize = '16px';
@@ -168,25 +159,37 @@ module.exports = React.createClass({
     editor.display.wrapper.style.height = 'auto';
     editor.display.scroller.style.minHeight = '480px';
 
-    //editor.display.wrapper.style.border = '1px solid #ccc';
-    // editor.display.wrapper.style.padding = '1em';
-
-    editor.refresh();
-
     editor.on('change', () => onChange(editor.getValue()));
 
-    this.setState({ editor });
+    this.setState({ editor }, () => editor.refresh())
   },
 
   handleReferenceSelect(item) {
-    this.state.editor.focus();
-    this.state.editor.doc.replaceSelection(item.get('id') + ' ');
+    var { editor } = this.state
+
+    editor.focus();
+    editor.doc.replaceSelection(item.get('id') + ' ');
+  },
+
+  renderReferences() {
+    var References = require('./references.jsx')
+      , { projectURL, embeddedItems, onAddEmbeddedItem } = this.props
+      , { referenceType } = this.state
+
+    return (
+      <div className="TextEditor--references col-12 ml3 p4 border bg-white">
+        <References
+            type={referenceType}
+            projectURL={projectURL}
+            embeddedItems={embeddedItems}
+            onSelect={this.handleReferenceSelect}
+            onAddEmbeddedItem={onAddEmbeddedItem} />
+      </div>
+    )
   },
 
   render() {
-    var References = require('./references.jsx')
-      , { projectURL, minimal, html, noCodeMirror } = this.props
-      , { referenceType, editor } = this.state
+    var { minimal, noCodeMirror, html } = this.props
 
     return (
       <div className="bg-gray py2 px1 flex" style={{ justifyContent: 'center' }}>
@@ -196,16 +199,7 @@ module.exports = React.createClass({
           </div>
         </div>
 
-        {
-          !minimal && (
-            <div className="TextEditor--references col-12 ml3 p4 border bg-white">
-              <References
-                  type={referenceType}
-                  projectURL={projectURL}
-                  onSelect={this.handleReferenceSelect} />
-            </div>
-          )
-        }
+        { !minimal && this.renderReferences() }
       </div>
     )
   }
