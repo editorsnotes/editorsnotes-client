@@ -26,6 +26,37 @@ function hasNotBeenMarked(cm, token) {
   ))
 }
 
+function selectAfterClickedMarkedSpan(cm, e) {
+  var allMarks = cm.doc.getAllMarks()
+    , clickedMark
+    , clickedLine
+    , clickedMarkedSpan
+
+  for (let i = 0; i < allMarks.length; i++) {
+    if (allMarks[i].replacedWith === e.currentTarget) {
+      clickedMark = allMarks[i];
+      break;
+    }
+  }
+
+  clickedLine = clickedMark.lines[clickedMark.lines.length - 1];
+
+  for (let i = 0; i < clickedLine.markedSpans.length; i++) {
+    let markedSpan = clickedLine.markedSpans[i]
+
+    if (markedSpan.marker.replacedWith === e.currentTarget) {
+      clickedMarkedSpan = markedSpan;
+      break;
+    }
+  }
+
+  cm.focus();
+  cm.doc.setSelection({
+    line: cm.doc.getLineNumber(clickedLine),
+    ch: clickedMarkedSpan.to
+  });
+}
+
 module.exports = function updateInlineReferences(cm, fromLine, toLine) {
   var { getReferenceLabel, getInlineCitation } = cm
 
@@ -49,6 +80,7 @@ module.exports = function updateInlineReferences(cm, fromLine, toLine) {
       replacementEl.style.background = '#ccc';
       replacementEl.style.padding = '1px 4px';
       replacementEl.style.borderRadius = '4px';
+      replacementEl.onclick = selectAfterClickedMarkedSpan.bind(null, cm);
 
       if (ref.itemType === 'document') {
         labelPromise = getInlineCitation(ref.itemID);
@@ -62,7 +94,7 @@ module.exports = function updateInlineReferences(cm, fromLine, toLine) {
 
           cm.doc.markText(ref.startPos, ref.endPos, {
             replacedWith: replacementEl
-          })
+          });
         })
     })
 }
