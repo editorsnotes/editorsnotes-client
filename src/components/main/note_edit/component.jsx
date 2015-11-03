@@ -6,6 +6,7 @@ var React = require('react')
   , Immutable = require('immutable')
   , Translate = require('../../shared/translate.jsx')
   , standaloneForm = require('../../util/standalone_form.jsx')
+  , editingBreadcrumb = require('../../util/editing_breadcrumb.jsx')
   , commonStrings = require('../../common_strings')
   , Note = require('../../../records/note')
   , NoteEdit
@@ -16,6 +17,7 @@ NoteEdit = React.createClass({
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     projectURL: React.PropTypes.string.isRequired,
+    renderBreadcrumb: React.PropTypes.func.isRequired,
     saveAndRedirect: React.PropTypes.func.isRequired
   },
 
@@ -50,11 +52,14 @@ NoteEdit = React.createClass({
 
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
-      , { loading, errors, projectURL } = this.props
+      , { loading, errors, projectURL, renderBreadcrumb } = this.props
       , { note, embeddedItems } = this.state
 
     return (
-      <div>
+      <div className="bg-lightgray py2">
+
+        { renderBreadcrumb() }
+
         <NoteForm
             note={note}
             embeddedItems={embeddedItems}
@@ -80,4 +85,4 @@ NoteEdit = React.createClass({
   }
 });
 
-module.exports = standaloneForm(NoteEdit, 'note')
+module.exports = editingBreadcrumb(standaloneForm(NoteEdit, 'note'));
