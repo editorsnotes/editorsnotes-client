@@ -25,8 +25,8 @@ NoteEdit = React.createClass({
       , embeddedItems
 
     embeddedItems = data ?
-      getEmbedded(data, 'references').toSet() :
-      Immutable.Set()
+      getEmbedded(data, 'references').toOrderedSet() :
+      Immutable.OrderedSet()
 
     return { note: new Note(data), embeddedItems }
   },
