@@ -70,18 +70,8 @@ NoteEdit = React.createClass({
             projectURL={projectURL}
 
             onChange={this.handleNoteChange}
-            onAddEmbeddedItem={this.handleAddEmbeddedItem} />
-
-        <section>
-          <div className="well">
-            <button
-                className="btn btn-primary btn-large"
-                disabled={loading}
-                onClick={this.handleSave}>
-              <Translate text={commonStrings.save} />
-            </button>
-          </div>
-        </section>
+            onAddEmbeddedItem={this.handleAddEmbeddedItem}
+            handleSave={this.handleSave} />
       </div>
     )
   }

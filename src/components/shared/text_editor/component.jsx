@@ -9,6 +9,7 @@ module.exports = React.createClass({
   propTypes: {
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
+    handleSave: React.PropTypes.func,
 
     embeddedItems: React.PropTypes.instanceOf(Immutable.Set),
     onAddEmbeddedItem: React.PropTypes.func,
@@ -173,17 +174,22 @@ module.exports = React.createClass({
 
   renderReferences() {
     var References = require('./references.jsx')
-      , { projectURL, embeddedItems, onAddEmbeddedItem } = this.props
+      , { projectURL, embeddedItems, onAddEmbeddedItem, handleSave } = this.props
       , { referenceType } = this.state
 
     return (
-      <div className="TextEditor--references col-12 ml3 p4 border bg-white">
-        <References
-            type={referenceType}
-            projectURL={projectURL}
-            embeddedItems={embeddedItems}
-            onSelect={this.handleReferenceSelect}
-            onAddEmbeddedItem={onAddEmbeddedItem} />
+      <div className="TextEditor--references col-12 ml3 p4 border bg-white flex flex-column">
+        <div className="flex-grow">
+          <References
+              type={referenceType}
+              projectURL={projectURL}
+              embeddedItems={embeddedItems}
+              onSelect={this.handleReferenceSelect}
+              onAddEmbeddedItem={onAddEmbeddedItem} />
+        </div>
+        <div className="center">
+          <button onClick={handleSave} className="btn btn-primary">Save</button>
+        </div>
       </div>
     )
   },

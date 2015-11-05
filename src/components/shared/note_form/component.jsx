@@ -16,6 +16,7 @@ module.exports = React.createClass({
 
     onChange: React.PropTypes.func.isRequired,
     onAddEmbeddedItem: React.PropTypes.func.isRequired,
+    handleSave: React.PropTypes.func.isRequired,
 
     minimal: React.PropTypes.bool,
   },
@@ -45,7 +46,7 @@ module.exports = React.createClass({
       , HTMLEditor = require('../text_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
-      , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem } = this.props
+      , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem, handleSave } = this.props
 
     return (
       <div className="bg-lightgray">
@@ -127,7 +128,8 @@ module.exports = React.createClass({
               embeddedItems={embeddedItems}
 
               onChange={markup => this.mergeValues({ markup })}
-              onAddEmbeddedItem={onAddEmbeddedItem} />
+              onAddEmbeddedItem={onAddEmbeddedItem}
+              handleSave={handleSave} />
           <br />
         </section>
       </div>
