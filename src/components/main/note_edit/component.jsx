@@ -58,7 +58,9 @@ NoteEdit = React.createClass({
     return (
       <div className="bg-lightgray py2">
 
-        { renderBreadcrumb() }
+        <div className="container">
+          { renderBreadcrumb() }
+        </div>
 
         <NoteForm
             note={note}
@@ -85,4 +87,4 @@ NoteEdit = React.createClass({
   }
 });
 
-module.exports = editingBreadcrumb(standaloneForm(NoteEdit, 'note'));
+module.exports = editingBreadcrumb(standaloneForm(NoteEdit, 'note'), 'note');
