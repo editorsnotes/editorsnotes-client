@@ -154,7 +154,7 @@ module.exports = React.createClass({
 
     editor.display.wrapper.style.fontFamily = '"Times New Roman"';
     editor.display.wrapper.style.fontSize = '16px';
-    editor.display.wrapper.style.lineHeight = '16px';
+    editor.display.wrapper.style.lineHeight = '19px';
 
     editor.display.wrapper.style.height = 'auto';
     editor.display.scroller.style.minHeight = '480px';

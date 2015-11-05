@@ -77,8 +77,8 @@ module.exports = function updateInlineReferences(cm, fromLine, toLine) {
       var replacementEl = document.createElement('span')
         , labelPromise
 
-      replacementEl.style.background = '#ccc';
-      replacementEl.style.padding = '1px 4px';
+      replacementEl.style.background = 'rgba(50, 115, 160, .3)';
+      replacementEl.style.padding = '0 3px';
       replacementEl.style.borderRadius = '4px';
       replacementEl.onclick = selectAfterClickedMarkedSpan.bind(null, cm);
 
