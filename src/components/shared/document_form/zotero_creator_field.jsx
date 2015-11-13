@@ -3,12 +3,23 @@
 var React = require('react')
   , Immutable = require('immutable')
 
+
+const CREATOR_TYPES = {
+  firstName: 'Given name',
+  lastName: 'Family name',
+  name: 'Name'
+}
+
+
 module.exports = React.createClass({
   displayName: 'ZoteroCreator',
 
   propTypes: {
     creator: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     creatorTypes: React.PropTypes.instanceOf(Immutable.List),
+
+    handleCreatorAdd: React.PropTypes.func.isRequired,
+    handleCreatorRemove: React.PropTypes.func.isRequired,
     onCreatorChange: React.PropTypes.func.isRequired
   },
 
@@ -43,7 +54,7 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { creator } = this.props
+    var { creator, handleCreatorAdd, handleCreatorRemove } = this.props
       , creatorFields
 
     creatorFields = creator
@@ -51,9 +62,10 @@ module.exports = React.createClass({
       .map((val, field) => [field, val])
       .toList()
       .sortBy(([field]) => field)
+      .toList()
 
     return (
-      <div className="zotero-row">
+      <div className="ZoteroField mb1 flex flex-center">
         <select
             value={creator.get('creatorType')}
             onChange={this.handleChange.bind(null, 'creatorType')}>
@@ -65,12 +77,23 @@ module.exports = React.createClass({
             <input
                 key={field}
                 type="text"
-                placeholder={this.translate(field)}
-                className="field"
+                placeholder={this.translate(CREATOR_TYPES[field])}
+                className="field mr1 flex-grow"
                 value={value}
                 onChange={this.handleChange.bind(null, field)} />
-          ).toList()
+          )
         }
+
+        <button
+            className="btn btn-outline btn-small mr1"
+            onClick={handleCreatorAdd.bind(null, creator)}>
+          +
+        </button>
+        <button
+            className="btn btn-outline btn-small"
+            onClick={handleCreatorRemove.bind(null, creator)}>
+          -
+        </button>
 
       </div>
     )

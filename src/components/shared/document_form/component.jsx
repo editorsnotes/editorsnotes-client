@@ -117,7 +117,7 @@ module.exports = React.createClass({
       , { citationGenerator } = this.state
       , cslData
 
-    if (isEmptyItem(document.zotero_data)) return jull;
+    if (isEmptyItem(document.zotero_data)) return null;
 
     cslData = zoteroToCSL(document.zotero_data
       .delete('tags')
@@ -157,6 +157,8 @@ module.exports = React.createClass({
               key={i}
               creator={creator}
               creatorTypes={creatorTypes}
+              handleCreatorAdd={() => null}
+              handleCreatorRemove={() => null}
               onCreatorChange={this.handleZoteroCreatorChange.bind(null, ['creators', i])} />
         )
       })

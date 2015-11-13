@@ -17,18 +17,16 @@ module.exports = React.createClass({
     var { field, value, onChange } = this.props
 
     return (
-      <div>
-        <label className="zotero-row">
-          <Translate
-              text={field}
-              domain='messages_zotero' />
-          <input
-              type="text"
-              className="field"
-              value={value}
-              onChange={onChange} />
-        </label>
-      </div>
+      <label className="ZoteroField mb1 flex flex-center">
+        <Translate
+            text={field}
+            domain='messages_zotero' />
+        <input
+            type="text"
+            className="field flex-grow"
+            value={value}
+            onChange={onChange} />
+      </label>
     )
   }
 });

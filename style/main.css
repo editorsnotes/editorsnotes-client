@@ -1,18 +1,17 @@
 @import "normalize.css";
-@import "basscss";
 @import "font-awesome";
 @import "openwebicons/css/openwebicons";
 @import "codemirror/lib/codemirror";
+
+@import "basscss";
+@import "basscss-btn-sizes";
 
 @import "./variables";
 @import "./colors";
 
 
-/**************
- * Components *
- **************/
+/** Text editor **/
 
-/* Text editor */
 .TextEditor--editor {
     min-height: 480px;
     max-width: 600px;
@@ -34,7 +33,9 @@
     cursor: text;
 }
 
-/* Note heading */
+
+
+/** Note heading **/
 .NoteInformation--Heading {
     width: 90px;
     text-align: right;
@@ -44,23 +45,17 @@
     margin-left: 100px;
 }
 
+
+
 /** Zotero items **/
-.zotero-row {
-    display: flex;
-    align-items: center;
-}
 
-.zotero-row * {
-    margin: 0;
-}
-
-.zotero-row > * {
-    flex-grow: 1;
-    width: 0;
-}
-
-.zotero-row > :first-child {
+.ZoteroField > :first-child {
     flex-basis: 120px;
     flex-grow: 0;
     margin-right: 1em;
+}
+
+.ZoteroField > input[type="text"] {
+    padding: 0px 6px;
+    height: 1.7em;
 }
