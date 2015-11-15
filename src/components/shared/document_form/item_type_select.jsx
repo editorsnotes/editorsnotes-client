@@ -13,23 +13,27 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { onChange, itemTypes, currentType } = this.props
+    var { onChange, itemTypes, currentType, loading } = this.props
 
     return (
-      <label className="ZoteroField flex flex-center">
+      <label className="ZoteroField flex flex-center mb1">
         <strong>Item type</strong>
-        <select value={currentType || ''} onChange={onChange}>
-          <option key='blank' value=''>Select an item type...</option>
-          {
-            itemTypes.map(type =>
-              <option
-                  key={type.get('itemType')}
-                  value={type.get('itemType')}>
-                { type.get('localized') }
-              </option>
-            )
-          }
-        </select>
+        {
+          (loading || !itemTypes) ?
+            <select disabled={true}><option>Loading...</option></select> :
+            <select value={currentType || ''} onChange={onChange}>
+              <option key='blank' value=''>Select an item type...</option>
+              {
+                itemTypes.map(type =>
+                  <option
+                      key={type.get('itemType')}
+                      value={type.get('itemType')}>
+                    { type.get('localized') }
+                  </option>
+                )
+              }
+            </select>
+        }
       </label>
     )
   }
