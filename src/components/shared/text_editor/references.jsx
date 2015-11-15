@@ -5,6 +5,7 @@
 var React = require('react')
   , Immutable = require('immutable')
   , Translate = require('../translate.jsx')
+  , commonStrings = require('../../common_strings')
   , strings = require('./strings')
 
 
@@ -22,7 +23,10 @@ module.exports = React.createClass({
   },
 
   getInitialState() {
-    return { addingInlineItem: null }
+    return {
+      addingInlineItem: null,
+      shownTab: 'references'
+    }
   },
 
   componentWillReceiveProps(nextProps) {
@@ -90,16 +94,48 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { type } = this.props
+    var classnames = require('classnames')
+      , { type } = this.props
+      , { shownTab } = this.state
       , show = type && type !== 'empty'
+      , tabclass = 'm0 inline-block border border-box col-6 p2 center'
 
     return (
       <div>
-        <h3 className="m0"><Translate text={strings.referencesHeader} /></h3>
+        <div className="mxn4 mb2" style={{ cursor: 'pointer' }}>
+          <h3
+              onClick={() => this.setState({ shownTab: 'references' })}
+              className={classnames(tabclass, {
+                'bg-red': shownTab === 'references'
+              })}>
+            <Translate text={strings.referencesHeader} />
+          </h3>
+          <h3
+              onClick={() => this.setState({ shownTab: 'help' })}
+              className={classnames(tabclass, {
+                'bg-red': shownTab === 'help'
+              })}>
+            <Translate text={commonStrings.help} />
+          </h3>
+        </div>
 
-        { !type && this.renderReferencesList() }
-        { type === 'empty' && this.renderReferenceHint() }
-        { show && this.renderReferenceSearch() }
+        {
+          shownTab === 'references' && (
+            <div>
+              { !type && this.renderReferencesList() }
+              { type === 'empty' && this.renderReferenceHint() }
+              { show && this.renderReferenceSearch() }
+            </div>
+          )
+        }
+
+        {
+          shownTab === 'help' && (
+            <div>
+              Help
+            </div>
+          )
+        }
       </div>
     )
   }

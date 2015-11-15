@@ -15,6 +15,8 @@ module.exports = {
   save: 'Save',
   delete: 'Delete',
 
+  help: 'Help',
+
   yes: 'Yes',
   no: 'No',
   

@@ -179,7 +179,7 @@ module.exports = React.createClass({
 
     return (
       <div className="TextEditor--references col-12 ml3 p4 border bg-white flex flex-column">
-        <div className="flex-grow">
+        <div className="flex-grow" style={{ marginTop: '-4rem' }}>
           <References
               type={referenceType}
               projectURL={projectURL}
