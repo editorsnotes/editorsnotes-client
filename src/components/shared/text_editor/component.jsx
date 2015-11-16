@@ -136,7 +136,7 @@ module.exports = React.createClass({
 
   initCodeMirror() {
     var { findDOMNode } = require('react-dom')
-      , codemirrorEditor = require('./editor')
+      , codemirrorEditor = require('./cm_editor')
       , { html, minimal, onChange } = this.props
       , cmOpts
       , editor
