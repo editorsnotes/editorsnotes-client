@@ -18,6 +18,8 @@ module.exports = React.createClass({
     onAddEmbeddedItem: React.PropTypes.func.isRequired,
     handleSave: React.PropTypes.func.isRequired,
 
+    afterHeader: React.PropTypes.func,
+
     minimal: React.PropTypes.bool,
   },
 
@@ -46,7 +48,7 @@ module.exports = React.createClass({
       , HTMLEditor = require('../text_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
-      , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem, handleSave } = this.props
+      , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem, handleSave, afterHeader } = this.props
 
     return (
       <div className="bg-lightgray">
@@ -114,6 +116,11 @@ module.exports = React.createClass({
               <span className="h4 bold block">Related topics</span>
               <RelatedTopicsSelector topics={note.get('related_topics').toSet()} />
             </div>
+
+            <div className="col col-12">
+              { afterHeader && afterHeader() }
+            </div>
+
           </header>
         </div>
 

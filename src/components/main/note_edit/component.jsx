@@ -50,6 +50,19 @@ NoteEdit = React.createClass({
     saveAndRedirect(note);
   },
 
+  renderAfterHeader() {
+    return (
+      <div>
+        <hr />
+        <div className="p1 mb2 center">
+          <btn
+              onClick={this.handleSave}
+              className="btn btn-primary btn-large">Save</btn>
+        </div>
+      </div>
+    )
+  },
+
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
       , { loading, errors, projectURL, renderBreadcrumb } = this.props
@@ -68,6 +81,8 @@ NoteEdit = React.createClass({
 
             errors={errors}
             projectURL={projectURL}
+
+            afterHeader={this.renderAfterHeader}
 
             onChange={this.handleNoteChange}
             onAddEmbeddedItem={this.handleAddEmbeddedItem}
