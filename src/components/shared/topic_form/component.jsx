@@ -84,6 +84,7 @@ module.exports = React.createClass({
           <h3>Summary</h3>
           <HTMLEditor
               onChange={markup => this.mergeValues({ markup })}
+              embeddedItems={Immutable.Set()}
               projectURL={projectURL}
               minimal={minimal}
               html={topic.markup} />

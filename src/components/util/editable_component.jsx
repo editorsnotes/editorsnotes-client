@@ -32,7 +32,7 @@ module.exports = function makeEditableComponent(Component, type) {
       var saveItem = require('../../utils/save_item')
         , handleResponse = require('../../utils/handle_response')
 
-      type = type || typeFromRecord(data);
+      type = data instanceof Immutable.Record ? typeFromRecord(data) : type;
 
       this.setState({
         errors: Immutable.Map(),

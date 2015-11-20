@@ -94,7 +94,10 @@ module.exports = React.createClass({
     var { projectURL } = this.props
       , itemURL = `${projectURL}${itemType}s/${itemID}/`
 
-    return this.getItemFromURL(itemURL);
+    return this.getItemFromURL(itemURL).then(item => {
+      if (itemType === 'document') this.refreshCiteprocEngine();
+      return item;
+    });
   },
 
   getReferenceLabel(itemType, itemID) {
