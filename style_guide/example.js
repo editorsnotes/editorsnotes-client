@@ -146,4 +146,22 @@ module.exports = [
     ]
   },
 
+  {
+    Component: require('../src/components/shared/document_form/zotero_data.jsx'),
+    examples: [
+      {
+        title: '',
+        props: {
+          data: Immutable.OrderedMap({
+            itemType: 'book',
+            title: 'Living My Life',
+            creators: Immutable.List([
+              Immutable.Map({ creatorType: 'author', firstName: 'Emma', lastName: 'Goldman' })
+            ]),
+            date: '1932'
+          })
+        }
+      }
+    ]
+  },
 ]
