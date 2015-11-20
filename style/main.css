@@ -50,12 +50,14 @@
 /** Zotero items **/
 
 .ZoteroField > :first-child {
-    flex-basis: 120px;
+    width: 120px;
+    flex-basis: auto;
     flex-grow: 0;
     margin-right: 1em;
 }
 
-.ZoteroField > input[type="text"] {
+.ZoteroField input[type="text"] {
     padding: 0px 6px;
+    width: 0;
     height: 1.7em;
 }

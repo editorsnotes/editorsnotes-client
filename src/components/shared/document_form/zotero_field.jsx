@@ -23,7 +23,7 @@ module.exports = React.createClass({
             domain='messages_zotero' />
         <input
             type="text"
-            className="field flex-grow"
+            className="field flex-auto"
             value={value}
             onChange={onChange} />
       </label>

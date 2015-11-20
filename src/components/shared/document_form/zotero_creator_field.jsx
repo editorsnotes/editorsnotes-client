@@ -67,33 +67,38 @@ module.exports = React.createClass({
     return (
       <div className="ZoteroField mb1 flex flex-center">
         <select
+            className="flex-none"
             value={creator.get('creatorType')}
             onChange={this.handleChange.bind(null, 'creatorType')}>
           { this.renderCreatorOptions() }
         </select>
 
-        {
-          creatorFields.map(([field, value]) =>
-            <input
-                key={field}
-                type="text"
-                placeholder={this.translate(CREATOR_TYPES[field])}
-                className="field mr1 flex-grow"
-                value={value}
-                onChange={this.handleChange.bind(null, field)} />
-          )
-        }
+        <div className="flex-grow flex">
+          {
+            creatorFields.map(([field, value]) =>
+              <input
+                  key={field}
+                  type="text"
+                  placeholder={this.translate(CREATOR_TYPES[field])}
+                  className="field mr1 flex-auto"
+                  value={value}
+                  onChange={this.handleChange.bind(null, field)} />
+            )
+          }
 
-        <button
-            className="btn btn-outline btn-small mr1"
-            onClick={handleCreatorAdd.bind(null, creator)}>
-          +
-        </button>
-        <button
-            className="btn btn-outline btn-small"
-            onClick={handleCreatorRemove.bind(null, creator)}>
-          -
-        </button>
+          <button
+              style={{ flexBasis: 'auto' }}
+              className="btn btn-outline btn-small mr1 flex-none"
+              onClick={handleCreatorAdd.bind(null, creator)}>
+            +
+          </button>
+          <button
+              style={{ flexBasis: 'auto' }}
+              className="btn btn-outline btn-small flex-none"
+              onClick={handleCreatorRemove.bind(null, creator)}>
+            -
+          </button>
+        </div>
 
       </div>
     )
