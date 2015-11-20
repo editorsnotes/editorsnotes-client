@@ -166,15 +166,37 @@ module.exports = React.createClass({
   },
 
   handleReferenceSelect(item) {
-    var { editor } = this.state
+    var { getType } = require('../../../helpers/api')
+      , { onAddEmbeddedItem } = this.props
+      , { editor } = this.state
 
     editor.focus();
-    editor.doc.replaceSelection(item.get('id') + ' ');
+
+    onAddEmbeddedItem(item);
+
+
+    setTimeout(() => {
+      if (getType(item) === 'Document') {
+        let end = editor.getCursor()
+          , start = { line: end.line, ch: end.ch - 3 }
+
+        if (start.ch > 0 && editor.getRange({ line: start.line, ch: start.ch - 1 }, start) === '[') {
+          start.ch -= 1;
+        }
+
+        editor.doc.setSelection(start, end);
+        editor.doc.replaceSelection(`[@@d${item.get('id')}] `);
+
+
+      } else {
+        editor.doc.replaceSelection(item.get('id') + ' ');
+      }
+    }, 0)
   },
 
   renderReferences() {
     var References = require('./references.jsx')
-      , { projectURL, embeddedItems, onAddEmbeddedItem, handleSave } = this.props
+      , { projectURL, embeddedItems, onAddEmbeddedItem } = this.props
       , { referenceType } = this.state
 
     return (
