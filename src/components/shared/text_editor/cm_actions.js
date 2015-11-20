@@ -72,7 +72,7 @@ function replaceReference(cm, { itemType, itemID, startPos, endPos }) {
   }
 
   labelPromise.then(label => {
-    replacementEl.textContent = label;
+    replacementEl.innerHTML = label;
     cm.doc.markText(startPos, endPos, { replacedWith: replacementEl });
   });
 }

@@ -9,6 +9,8 @@
 @import "./variables";
 @import "./colors";
 
+.inline-children * { display: inline; }
+
 
 /** Text editor **/
 

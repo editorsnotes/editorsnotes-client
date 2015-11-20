@@ -52,8 +52,16 @@ module.exports = React.createClass({
       {
         embeddedItems.map(item =>
           <li key={item.get('url')}>
-            <strong>{ getType(item) }: </strong>
-            { getDisplayTitle(item) }
+            <strong
+                className="inline-block right-align mr1"
+                style={{ width: '76px' }}>
+              { getType(item) }:
+            </strong>
+            <a
+                href={item.get('url')}
+                target="blank"
+                className="inline inline-children"
+                dangerouslySetInnerHTML={{  __html: getDisplayTitle(item) }} />
           </li>
         )
       }
