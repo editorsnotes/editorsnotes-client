@@ -62,18 +62,18 @@ module.exports = React.createClass({
     var FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
       , ZoteroData = require('./zotero_data.jsx')
-      , { document, errors } = this.props
+      , { document, errors, minimal } = this.props
       , description = document.description || '<em>Fill in document metadata to generate citation.</em>'
 
     return (
       <div className="clearfix">
-        <div className="md-col md-col-right md-col-6 col-right">
+        <div className={ minimal ? '' : 'md-col md-col-right md-col-6 col-right'}>
           <GeneralErrors errors={errors.delete('description')} />
           <FieldErrors errors={errors.get('description')} />
           <p dangerouslySetInnerHTML={{ __html: description }} />
         </div>
 
-        <div className="md-col md-col-right md-col-6 col-right px2">
+        <div className={ minimal ? '' : 'md-col md-col-right md-col-6 col-right px2'}>
           <ZoteroData
               data={document.zotero_data}
               onValueChange={this.handleZoteroValueChange} />
