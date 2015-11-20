@@ -1,20 +1,58 @@
 "use strict";
 
+var React = require('react')
+
+const HEADER_TEXT = `# Level 1 Header
+## Level 2 Header
+### Level 3 Header
+`
+
+const LIST_TEXT = `1. Item 1
+
+   2nd paragraph of Item 1
+
+1. Item 2
+`
+
+const UNORDERED_LIST_TEXT = `* Item
+* Another item
+`
+
+const NESTED_LIST_TEXT = `1. Item 1
+1. Item 2
+  * Sub-item
+  * Another sub-item
+`
+
+const REFERENCE_LINK_TEXT = `An [example][id].
+
+[id]: http://example.org
+`
+
+const BLOCKQUOTE_TEXT = `> Some quoted text.
+
+>> Nested quotes.`
+
+const BLOCKQUOTE_CITATION_TEXT = `> Quotation from cited text.
+>
+> [@@d40, p.12]
+`
+
 module.exports = () => (
   <div>
     <p>Notes are written using Markdown with some Working Notes-specific
       extensions for references to notes, topics and documents.
       <a href="https://help.github.com/articles/markdown-basics/">
+      {' '}
       Learn about Markdown.</a>
     </p>
+
     <section>
       <h1>Headings</h1>
       <p>One or more (up to six) <code>#</code> symbols creates a heading:</p>
-      <pre><code># Level 1 Header
-## Level 2 Header
-### Level 3 Header
-      </code></pre>
+      <pre className="overflow-hidden px3 py1"><code>{HEADER_TEXT}</code></pre>
     </section>
+
     <section>
       <h1>Emphasis</h1>
       <p>One asterisk or underscore for <i>italics</i>:<br/>
@@ -22,27 +60,25 @@ module.exports = () => (
       <p>Two asterisks or underscores for <b>bold</b>:<br/>
         <code>**bold**</code> or <code>__bold__</code></p>
     </section>
+
     <section>
       <h1>Lists</h1>
       <p>Lists can be ordered or unordered, and they can be nested.</p>
+
       <p>Ordered lists:</p>
-      <pre><code>1. Item 1
+      <pre className="overflow-hidden px3 py1">
+        <code>{LIST_TEXT}</code>
+      </pre>
 
-   2nd paragraph of Item 1
-
-1. Item 2
-      </code></pre>
       <p>Unordered lists:</p>
-      <pre><code>* Item
-* Another item
-      </code></pre>
+      <pre className="overflow-hidden px3 py1">
+        <code>{UNORDERED_LIST_TEXT}</code>
+      </pre>
+
       <p>Nest lists by indenting two spaces:</p>
-      <pre><code>1. Item 1
-1. Item 2
-  * Sub-item
-  * Another sub-item
-      </code></pre>
+      <pre className="overflow-hidden px3 py1"><code>{NESTED_LIST_TEXT}</code></pre>
     </section>
+
     <section>
       <h1>Links</h1>
       <p>Link to URLs can be with or without anchor text.</p>
@@ -53,11 +89,9 @@ module.exports = () => (
         <code>An [example](http://example.org).</code>
       </p>
       <p>Reference-style links:</p>
-      <pre><code>An [example][id].
-
-[id]: http://example.org
-      </code></pre>
+      <pre className="overflow-hidden px3 py1"><code>{REFERENCE_LINK_TEXT}</code></pre>
     </section>
+
     <section>
       <h1>References</h1>
       <p>Link to other topics or notes by their numeric IDs. Just typing
@@ -72,24 +106,22 @@ module.exports = () => (
         create a reference with anchor text:</p>
       <p><code>[Woody](@@t140) was elected president in 1912.</code></p>
     </section>
+
     <section>
       <h1>Citations</h1>
       <p>References to documents can additionally supply some text before or
         after the reference using square brackets:<br/>
         <code>[see @@d92, pp. 33--35]</code></p>
     </section>
+
     <section>
       <h1>Blockquotes</h1>
-      <pre><code>&gt; Some quoted text.
-
-&gt;&gt; Nested quotes.
-      </code></pre>
+      <pre className="overflow-hidden px3 py1">
+        <code>{BLOCKQUOTE_TEXT}</code>
+      </pre>
       <p>Blockquotes can be associated with a citation by using the citation
         syntax in the final line:</p>
-      <pre><code>&gt; Quotation from cited text.
-&gt;
-&gt; [@@d40, p.12]
-      </code></pre>
+      <pre className="overflow-hidden px3 py1"><code>{BLOCKQUOTE_CITATION_TEXT}</code></pre>
     </section>
     <section>
       <h1>Escaping</h1>
