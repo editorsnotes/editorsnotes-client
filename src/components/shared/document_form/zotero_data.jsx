@@ -28,8 +28,6 @@ ZoteroData = React.createClass({
   handleCreatorChange(index, value) {
     var { data, onValueChange } = this.props;
 
-    debugger;
-
     onValueChange(data.setIn(['creators', index], value));
   },
 

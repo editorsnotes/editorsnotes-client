@@ -35,6 +35,7 @@ module.exports = React.createClass({
 
   render: function () {
     var getLinks = require('../../../helpers/get_links')
+      , { getEmbedded, getType, getDisplayTitle } = require('../../../helpers/api')
       , doc = this.props.data
       , links = getLinks(doc)
 
@@ -43,9 +44,10 @@ module.exports = React.createClass({
 
         {this.renderBreadcrumb()}
 
-        <header dangerouslySetInnerHTML={{ __html: doc.get('description') }} />
+        <header className="h1 mb2" dangerouslySetInnerHTML={{ __html: doc.get('description') }} />
 
         <section id="info">
+          <h3>Metadata</h3>
           <ZoteroDisplay data={doc.get('zotero_data')} />
           <Links doc={doc} />
         </section>
@@ -59,15 +61,33 @@ module.exports = React.createClass({
                 </a>
             }
           </div>
+
+          {/* FIXME
           <div className="span6 edit-history">
           Last edited
-          {/* FIXME: last edited */}
           </div>
+          */ }
         </div>
 
+          {/* FIXME
         <RelatedTopics topics={doc.get('related_topics')} />
+        */}
 
-        <Citations citations={doc.get('cited_by')} />
+        <h2>Referenced by</h2>
+        {
+          getEmbedded(doc, 'referenced_by').map(item =>
+            <ul>
+              <li>
+                { getType(item) }:
+                {' '}
+                <a href={item.get('url')}>
+                  { getDisplayTitle(item)}
+                </a>
+              </li>
+            </ul>
+          )
+        }
+        {/* FIXME <Citations citations={doc.get('cited_by')} /> */}
 
         <div>
           <h2><Translate text={strings.scans} /></h2>
