@@ -27,7 +27,7 @@ module.exports = function (el, value='', opts={}) {
     var fromLine = from.line
       , toLine = to.line
 
-    actions.updateDocumentMarks(cm, fromLine, toLine);
+    //actions.updateDocumentMarks(cm, fromLine, toLine);
     actions.updateInlineReferences(cm, fromLine, toLine);
   });
 
