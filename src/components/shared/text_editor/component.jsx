@@ -178,18 +178,18 @@ module.exports = React.createClass({
       , { referenceType } = this.state
 
     return (
-      <div className="TextEditor--references col-12 ml3 p4 border bg-white flex flex-column">
-        <div className="flex-grow" style={{ marginTop: '-4rem' }}>
-          <References
-              type={referenceType}
-              projectURL={projectURL}
-              embeddedItems={embeddedItems}
-              onSelect={this.handleReferenceSelect}
-              onAddEmbeddedItem={onAddEmbeddedItem} />
-        </div>
+      <div className="TextEditor--references col-12 ml3 border bg-white">
+        <References
+            type={referenceType}
+            projectURL={projectURL}
+            embeddedItems={embeddedItems}
+            onSelect={this.handleReferenceSelect}
+            onAddEmbeddedItem={onAddEmbeddedItem} />
+        { /* FIXME
         <div className="center">
           <button onClick={handleSave} className="btn btn-primary">Save</button>
         </div>
+        */ }
       </div>
     )
   },

@@ -102,8 +102,8 @@ module.exports = React.createClass({
       , tabclass = 'm0 inline-block border border-box col-6 p2 center'
 
     return (
-      <div>
-        <div className="mxn4 mb2" style={{ cursor: 'pointer' }}>
+      <div className="flex flex-column" style={{ maxHeight: '90vh' }}>
+        <div style={{ cursor: 'pointer', marginBottom: '2px' }}>
           <h3
               onClick={() => this.setState({ shownTab: 'references' })}
               className={classnames(tabclass, {
@@ -120,23 +120,25 @@ module.exports = React.createClass({
           </h3>
         </div>
 
-        {
-          shownTab === 'references' && (
-            <div>
-              { !type && this.renderReferencesList() }
-              { type === 'empty' && this.renderReferenceHint() }
-              { show && this.renderReferenceSearch() }
-            </div>
-          )
-        }
+        <div className="flex-auto py2 px3" style={{ overflowY: 'auto' }}>
+          {
+            shownTab === 'references' && (
+              <div>
+                { !type && this.renderReferencesList() }
+                { type === 'empty' && this.renderReferenceHint() }
+                { show && this.renderReferenceSearch() }
+              </div>
+            )
+          }
 
-        {
-          shownTab === 'help' && (
-            <div>
-              <Help />
-            </div>
-          )
-        }
+          {
+            shownTab === 'help' && (
+              <div>
+                <Help />
+              </div>
+            )
+          }
+        </div>
       </div>
     )
   }
