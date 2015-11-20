@@ -42,7 +42,7 @@ module.exports = () => (
   <div>
     <p>Notes are written using Markdown with some Working Notes-specific
       extensions for references to notes, topics and documents.
-      <a href="https://help.github.com/articles/markdown-basics/">
+      <a target="_blank" href="https://help.github.com/articles/markdown-basics/">
       {' '}
       Learn about Markdown.</a>
     </p>
