@@ -5,8 +5,9 @@ var CodeMirror = require('codemirror')
 require('codemirror/mode/markdown/markdown')
 
 const TYPES = { n: 'note', d: 'document', t: 'topic' }
-    , referenceRegex = /^@@([ndt])?(\d+)?($|\W)/
-    , citationRegex = /^\[[^\]]*?@@d.*?\](?!\(.*\)|\[.*\])/
+    , referenceRE = /^@@([ndt])?(\d+)?($|\W)/
+    , citationRE = /^\[[^\]]*?@@d.*?\](?!\(.*\)|\[.*\])/
+    , citationBlockRE = /^::: document @@d(\d+)?$/
 
 
 CodeMirror.defineMode('en-markdown', function (config) {
@@ -26,6 +27,16 @@ CodeMirror.defineMode('en-markdown', function (config) {
       var token
         , reference
 
+      if (!state.inCitationBlock && stream.match(citationBlockRE, true)) {
+        state.inCitationBlock = true;
+        return 'citationBlock-start';
+      }
+
+      if (state.inCitationBlock && stream.match(/^:::/, true)) {
+        state.inCitationBlock = false;
+        return 'citationBlock-stop';
+      }
+
       if (state.inCitation) {
         // Parse up to the first character which might indicate the start of a
         // new document being cited
@@ -41,7 +52,7 @@ CodeMirror.defineMode('en-markdown', function (config) {
 
           if (nextChar === '@') {
             stream.backUp(1);
-            if (stream.match(referenceRegex, true)) {
+            if (stream.match(referenceRE, true)) {
               return 'reference-document';
             } else {
               stream.next(1);
@@ -56,7 +67,7 @@ CodeMirror.defineMode('en-markdown', function (config) {
       if (token === '[') {
         stream.backUp(1);
 
-        if (stream.match(citationRegex, false)) {
+        if (stream.match(citationRE, false)) {
           state.inCitation = true;
           return 'citation-start';
         } else {
@@ -64,25 +75,13 @@ CodeMirror.defineMode('en-markdown', function (config) {
         }
       }
 
-      reference = stream.current().match(referenceRegex);
+      reference = stream.current().match(referenceRE);
 
       if (reference) {
         let [ type, id, trailing ] = reference.slice(1)
 
         // Skip if in link text
-
         stream.backUp(trailing.length);
-
-        /*
-        if (type === 'd' && !id) {
-          let isValidCitation = (
-            state.thisLine &&
-            state.thisLine.start > 0 &&
-            state.thisLine.string[state.thisLine.start - 1] === '[' &&
-            stream.peek() === ']'
-          )
-        }
-        */
 
         if (type) {
           return id ?
@@ -94,30 +93,6 @@ CodeMirror.defineMode('en-markdown', function (config) {
       }
 
       return token;
-
-      /*
-      if (!state.inDocumentBlock && stream.match(/^::: document/, true)) {
-        state.inDocumentBlock = true;
-        stream.skipToEnd();
-        return 'documentBlock-start';
-      }
-
-      if ((state.inDocumentBlock) && stream.match(/^:::/)) {
-        state.inDocumentBlock = false;
-        stream.skipToEnd();
-        return 'documentBlock-stop';
-      }
-
-      if (wordRegex.test(ch)) {
-        let word
-          , reference
-
-        stream.eatWhile(wordRegex);
-
-        word = stream.current();
-
-      }
-      */
     }
   }
 });
