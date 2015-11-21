@@ -4,7 +4,7 @@ var CodeMirror = require('codemirror')
 
 
 // Register CodeMirror modes for our markup
-require('codemirror/mode/gfm/gfm');
+require('codemirror/addon/edit/continuelist');
 require('./cm_en-markdown_mode');
 
 
@@ -15,12 +15,15 @@ module.exports = function (el, value='', opts={}) {
   editor = CodeMirror(el, {
     value,
     mode: 'en-markdown',
-    lineWrapping: true
+    lineWrapping: true,
+    extraKeys: {
+      'Enter': 'newlineAndIndentContinueMarkdownList'
+    }
   });
 
   Object.keys(opts).forEach(key => {
     editor[key] = opts[key];
-  })
+  });
 
   editor.on('inputRead', actions.checkEmptyReferences)
   editor.on('change', function (cm, { from, to }) {
