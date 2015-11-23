@@ -10,6 +10,18 @@ Requires nodejs >=0.12.0
   3. Start the Editors' Notes server and this one (using `npm start`). The configuration currently assumes that you will be running the Editors' Notes server on port 8001.
   4. Set up a proxy that will server static files and forward non-HTML requests. An example nginx is included below.
 
+## Publishing
+
+We use `npm version` along with some pre/post scrips to release new versions. To tag a new release:
+
+  1. Make sure your master branch is tracking the upstream branch. You might need to run `git branch master --set-upstream-to=origin/master` for this to be the case.
+
+  2. When you want to tag a new version from master, make sure you are up to date with the upstream branch (i.e. run `git push` and/or `git pull`)
+
+  3. Run `npm version` with an argument of `major`, `minor`, or `patch` to tag a new version. It will automatically be pushed upstream.
+
+
+
 ## nginx configuration
 ```
 server {
