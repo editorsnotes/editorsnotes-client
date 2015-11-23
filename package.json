@@ -77,6 +77,7 @@
   },
   "scripts": {
     "preversion": "npm test && npm run isMaster && npm run matchesRemote",
+    "postversion": "git push && git push --tags",
     "isMaster": "test master = $(git rev-parse --abbrev-ref HEAD)",
     "matchesRemote": "test $(git rev-parse @) = $(git rev-parse @{u})",
     "test": "browserify src/test/*.js | tape-run",
