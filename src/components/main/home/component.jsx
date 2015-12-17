@@ -7,15 +7,16 @@ var React = require('react')
 
 UserHomepage = React.createClass({
   getInitialState() {
-    var { localStorage } = global
-      , activity = localStorage ? JSON.parse(localStorage.myActivity || '[]') : []
-
-    return { activity }
+    return { activity: Immutable.List() }
   },
 
   componentDidMount() {
     var { user } = this.props
       , activityURL = user.get('activity')
+
+    this.setState({
+      activity: Immutable.fromJS(JSON.parse(localStorage.myActivity || '[]'))
+    });
 
     fetch(activityURL, { headers: { Accept: 'application/json' }})
       .then(response => response.json())
@@ -36,7 +37,7 @@ UserHomepage = React.createClass({
       , { activity } = this.state
       , projects
 
-    projects = data.get('affiliated_projects')
+    projects = data.get('affiliated_projects').toList();
 
     return (
       <div>

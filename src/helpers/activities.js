@@ -12,6 +12,7 @@ function groupActivities(activities) {
     .toList()
     .sortBy(activitiesForURL => activities.indexOf(activitiesForURL.first()))
     .map(activitiesForURL => Immutable.Map({
+      id: activityURLAndAction(activitiesForURL.first()),
       count: activitiesForURL.size,
       mostRecent: activitiesForURL.first(),
       times: activitiesForURL.map(activity => activity.get('time'))
