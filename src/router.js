@@ -56,7 +56,7 @@ Router.prototype.execute = function (url, context) {
     if (!this.fallbackHandler) {
       throw new Error('No handler found for route "' + match.handler.name + '".');
     } else {
-      handler = this.fallbackHandler(match.handler.name);
+      handler = this.fallbackHandler(match.handler.name, url);
     }
   }
 

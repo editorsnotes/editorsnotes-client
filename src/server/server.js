@@ -148,7 +148,7 @@ function getUserData(req) {
 //
 // FIXME: needs to be able to be cached better- maybe use
 // React.renderToStaticMarkup if user is not logged in
-router.fallbackHandler = function () {
+router.fallbackHandler = function (matchName, path) {
   return function (config, params, queryParams) {
     var promise = Promise.resolve({})
       , bootstrap
@@ -183,7 +183,8 @@ router.fallbackHandler = function () {
           , component = hadError ? require('../components/main/error/component.jsx') : config.Component
 
         return _.extend(props, {
-          ActiveComponent: component
+          ActiveComponent: component,
+          path
         })
       })
       .then(props => render(props, bootstrap))
