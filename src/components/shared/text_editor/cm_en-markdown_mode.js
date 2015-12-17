@@ -12,8 +12,9 @@ const TYPES = { n: 'note', d: 'document', t: 'topic' }
 
 CodeMirror.defineMode('en-markdown', function (config) {
   var mdMode = CodeMirror.getMode(config, 'markdown')
+    , mode
 
-  return {
+  mode = {
     startState: function () {
       var state = mdMode.startState();
 
@@ -32,7 +33,17 @@ CodeMirror.defineMode('en-markdown', function (config) {
       return state;
     },
 
-    innerMode: mdMode.innerMode,
+    innerMode: function (state) {
+      var innerMode = mdMode.innerMode(state);
+
+      if (innerMode.mode === mdMode) {
+        innerMode.mode = mode;
+      }
+
+      return innerMode;
+    },
+
+    blankLine: mdMode.blankLine,
 
     token: function (stream, state) {
       var token
@@ -64,6 +75,7 @@ CodeMirror.defineMode('en-markdown', function (config) {
           if (nextChar === '@') {
             stream.backUp(1);
             if (stream.match(referenceRE, true)) {
+              if (stream.current().slice(-1) === ']') stream.backUp(1);
               return 'reference-document';
             } else {
               stream.next(1);
@@ -75,11 +87,12 @@ CodeMirror.defineMode('en-markdown', function (config) {
       token = mdMode.token(stream, state)
 
       // If this is a citation, treat it that way
-      if (token === '[') {
+      if (stream.current() === '[') {
         stream.backUp(1);
 
         if (stream.match(citationRE, false)) {
           state.inCitation = true;
+          stream.next(1);
           return 'citation-start';
         } else {
           stream.next(1);
@@ -106,4 +119,6 @@ CodeMirror.defineMode('en-markdown', function (config) {
       return token;
     }
   }
+
+  return mode;
 });
