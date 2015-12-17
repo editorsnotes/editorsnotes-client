@@ -10,10 +10,15 @@ module.exports = React.createClass({
   },
 
   renderAuth() {
-    var { user } = this.props
+    var { user, path } = this.props
+      , loginURL = '/auth/signin'
+
+    if (path !== '/') {
+      loginURL += ('?return_to=' + path)
+    }
 
     return !user ?
-      <a href="/auth/signin" className="silver">Sign in</a> :
+      <a href={loginURL} className="silver">Sign in</a> :
       <div>
         <span key={1} className="silver">Logged in as </span>
         <a key={2} href={user.get('url')} className="silver bold">
