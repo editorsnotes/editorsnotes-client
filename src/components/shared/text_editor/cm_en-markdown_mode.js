@@ -23,6 +23,17 @@ CodeMirror.defineMode('en-markdown', function (config) {
       return state;
     },
 
+    copyState: function (s) {
+      var state = mdMode.copyState(s);
+
+      state.inCitation = s.inCitation;
+      state.inCitationBlock = s.inCitationBlock;
+
+      return state;
+    },
+
+    innerMode: mdMode.innerMode,
+
     token: function (stream, state) {
       var token
         , reference
