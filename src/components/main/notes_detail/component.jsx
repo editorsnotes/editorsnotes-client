@@ -26,11 +26,6 @@ NoteDetail = React.createClass({
     return <Breadcrumb crumbs={crumbs} />
   },
 
-  renderMarkup: function () {
-    return <div dangerouslySetInnerHTML={{ __html: this.props.data.get('markup_html') }} />
-
-  },
-
   render: function () {
     var NoteInformation = require('./information.jsx')
       , { data, canReplace } = this.props
@@ -48,7 +43,11 @@ NoteDetail = React.createClass({
         <hr />
 
         <section>
-          { this.renderMarkup() }
+          <div
+              className="ItemText"
+              dangerouslySetInnerHTML={{
+                __html: this.props.data.get('markup_html')
+              }} />
         </section>
       </div>
     )

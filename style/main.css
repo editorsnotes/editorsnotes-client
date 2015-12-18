@@ -65,3 +65,32 @@
     width: 0;
     height: 1.7em;
 }
+
+
+/** Rendered EN Markup (in notes, e.g.) **/
+.ItemText blockquote {
+    border-left: 3px solid #eee;
+    padding-left: .5em;
+    margin-left: 1.25em;
+}
+
+.ItemText .ENDocumentBlock {
+    position: relative;
+    border-left: 1px solid #999;
+    padding-left: 6px;
+    margin-left: 22px;
+}
+
+.ItemText .ENDocumentBlock::before {
+    content: "\f0f6";
+    position: absolute;
+    left: -22px;
+    color: #333;
+    font-size: 18px;
+}
+
+.ItemText .ENDocumentBlock > :nth-child(2) {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dotted #ccc;
+}
