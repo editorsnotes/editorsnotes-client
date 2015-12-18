@@ -4,21 +4,21 @@
 
 var React = require('react')
   , Immutable = require('immutable')
-  , Translate = require('../../shared/translate.jsx')
   , standaloneForm = require('../../util/standalone_form.jsx')
   , editingBreadcrumb = require('../../util/editing_breadcrumb.jsx')
-  , commonStrings = require('../../common_strings')
   , Note = require('../../../records/note')
   , NoteEdit
 
 NoteEdit = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map),
+    note: React.PropTypes.instanceOf(Note).isRequired,
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     renderBreadcrumb: React.PropTypes.func.isRequired,
-    saveAndRedirect: React.PropTypes.func.isRequired
+    saveAndRedirect: React.PropTypes.func.isRequired,
+    handleRecordChange: React.PropTypes.func.isRequired
   },
 
   getInitialState() {
@@ -33,31 +33,20 @@ NoteEdit = React.createClass({
     return { note: new Note(data), embeddedItems }
   },
 
-  handleNoteChange(note) {
-    this.setState({ note });
-  },
-
   handleAddEmbeddedItem(item) {
     this.setState(prev => ({
       embeddedItems: prev.embeddedItems.add(item)
     }));
   },
 
-  handleSave() {
-    var { saveAndRedirect } = this.props
-      , { note } = this.state
-
-    saveAndRedirect(note);
-  },
-
   renderAfterHeader() {
+    var { saveAndRedirect } = this.props
+
     return (
       <div>
         <hr />
         <div className="p1 mb2 center">
-          <btn
-              onClick={this.handleSave}
-              className="btn btn-primary btn-large">Save</btn>
+          <button onClick={saveAndRedirect} className="btn btn-primary btn-large">Save</button>
         </div>
       </div>
     )
@@ -65,8 +54,8 @@ NoteEdit = React.createClass({
 
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
-      , { loading, errors, projectURL, renderBreadcrumb } = this.props
-      , { note, embeddedItems } = this.state
+      , { note, loading, errors, projectURL, renderBreadcrumb, handleRecordChange, saveAndRedirect } = this.props
+      , { embeddedItems } = this.state
 
     return (
       <div className="bg-lightgray py2">
@@ -84,12 +73,12 @@ NoteEdit = React.createClass({
 
             afterHeader={this.renderAfterHeader}
 
-            onChange={this.handleNoteChange}
+            onChange={handleRecordChange}
             onAddEmbeddedItem={this.handleAddEmbeddedItem}
-            handleSave={this.handleSave} />
+            handleSave={saveAndRedirect} />
       </div>
     )
   }
 });
 
-module.exports = editingBreadcrumb(standaloneForm(NoteEdit, 'note'), 'note');
+module.exports = editingBreadcrumb(standaloneForm(NoteEdit, Note), 'note');

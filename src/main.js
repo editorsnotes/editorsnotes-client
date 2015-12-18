@@ -36,7 +36,7 @@ router = new Router();
 router.add(require('./base_routes'));
 router.add(require('./admin_routes'));
 
-router.fallbackHandler = function () {
+router.fallbackHandler = function (name, path) {
   return function (config, params, queryParams) {
     var promise = Promise.resolve({})
 
@@ -55,7 +55,7 @@ router.fallbackHandler = function () {
     }
 
     promise = promise
-      .then(props => _.extend(props, { ActiveComponent: config.Component }))
+      .then(props => _.extend(props, { ActiveComponent: config.Component, path }))
       .then(renderApplication)
   }
 }

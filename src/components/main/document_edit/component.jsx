@@ -12,32 +12,17 @@ var React = require('react')
 
 DocumentEdit = React.createClass({
   propTypes: {
-    data: React.PropTypes.instanceOf(Immutable.Map),
+    document: React.PropTypes.instanceOf(Document).isRequired,
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     projectURL: React.PropTypes.string.isRequired,
-    saveAndRedirect: React.PropTypes.func.isRequired
-  },
-
-  getInitialState() {
-    return { document: new Document(this.props.data) }
-  },
-
-  handleDocumentChange(document) {
-    this.setState({ document });
-  },
-
-  handleSave() {
-    var { saveAndRedirect } = this.props
-      , { document } = this.state
-
-    saveAndRedirect(document);
+    saveAndRedirect: React.PropTypes.func.isRequired,
+    handleRecordChange: React.PropTypes.func.isRequired
   },
 
   render() {
     var DocumentForm = require('../../shared/document_form/component.jsx')
-      , { loading, errors, projectURL } = this.props
-      , { document } = this.state
+      , { document, loading, errors, projectURL, handleRecordChange, saveAndRedirect } = this.props
 
     return (
       <div>
@@ -45,14 +30,14 @@ DocumentEdit = React.createClass({
             document={document}
             errors={errors}
             projectURL={projectURL}
-            onChange={this.handleDocumentChange} />
+            onChange={handleRecordChange} />
 
         <section>
           <div className="well">
             <button
                 className="btn btn-primary btn-large"
                 disabled={loading}
-                onClick={this.handleSave}>
+                onClick={saveAndRedirect}>
               <Translate text={commonStrings.save} />
             </button>
           </div>
@@ -62,4 +47,4 @@ DocumentEdit = React.createClass({
   }
 });
 
-module.exports = standaloneForm(DocumentEdit, 'document');
+module.exports = standaloneForm(DocumentEdit, Document);

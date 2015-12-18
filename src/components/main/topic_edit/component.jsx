@@ -12,31 +12,17 @@ var React = require('react')
 TopicEdit = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map),
+    topic: React.PropTypes.instanceOf(Topic).isRequired,
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     projectURL: React.PropTypes.string.isRequired,
-    saveAndRedirect: React.PropTypes.func.isRequired
-  },
-
-  getInitialState() {
-    return { topic: new Topic(this.props.data) }
-  },
-
-  handleTopicChange(topic) {
-    this.setState({ topic });
-  },
-
-  handleSave() {
-    var { saveAndRedirect } = this.props
-      , { topic } = this.state
-
-    saveAndRedirect(topic);
+    saveAndRedirect: React.PropTypes.func.isRequired,
+    handleRecordChange: React.PropTypes.func.isRequired
   },
 
   render() {
     var TopicForm = require('../../shared/topic_form/component.jsx')
-      , { loading, errors, projectURL } = this.props
-      , { topic } = this.state
+      , { loading, errors, projectURL, topic, handleRecordChange, saveAndRedirect } = this.props
 
     return (
       <div>
@@ -44,14 +30,14 @@ TopicEdit = React.createClass({
             topic={topic}
             errors={errors}
             projectURL={projectURL}
-            onChange={this.handleTopicChange} />
+            onChange={handleRecordChange} />
 
         <section>
           <div className="well">
             <button
                 className="btn btn-primary btn-large"
                 disabled={loading}
-                onClick={this.handleSave}>
+                onClick={saveAndRedirect}>
               <Translate text={commonStrings.save} />
             </button>
           </div>
