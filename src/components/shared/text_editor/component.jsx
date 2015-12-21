@@ -187,8 +187,14 @@ module.exports = React.createClass({
           start.ch -= 1;
         }
 
-        editor.doc.setSelection(start, end);
-        editor.doc.replaceSelection(`[@@d${item.get('id')}] `);
+        if (editor.getLine(end.line) === '::: document @@d') {
+          editor.setSelection({ line: end.line, ch: 16 });
+          editor.replaceSelection(`${item.get('id')}\n\n\n\n:::`);
+          editor.setSelection({ line: end.line + 2, ch: 0 });
+        } else {
+          editor.doc.setSelection(start, end);
+          editor.doc.replaceSelection(`[@@d${item.get('id')}] `);
+        }
 
 
       } else {

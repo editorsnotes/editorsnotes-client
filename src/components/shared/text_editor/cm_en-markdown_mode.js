@@ -7,7 +7,7 @@ require('codemirror/mode/markdown/markdown')
 const TYPES = { n: 'note', d: 'document', t: 'topic' }
     , referenceRE = /^@@([ndt])?(\d+)?($|\W)/
     , citationRE = /^\[[^\]]*?@@d.*?\](?!\(.*\)|\[.*\])/
-    , citationBlockRE = /^::: document @@d(\d+)?$/
+    , citationBlockRE = /^::: document @@d\d+$/
 
 
 CodeMirror.defineMode('en-markdown', function (config) {
