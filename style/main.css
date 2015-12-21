@@ -94,3 +94,16 @@
     padding-top: 4px;
     border-top: 1px dotted #ccc;
 }
+
+/** Text editor **/
+.CITATION-BLOCK {
+    border-left: 1px solid #ccc !important;
+    border-right: 1px solid #ccc !important;
+
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+
+    margin-right: 1px !important;
+
+    background: #f0f0f0 !important;
+}

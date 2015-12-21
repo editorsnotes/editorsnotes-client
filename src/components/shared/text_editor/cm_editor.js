@@ -69,17 +69,30 @@ module.exports = function (el, value='', opts={}) {
     editor[key] = opts[key];
   });
 
+  editor._sectionMarks = [];
+
   editor.on('inputRead', actions.checkEmptyReferences)
   editor.on('change', function (cm, { from, to }) {
     var fromLine = from.line
       , toLine = to.line
 
-    //actions.updateDocumentMarks(cm, fromLine, toLine);
-    actions.updateInlineReferences(cm, fromLine, toLine);
+    actions.updateDocumentMarks(cm, fromLine, toLine);
+  });
+
+  editor.on('renderLine', function (cm, line) {
+    var inCitationBlock = (
+      line.markedSpans &&
+      line.markedSpans.some(markedSpan =>
+        editor._sectionMarks.indexOf(markedSpan.marker) !== -1)
+    )
+
+    if (inCitationBlock) {
+      editor.addLineClass(line, 'text', 'CITATION-BLOCK');
+    }
   });
 
   // Update references on editor initialization
-  actions.updateInlineReferences(editor, 0, editor.doc.lineCount() - 1);
+  actions.updateDocumentMarks(editor, 0, editor.doc.lineCount() - 1);
 
   return editor;
 }

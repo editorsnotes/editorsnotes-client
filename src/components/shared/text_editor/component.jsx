@@ -83,8 +83,10 @@ module.exports = React.createClass({
       promise = apiFetch(itemURL)
         .then(resp => resp.json())
         .then(Immutable.fromJS)
-        .then(onAddEmbeddedItem)
-        .then(() => setTimeout(this.refreshCiteprocEngine, 0))
+        .then(newItem => {
+          onAddEmbeddedItem(newItem);
+          return newItem;
+        })
     }
 
     return promise;

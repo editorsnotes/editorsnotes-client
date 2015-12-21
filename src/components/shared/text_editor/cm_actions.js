@@ -22,40 +22,9 @@ function checkEmptyReferences(cm, { to, text }) {
 }
 
 
-function updateDocumentMarks(cm, fromLine=0, toLine) {
-  var checkLine = fromLine
-    , ranges = []
-
-  if (toLine === undefined) toLine = cm.doc.lineCount();
-
-  if (utils.isInSection(cm, fromLine)) {
-    let initialRange = utils.getSectionRange(cm, null, fromLine);
-    ranges.push(initialRange);
-
-    // Advance past the end of this range
-    checkLine = initialRange[1] + 1;
-  }
-
-  while (checkLine <= toLine) {
-    if (utils.isInSection(cm, checkLine)) {
-      let range = utils.getSectionRange(cm, checkLine);
-      ranges.push(range);
-
-      // Advance to the end of this range
-      checkLine = range[1];
-    }
-
-    checkLine += 1;
-  }
-
-  // TODO: Now, run markText for each of these ranges if they do not already
-  // exist in cm._sectionMarks
-}
-
-
 // Replace a reference (as returned by getUnmarkedReferences) with a span
 // whose text content is the appropriate label for the reference's item type.
-function replaceReference(cm, { itemType, itemID, startPos, endPos }) {
+function replaceInlineReference(cm, { itemType, itemID, startPos, endPos }) {
   var { getReferenceLabel, getInlineCitation } = cm
     , replacementEl = document.createElement('span')
     , labelPromise
@@ -74,6 +43,36 @@ function replaceReference(cm, { itemType, itemID, startPos, endPos }) {
   labelPromise.then(label => {
     replacementEl.innerHTML = label;
     cm.doc.markText(startPos, endPos, { replacedWith: replacementEl });
+  });
+}
+
+function markCitationBlock(cm, { itemID, startPos, endPos }) {
+  var { getFullCitation } = cm
+    , closingToken = utils.getClosingBlockToken(cm, startPos.line)
+
+  // If there's not a closing token yet, don't mark the section
+  if (!closingToken) return;
+
+  getFullCitation(itemID).then(label => {
+    var openingEl = document.createElement('span')
+      , closingEl = document.createElement('span')
+      , mark
+
+    openingEl.innerHTML = label;
+    openingEl.style.background = 'red';
+    openingEl.style.padding = '0 3px';
+    openingEl.style.borderRadius = '4px';
+
+    cm.doc.markText(startPos, endPos, { replacedWith: openingEl });
+    cm.doc.markText(closingToken.startPos, closingToken.endPos, { replacedWith: closingEl });
+
+    mark = cm.doc.markText(startPos, closingToken.endPos);
+
+    cm._sectionMarks.push(mark);
+
+    mark.lines.forEach(line => {
+      cm.addLineClass(line, 'text', 'CITATION-BLOCK');
+    });
   });
 }
 
@@ -112,17 +111,22 @@ function selectAfterClickedMarkedSpan(cm, e) {
 }
 
 
-function updateInlineReferences(cm, fromLine, toLine) {
+function updateDocumentMarks(cm, fromLine, toLine) {
   var { getUnmarkedReferences } = require('./cm_utils')
 
   Immutable.Range(fromLine, toLine + 1).toList()
     .map(lineNumber => Immutable.List(getUnmarkedReferences(cm, lineNumber)))
     .flatten(true)
-    .forEach(replaceReference.bind(null, cm))
+    .forEach(reference => {
+      if (reference.itemType === 'citationBlock-start') {
+        markCitationBlock(cm, reference)
+      } else {
+        replaceInlineReference(cm, reference);
+      }
+    });
 }
 
 module.exports = {
   checkEmptyReferences,
   updateDocumentMarks,
-  updateInlineReferences,
 }
