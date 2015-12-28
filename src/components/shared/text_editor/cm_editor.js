@@ -42,12 +42,22 @@ CodeMirror.commands.newlineAndIndentPromptForCitation = function (cm) {
       , prev = { line: pos.line - 1, ch: 0 }
 
     cm.setSelection(prev, pos);
-    cm.replaceSelection(
-      indent + quotes + after + '\n' +
-      indent + quotes + after + '[@@d'
-    );
 
-    actions.checkEmptyReferences(cm, { to: cm.getCursor(), text: 'd' });
+    if (cm.getStateAfter(prev.line).inCitationBlock) {
+      cm.replaceSelection(
+        indent + quotes + after + '\n' +
+        indent + quotes + after + '['
+      );
+      cm.replaceSelection(']', 'start');
+    } else {
+      cm.replaceSelection(
+        indent + quotes + after + '\n' +
+        indent + quotes + after + '[@@d'
+      );
+      cm.replaceSelection(']', 'start');
+      actions.checkEmptyReferences(cm, { to: cm.getCursor(), text: 'd' });
+    }
+
   }
 }
 
