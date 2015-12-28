@@ -107,3 +107,8 @@
 
     background: #f0f0f0 !important;
 }
+
+:not(.CITATION-BLOCK) + .CITATION-BLOCK,
+.CITATION-BLOCK + :not(.CITATION-BLOCK) {
+    border-top: 1px solid #ccc !important;
+}
