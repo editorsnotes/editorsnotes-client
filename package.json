@@ -43,6 +43,7 @@
     "cookie": "^0.1.2",
     "cookie-cutter": "^0.1.1",
     "envify": "^3.4.0",
+    "exorcist": "^0.4.0",
     "factor-bundle": "^2.3.3",
     "gettext-parser": "^1.1.1",
     "jed": "^1.1.0",
