@@ -7,6 +7,10 @@ function isReferenceToken(token) {
   )
 }
 
+function isCitationBlockToken(token) {
+  return (token.type || '').indexOf('citationBlock-start') === 0;
+}
+
 
 function referenceTypeFromToken(token) {
   return token.type.replace('reference-', '')
@@ -27,44 +31,28 @@ function hasNotBeenMarked(cm, token) {
 }
 
 
-function isInSection(cm, line) {
-  var state = cm.getStateAfter(line);
-  return (state.base.inCitation || state.base.inNoteReference);
-}
+// Given a line number, return the next token that ends a citation block
+function getClosingBlockToken(cm, startLine) {
+  var numLines = cm.doc.lineCount()
+    , checkLine = startLine
+    , closingToken = null
 
+  while (checkLine <= numLines) {
+    let closingTokens = cm
+      .getLineTokens(checkLine, true)
+      .filter(token => (token.type || '').indexOf('citationBlock-stop') !== -1)
 
-function getSectionRange(cm, start=null, line) {
-  if (start === null) {
-    // Don't assume this line is the start; go backward first to find the
-    // first line of the section.
-    let startLine = line
-
-    if (!isInSection(cm, line)) {
-      throw new Error(`line ${line} is not in a section`);
+    if (closingTokens.length) {
+      closingToken = closingTokens[0];
+      break;
     }
 
-    while (startLine > 0) {
-      if (!isInSection(cm, startLine - 1)) break;
-      startLine -= 1;
-    }
+    checkLine += 1;
+  }
 
-    return getSectionRange(cm, startLine);
-  } else {
-    // Go forward to find the last line of this section
-    let numLines = cm.doc.lineCount()
-      , checkLine = start
-      , endLine = Infinity
-
-    // FIXME: check if start is in section
-    while (checkLine <= numLines) {
-      if (!isInSection(cm, checkLine)) {
-        endLine = checkLine;
-        break;
-      }
-      checkLine += 1;
-    }
-
-    return [start, endLine]
+  return closingToken && {
+    startPos: { line: checkLine, ch: closingToken.start },
+    endPos: { line: checkLine, ch: closingToken.end }
   }
 }
 
@@ -72,8 +60,9 @@ function getSectionRange(cm, start=null, line) {
 // For a given line number, return a list of all the unmarked references.
 function getUnmarkedReferences(cm, line) {
   return cm.getLineTokens(line)
-    .filter(isReferenceToken)
+    .filter(token => isReferenceToken(token) || isCitationBlockToken(token))
     .map(token => ({
+      token,
       startPos: { line, ch: token.start },
       endPos: { line, ch: token.end },
       itemType: referenceTypeFromToken(token),
@@ -88,7 +77,6 @@ module.exports = {
   referenceTypeFromToken,
   hasNotBeenMarked,
 
-  isInSection,
-  getSectionRange,
-  getUnmarkedReferences
+  getUnmarkedReferences,
+  getClosingBlockToken
 }

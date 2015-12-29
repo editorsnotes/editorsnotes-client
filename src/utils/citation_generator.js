@@ -6,7 +6,11 @@ var _ = require('underscore')
   , locales = require('./citeproc_locales')
 
 CSL.Output.Formats.text['@font-style/italic'] = '<em>%%STRING%%</em>';
+CSL.Output.Formats.html['@bibliography/entry'] = (state, str) => {
+  return str;
+}
 CSL.debug = function () { return; }
+
 
 function CitationGenerator(style, locale) {
   style = style || 'chicago-fullnote-bibliography';

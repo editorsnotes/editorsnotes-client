@@ -83,8 +83,10 @@ module.exports = React.createClass({
       promise = apiFetch(itemURL)
         .then(resp => resp.json())
         .then(Immutable.fromJS)
-        .then(onAddEmbeddedItem)
-        .then(() => setTimeout(this.refreshCiteprocEngine, 0))
+        .then(newItem => {
+          onAddEmbeddedItem(newItem);
+          return newItem;
+        })
     }
 
     return promise;
@@ -177,7 +179,6 @@ module.exports = React.createClass({
 
     onAddEmbeddedItem(item);
 
-
     setTimeout(() => {
       if (getType(item) === 'Document') {
         let end = editor.getCursor()
@@ -187,8 +188,18 @@ module.exports = React.createClass({
           start.ch -= 1;
         }
 
-        editor.doc.setSelection(start, end);
-        editor.doc.replaceSelection(`[@@d${item.get('id')}] `);
+        if (editor.getRange(end, { line: end.line, ch: end.ch + 1 }) === ']') {
+          end.ch += 1;
+        }
+
+        if (editor.getLine(end.line) === '::: document @@d') {
+          editor.setSelection({ line: end.line, ch: 16 });
+          editor.replaceSelection(`${item.get('id')}\n\n\n\n:::`);
+          editor.setSelection({ line: end.line + 2, ch: 0 });
+        } else {
+          editor.doc.setSelection(start, end);
+          editor.doc.replaceSelection(`[@@d${item.get('id')}]`);
+        }
 
 
       } else {

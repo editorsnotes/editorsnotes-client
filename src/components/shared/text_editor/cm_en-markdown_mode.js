@@ -7,7 +7,7 @@ require('codemirror/mode/markdown/markdown')
 const TYPES = { n: 'note', d: 'document', t: 'topic' }
     , referenceRE = /^@@([ndt])?(\d+)?($|\W)/
     , citationRE = /^\[[^\]]*?@@d.*?\](?!\(.*\)|\[.*\])/
-    , citationBlockRE = /^::: document @@d(\d+)?$/
+    , citationBlockRE = /^::: document @@d\d+$/
 
 
 CodeMirror.defineMode('en-markdown', function (config) {
@@ -74,9 +74,14 @@ CodeMirror.defineMode('en-markdown', function (config) {
 
           if (nextChar === '@') {
             stream.backUp(1);
-            if (stream.match(referenceRE, true)) {
+            let match = stream.match(referenceRE, true);
+
+            if (match) {
+              let [,,id] = match;
+
               if (stream.current().slice(-1) === ']') stream.backUp(1);
-              return 'reference-document';
+
+              return id ? 'reference-document' : 'reference-empty-document';
             } else {
               stream.next(1);
             }
