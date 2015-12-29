@@ -16,6 +16,7 @@ test('Activities helpers', function (t) {
     [
       {
         count: 2,
+        id: "changed|/projects/patrick_research/notes/17/",
         mostRecent: {
           "user": "patrick",
           "project": "patrick_research",
@@ -29,6 +30,7 @@ test('Activities helpers', function (t) {
       },
       {
         count: 1,
+        id: "added|/projects/patrick_research/topics/8/",
         mostRecent: {
           "user": "p",
           "project": "patrick_research",
@@ -42,6 +44,7 @@ test('Activities helpers', function (t) {
       },
       {
         count: 1,
+        id: "added|/projects/patrick_research/notes/17/",
         mostRecent: {
           "user": "p",
           "project": "patrick_research",
