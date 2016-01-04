@@ -1,3 +1,5 @@
+"use strict";
+
 var _ = require('underscore')
   , RouteRecognizer = require('route-recognizer')
   , isNode = typeof window === 'undefined'
@@ -23,7 +25,7 @@ Router.prototype.add = function (path, opts) {
     } else {
       _path = path;
     }
-    this.recognizer.add([{ path: _path, handler: opts }], { as: opts.name }) 
+    this.recognizer.add([{ path: _path, handler: opts }], { as: opts.name });
   }
 }
 
@@ -32,7 +34,6 @@ Router.prototype.registerFallbackHandler = function (fn) { this.fallbackHandler 
 
 Router.prototype.match = function (url) {
   var match = this.recognizer.recognize(url)
-    , name
     , ret
 
   if (!match) return null;
@@ -46,7 +47,6 @@ Router.prototype.match = function (url) {
 // match is made.
 Router.prototype.execute = function (url, context) {
   var match = this.match(url)
-    , params
     , handler
 
   if (!match) throw new Error('No route found for "' + url + '".');
@@ -78,7 +78,7 @@ Router.prototype.reverse = function (name) {
   if (!this.recognizer.hasRoute(name)) {
     throw new Error('Router has no route named: ' + name);
   }
-  
+
   segments = this.recognizer.names[name].segments;
   namedParams = segments.filter(function (seg) {
     return seg.hasOwnProperty('name');
@@ -108,7 +108,7 @@ Router.prototype.reverse = function (name) {
   if (addTrailingSlash && url[url.length - 1] !== '/') {
     url += '/';
   }
-  
+
   return url;
 }
 
