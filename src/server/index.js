@@ -8,21 +8,17 @@ global.EditorsNotes.jed = require('./jed')
 
 var request = require('request')
   , server = require('./server')
-  , argv = require('minimist')(process.argv.slice(2), {
-    default: {
-      api_url: 'http://127.0.0.1:8001',
-      port: '8450',
-      dev: false
-    }
-  })
+  , apiURL = process.env.EDITORSNOTES_API_URL || 'http://127.0.0.1:8001'
+  , port = process.env.EDITORSNOTES_RENDERER_PORT || 8450
+  , production = process.env.NODE_ENV === 'production'
 
-console.log(`Verifying Editors\' Notes API address at ${argv.api_url}`);
+console.log(`Verifying Editors\' Notes API address at ${apiURL}`);
 
 function start() {
-  request(argv.api_url, { headers: { Accept: 'application/json' }}, function (err) {
+  request(apiURL, { headers: { Accept: 'application/json' }}, function (err) {
     if (err) {
       if (err.code === 'ECONNREFUSED') {
-        console.error(`\nCould not connect to Editor\'s Notes API server at ${argv.api_url}`)
+        console.error(`\nCould not connect to Editor\'s Notes API server at ${apiURL}`)
         console.error('Retrying in 5 seconds...');
 
         setTimeout(start, 5000);
@@ -32,8 +28,8 @@ function start() {
       }
     }
 
-    console.log(`Starting server on port ${argv.port} (${argv.dev ? 'development' : 'production'} mode)`);
-    server.serve(argv.port, argv.api_url, argv.dev)
+    console.log(`Starting server on port ${port} (${production ? 'production' : 'development'} mode)`);
+    server.serve(port, apiURL, !production)
   });
 }
 
