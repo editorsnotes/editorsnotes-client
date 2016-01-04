@@ -1,5 +1,7 @@
 "use strict";
 
+/* eslint camelcase:0 */
+
 var process = require('process')
   , http = require('http')
   , _ = require('underscore')
@@ -7,13 +9,46 @@ var process = require('process')
   , cookie = require('cookie')
   , React = require('react')
   , Immutable = require('immutable')
-  , Router = require('../router')
+  , Router = require('./router')
   , router = new Router()
 
 
-const VERSION = require('../../package.json').version
+const VERSION = require('../package.json').version
     , FETCH_ERROR = '__error__'
     , USER_DATA = '__AUTHENTICATED_USER__'
+
+
+global.EditorsNotes = {};
+global.EditorsNotes.jed = getJed();
+
+
+function getJed() {
+  var child_process = require('child_process')
+    , Jed = require('jed')
+    , path = require('path')
+    , po2json = require('po2json')
+    , localePath
+    , files
+    , data
+
+  localePath = path.join(__dirname, '..', 'locale');
+
+  files = child_process
+    .execSync('find ' + localePath + ' -type f -name *po', { encoding: 'utf-8' })
+    .trim()
+    .split('\n');
+
+  data = files.reduce(function (acc, file) {
+    var domain = 'messages_' + path.basename(file).replace('.po', '')
+      , poData = po2json.parseFileSync(file, { format: 'jed1.x', domain: domain })
+
+    acc.locale_data[domain] = poData.locale_data[domain];
+    return acc;
+  }, { domain: 'messages_main', locale_data: {} });
+
+  return new Jed(data);
+}
+
 
 function getSessionID(req) {
   return cookie.parse(req.headers.cookie || '').sessionid;
@@ -104,12 +139,12 @@ function makeHTML(body, bootstrap) {
 }
 
 
-router.add(require('../base_routes'))
-router.add(require('../admin_routes'))
+router.add(require('./base_routes'))
+router.add(require('./admin_routes'))
 
 
 function render(props, bootstrap) {
-  var Application = require('../components/application.jsx')
+  var Application = require('./components/application.jsx')
     , { renderToString } = require('react-dom/server')
     , application = React.createElement(Application, props)
     , html = makeHTML(renderToString(application), bootstrap)
@@ -194,7 +229,7 @@ router.fallbackHandler = function (matchName, path) {
       })
       .then(props => {
         var hadError = props.data && props.data.has(FETCH_ERROR)
-          , component = hadError ? require('../components/main/error/component.jsx') : config.Component
+          , component = hadError ? require('./components/main/error/component.jsx') : config.Component
 
         return _.extend(props, {
           ActiveComponent: component,
@@ -221,7 +256,6 @@ router.fallbackHandler = function (matchName, path) {
   }
 }
 
-
 module.exports = {
   serve: function (port, apiURL, developmentMode) {
     global.API_URL = apiURL;
@@ -237,7 +271,7 @@ module.exports = {
                 , data = {}
 
               if (userData) data[USER_DATA] = props[USER_DATA] = Immutable.fromJS(userData);
-              props.ActiveComponent = require('../components/main/not_found/component.jsx');
+              props.ActiveComponent = require('./components/main/not_found/component.jsx');
 
               res.writeHead(404, { 'Content-Type': 'text/html' });
 

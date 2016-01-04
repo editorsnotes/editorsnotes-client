@@ -2,12 +2,8 @@
 
 require('babel/register')({ only: /src/ });
 
-global.EditorsNotes = {};
-global.EditorsNotes.jed = require('./jed')
-
-
 var request = require('request')
-  , server = require('./server')
+  , server = require('../src/server')
   , apiURL = process.env.EDITORSNOTES_API_URL || 'http://127.0.0.1:8001'
   , port = process.env.EDITORSNOTES_RENDERER_PORT || 8450
   , production = process.env.NODE_ENV === 'production'

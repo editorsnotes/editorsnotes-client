@@ -87,7 +87,7 @@
     "matchesRemote": "test $(git rev-parse @) = $(git rev-parse @{u})",
     "test": "browserify src/test/*.js | tape-run",
     "test-serve": "browserify src/test/*.js | tape-run -p 38723",
-    "start": "cd src && node server",
-    "start-debug": "cd src && nodemon server -w ./ -e 'js,jsx'"
+    "start": "node bin/serve",
+    "start-debug": "nodemon bin/serve -w ./src/ -e 'js,jsx'"
   }
 }
