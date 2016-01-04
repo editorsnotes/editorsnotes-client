@@ -11,10 +11,8 @@ var process = require('process')
   , router = new Router()
 
 
-const API_URL = process.env.EDITORSNOTES_API_URL || 'http://localhost:8001'
-    , SERVER_PORT = process.env.EDITORSNOTES_CLIENT_PORT || 8450
-
-const FETCH_ERROR = '__error__'
+const VERSION = require('../../package.json').version
+    , FETCH_ERROR = '__error__'
     , USER_DATA = '__AUTHENTICATED_USER__'
 
 function getSessionID(req) {
@@ -29,7 +27,7 @@ const fetchFn = function (req, pathname, headers={}) {
 
   if (pathname[0] !== '/') throw Error('Can only fetch data relative to local API.');
 
-  url = API_URL + pathname;
+  url = global.API_URL + pathname;
 
   if (sessionID) {
     headers.cookie = cookie.serialize('sessionid', sessionID);
@@ -71,31 +69,44 @@ const fetchFn = function (req, pathname, headers={}) {
 
 
 function makeHTML(body, bootstrap) {
-  var bootstrapScript = !bootstrap ? '' : `
+  var bootstrapScript
+    , jsBundleFilename
+    , cssBundleFilename
+
+  bootstrapScript = !bootstrap ? '' : `
     <script type="text/javascript">
       window.EDITORSNOTES_BOOTSTRAP = ${JSON.stringify(bootstrap)};
     </script>
   `
+
+  jsBundleFilename = global.DEVELOPMENT_MODE ?
+    'editorsnotes.js' :
+    `editorsnotes-${VERSION}.min.js`
+
+  cssBundleFilename = jsBundleFilename.replace(/.js$/, '.css');
+
+
   return `<!doctype html>
 <html lang="en">
   <head>
     <title>Editors' Notes</title>
     <meta charset="utf-8"/>
-    <link rel="stylesheet" href="/static/style.css" />
+    <link rel="stylesheet" href="/static/${cssBundleFilename}" />
   </head>
 
   <body>
     <div id="react-app" style="height: 100%">${body}</div>
     ${bootstrapScript}
-    <script type="text/javascript" src="/static/bundle.js"></script>
+    <script type="text/javascript" src="/static/${jsBundleFilename}"></script>
   </body>
 </html>
 `
 }
 
-//router.add(require('../admin_views/routes'))
+
 router.add(require('../base_routes'))
 router.add(require('../admin_routes'))
+
 
 function render(props, bootstrap) {
   var Application = require('../components/application.jsx')
@@ -106,6 +117,7 @@ function render(props, bootstrap) {
   return html;
 }
 
+
 function logError(err) {
   process.stderr.write('ERROR\n==========\n');
   process.stderr.write((err.stack || err) + '\n');
@@ -113,13 +125,14 @@ function logError(err) {
 
 }
 
+
 function getUserData(req) {
   var sessionID = getSessionID(req)
 
   if (!sessionID) return Promise.resolve(null);
 
   return new Promise((resolve, reject) => {
-    var url = API_URL + '/me/'
+    var url = global.API_URL + '/me/'
       , headers = {}
 
     headers.cookie = cookie.serialize('sessionid', sessionID);
@@ -142,6 +155,7 @@ function getUserData(req) {
     });
   })
 }
+
 
 // Render view template, unless there is no template, in which case just
 // render a blank page.
@@ -207,8 +221,12 @@ router.fallbackHandler = function (matchName, path) {
   }
 }
 
+
 module.exports = {
-  serve: function () {
+  serve: function (port, apiURL, developmentMode) {
+    global.API_URL = apiURL;
+    global.DEVELOPMENT_MODE = developmentMode;
+
     var server = http.createServer(function (req, res) {
       router.dispatch(req, res, function (err) {
         if (err) {
@@ -225,10 +243,10 @@ module.exports = {
 
               res.end(render(props, data));
             })
-            .catch(err => {
+            .catch(serverErr => {
               let msg = '<h1>Server error</h1>';
 
-              logError(err);
+              logError(serverErr);
 
               res.writeHead(500);
               res.end(makeHTML(msg));
@@ -237,7 +255,7 @@ module.exports = {
       });
     });
 
-    server.listen(SERVER_PORT);
+    server.listen(port);
     return server;
   }
 }
