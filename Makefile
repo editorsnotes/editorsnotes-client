@@ -17,11 +17,16 @@ CSS_BUNDLE = $(JS_BUNDLE:.js=.css)
 VERSIONED_CSS_BUNDLE = $(VERSIONED_JS_BUNDLE:.js=.css)
 MINIFIED_VERSIONED_CSS_BUNDLE = $(MINIFIED_VERSIONED_JS_BUNDLE:.js=.css)
 
+POSTCSS_OPTS = --use postcss-import \
+	       --use postcss-cssnext \
+	       --use postcss-url \
+	       --postcss-url.url copy \
+	       --postcss-url.useHash true \
+	       --postcss-url.assetsPath assets \
+	       ./style/main.css
 
 JS_FILES = $(shell find src/ -type f -name *js -o -name *jsx)
 CSS_FILES = $(shell find style -type f -name *css)
-FONT_FILES = ./node_modules/font-awesome/fonts/* \
-	     ./node_modules/openwebicons/font/*
 
 
 ###################
@@ -33,9 +38,9 @@ all: $(MINIFIED_VERSIONED_JS_BUNDLE) $(MINIFIED_VERSIONED_CSS_BUNDLE)
 clean:
 	@rm -rf static
 
-watch: | static
-	$(NPM_BIN)/watchify $(BROWSERIFY_ENTRY) -o $(JS_BUNDLE) -dv
-
+watch: node_modules | static
+	$(NPM_BIN)/watchify --poll=1s $(BROWSERIFY_ENTRY) -o $(JS_BUNDLE) -dv & \
+		$(NPM_BIN)/postcss $(POSTCSS_OPTS) --watch -o $(CSS_BUNDLE)
 
 watch-styleguide: static/style.css | static
 	NODE_ENV=styleguide ./bin/watch-styleguide.sh
@@ -51,8 +56,10 @@ watch-styleguide: static/style.css | static
 static:
 	mkdir -p $@
 
+node_modules: package.json
+	npm install
 
-$(VERSIONED_JS_BUNDLE): $(JS_FILES) | static
+$(VERSIONED_JS_BUNDLE): $(JS_FILES) node_modules | static
 	NODE_ENV=production $(NPM_BIN)/browserify -d $(BROWSERIFY_ENTRY) \
 		 | $(NPM_BIN)/exorcist $@.map > $@
 
@@ -64,16 +71,8 @@ $(MINIFIED_VERSIONED_JS_BUNDLE): $(VERSIONED_JS_BUNDLE)
 		-o $@
 
 
-$(VERSIONED_CSS_BUNDLE): static/fonts style/main.css $(CSS_FILES) | static
-	# sed command is to replace url() paths for fonts in compiled CSS
-	$(NPM_BIN)/cssnext -U ./style/main.css \
-		| sed -e 's|../fonts\?/|fonts/|g' \
-		> $@
+$(VERSIONED_CSS_BUNDLE): $(CSS_FILES) node_modules | static
+	$(NPM_BIN)/postcss $(POSTCSS_OPTS) -o $@
 
 $(MINIFIED_VERSIONED_CSS_BUNDLE): $(VERSIONED_CSS_BUNDLE)
 	$(NPM_BIN)/cleancss $< -o $@
-
-static/fonts: $(FONT_FILES)
-	mkdir -p static/fonts && cp $(FONT_FILES) $@
-
-
