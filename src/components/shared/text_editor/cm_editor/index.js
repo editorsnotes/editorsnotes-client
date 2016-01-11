@@ -5,7 +5,7 @@ var CodeMirror = require('codemirror')
 
 // Register CodeMirror modes for our markup
 require('codemirror/addon/edit/continuelist');
-require('./cm_en-markdown_mode');
+require('./en-markdown_mode');
 
 
 CodeMirror.commands.newlineAndIndentPromptForCitation = function (cm) {
@@ -37,7 +37,7 @@ CodeMirror.commands.newlineAndIndentPromptForCitation = function (cm) {
 
   // This means we have a newline
   if (wasInQuote && noLongerInQuote) {
-    let actions = require('./cm_actions')
+    let actions = require('./actions')
       , pos = cm.getCursor()
       , prev = { line: pos.line - 1, ch: 0 }
 
@@ -63,7 +63,7 @@ CodeMirror.commands.newlineAndIndentPromptForCitation = function (cm) {
 
 
 module.exports = function (el, value='', opts={}) {
-  var actions = require('./cm_actions')
+  var actions = require('./actions')
     , editor
 
   editor = CodeMirror(el, {

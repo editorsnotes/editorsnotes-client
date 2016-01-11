@@ -1,7 +1,7 @@
 "use strict";
 
 var Immutable = require('immutable')
-  , utils = require('./cm_utils')
+  , utils = require('./utils')
 
 
 // Given a codemirror instance and a change object (the arguments passed by
@@ -112,7 +112,7 @@ function selectAfterClickedMarkedSpan(cm, e) {
 
 
 function updateDocumentMarks(cm, fromLine, toLine) {
-  var { getUnmarkedReferences } = require('./cm_utils')
+  var { getUnmarkedReferences } = require('./utils')
 
   Immutable.Range(fromLine, toLine + 1).toList()
     .map(lineNumber => Immutable.List(getUnmarkedReferences(cm, lineNumber)))
