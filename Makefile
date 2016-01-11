@@ -39,7 +39,7 @@ clean:
 	@rm -rf static
 
 watch: node_modules | static
-	$(NPM_BIN)/watchify --poll=1s $(BROWSERIFY_ENTRY) -o $(JS_BUNDLE) -dv & \
+	$(NPM_BIN)/watchify $(BROWSERIFY_ENTRY) -o $(JS_BUNDLE) -dv & \
 		$(NPM_BIN)/postcss $(POSTCSS_OPTS) --watch -o $(CSS_BUNDLE)
 
 watch-styleguide: static/style.css | static
