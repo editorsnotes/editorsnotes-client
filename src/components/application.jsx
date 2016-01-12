@@ -49,10 +49,8 @@ Application = React.createClass({
 
         */}
 
-        <main className="flex-grow">
-          <div className={classnames({
-            container: !noContainer
-          })}>
+        <main className="flex-grow relative">
+          <div className={classnames({ container: !noContainer })}>
             <ActiveComponent {...activeComponentProps} />
           </div>
         </main>

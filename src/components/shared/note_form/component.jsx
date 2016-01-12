@@ -45,14 +45,14 @@ module.exports = React.createClass({
 
   render() {
     var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
-      , HTMLEditor = require('../text_editor/component.jsx')
+      , HTMLEditor = require('../en_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
       , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem, handleSave, afterHeader } = this.props
 
     return (
-      <div className="bg-lightgray">
-        <div className="container">
+      <div className="flex-grow flex flex-column">
+        <div className="container flex-none">
           <GeneralErrors
               errors={errors.delete('title').delete('markup')} />
 
@@ -124,7 +124,7 @@ module.exports = React.createClass({
           </header>
         </div>
 
-        <section>
+        <section className="flex-grow flex flex-column">
           <FieldErrors errors={errors.get('markup')} />
           <HTMLEditor
               ref="content"
@@ -137,7 +137,6 @@ module.exports = React.createClass({
               onChange={markup => this.mergeValues({ markup })}
               onAddEmbeddedItem={onAddEmbeddedItem}
               handleSave={handleSave} />
-          <br />
         </section>
       </div>
     )
