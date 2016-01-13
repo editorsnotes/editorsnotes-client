@@ -117,9 +117,13 @@ module.exports = React.createClass({
               <RelatedTopicsSelector topics={note.get('related_topics').toSet()} />
             </div>
 
+            {
+            /*
             <div className="col col-12">
               { afterHeader && afterHeader() }
             </div>
+            */
+            }
 
           </header>
         </div>

@@ -39,6 +39,7 @@ NoteEdit = React.createClass({
     }));
   },
 
+  /*
   renderAfterHeader() {
     var { saveAndRedirect } = this.props
 
@@ -51,6 +52,7 @@ NoteEdit = React.createClass({
       </div>
     )
   },
+  */
 
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
