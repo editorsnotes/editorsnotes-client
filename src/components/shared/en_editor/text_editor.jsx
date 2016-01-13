@@ -1,20 +1,17 @@
 "use strict";
 
-var _ = require('underscore')
-  , React = require('react')
-  , ReactDOM = require('react-dom')
-  , classnames = require('classnames')
+var React = require('react')
 
 
 const TOOLBAR_HEIGHT = '4em';
 
-function TopBar({ width, fixed }) {
-  var className
-    , style = { height: TOOLBAR_HEIGHT, lineHeight: TOOLBAR_HEIGHT }
+function TopBar({}) {
+  var style = { height: TOOLBAR_HEIGHT, lineHeight: TOOLBAR_HEIGHT, padding: '0 1em' }
 
   return (
-    <div className="bg-yellow col-12" style={style}>
-      I am the toolbar
+    <div className="bg-gray border-box col-12 right-align" style={style}>
+      <button className="btn bg-white btn-outline mr2">Help</button>
+      <button className="btn btn-primary">Save</button>
     </div>
   )
 }
@@ -22,7 +19,7 @@ function TopBar({ width, fixed }) {
 
 function CodeMirror() {
   return (
-    <div className="absolute bg-green" style={{
+    <div className="absolute bg-lightgray" style={{
       overflowY: 'scroll',
       left: 0,
       right: 0,
@@ -47,8 +44,6 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { fixed } = this.state
-
     return (
       <div className="absolute flex flex-column" style={{
         left: 0,
