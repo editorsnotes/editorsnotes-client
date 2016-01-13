@@ -12,18 +12,8 @@ function TopBar({ width, fixed }) {
   var className
     , style = { height: TOOLBAR_HEIGHT, lineHeight: TOOLBAR_HEIGHT }
 
-  className = classnames(
-    'bg-yellow',
-    fixed ? 'fixed' : 'col-12'
-  );
-
-  if (fixed) {
-    style.width = width;
-    style.top = 0;
-  }
-
   return (
-    <div className={className} style={style}>
+    <div className="bg-yellow col-12" style={style}>
       I am the toolbar
     </div>
   )
@@ -32,8 +22,15 @@ function TopBar({ width, fixed }) {
 
 function CodeMirror() {
   return (
-    <div>
+    <div className="absolute bg-green" style={{
+      overflowY: 'scroll',
+      left: 0,
+      right: 0,
+      height: '100%'
+    }}>
+
       I am codemirror
+
     </div>
   )
 }
@@ -49,32 +46,19 @@ module.exports = React.createClass({
     return { fixed: false }
   },
 
-  componentWillMount() {
-    this.handleScroll = _.debounce(this.handleScroll, 5);
-  },
-
-  componentDidMount() {
-    window.addEventListener('scroll', this.handleScroll);
-  },
-
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll);
-  },
-
-  handleScroll(e) {
-    var el = ReactDOM.findDOMNode(this)
-      , { top } = el.getBoundingClientRect()
-
-    this.setState({ fixed: top < 0 });
-  },
-
   render() {
     var { fixed } = this.state
 
     return (
-      <div style={{ paddingTop: fixed ? TOOLBAR_HEIGHT : 0 }}>
-        <TopBar {...this.props} {...this.state} />
-        <div>
+      <div className="absolute flex flex-column" style={{
+        left: 0,
+        right: 0,
+        height: '100%'
+      }}>
+        <div className="flex-none">
+          <TopBar {...this.props} {...this.state} />
+        </div>
+        <div className="flex-grow relative">
           <CodeMirror />
         </div>
       </div>
