@@ -20,7 +20,7 @@ Application = React.createClass({
     var classnames = require('classnames')
       , Header = require('./main/header/component.jsx')
       , Footer = require('./main/footer/component.jsx')
-      , { ActiveComponent, noContainer, path } = this.props
+      , { ActiveComponent, noContainer, noFooter, path } = this.props
       , { loading } = this.state
       , user = this.props.__AUTHENTICATED_USER__ || null
       , activeComponentProps
@@ -55,7 +55,7 @@ Application = React.createClass({
           </div>
         </main>
 
-        <Footer />
+        { !noFooter && <Footer /> }
       </div>
     )
   }
