@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react')
-  , classnames = require('classnames')
+  , ReactDOM = require('react-dom')
 
 
 module.exports = React.createClass({
@@ -12,9 +12,9 @@ module.exports = React.createClass({
 
   getInitialState() {
     return {
-      x: null,
+      rightWidth: null,
+      leftWidth: null,
       dragEl: null,
-      offset: null
     }
   },
 
@@ -32,15 +32,12 @@ module.exports = React.createClass({
     return true;
   },
 
-  handleDragEnd(e) {
+  handleDragEnd() {
     var { dragEl } = this.state
 
     dragEl.parentNode.removeChild(dragEl);
 
-    this.setState({
-      offset: null,
-      dragEl: null
-    });
+    this.setState({ dragEl: null });
 
     return false;
   },
@@ -48,22 +45,45 @@ module.exports = React.createClass({
   handleDrag(e) {
     var { pageX } = e
       , { offset } = this.state
+      , leftWidth, rightWidth
 
     if (!offset) return;
     if (pageX === 0) return;
 
-    this.setState({ x: offset - pageX });
+    leftWidth = pageX;
+
+    if (leftWidth < 300) leftWidth = 300;
+    rightWidth = offset - leftWidth - 16;
+
+    this.setState({ leftWidth, rightWidth });
+  },
+
+  componentDidMount() {
+    var leftEl = ReactDOM.findDOMNode(this.refs.left)
+      , rightEl = ReactDOM.findDOMNode(this.refs.right)
+
+    this.setState({
+      leftWidth: leftEl.clientWidth,
+      rightWidth: rightEl.clientWidth
+    });
   },
 
   render() {
     var TextEditor = require('./text_editor.jsx')
       , Panes = require('./panes.jsx')
-      , { x } = this.state
+      , { leftWidth, rightWidth } = this.state
+      , flex = leftWidth === rightWidth
 
     return (
-      <div className="flex-grow flex flex-stretch bg-white">
-        <div className="flex-grow" ref="left-pane">
-          <TextEditor />
+      <div className="flex-grow bg-white flex flex-stretch">
+        <div
+            ref="left"
+            className="relative"
+            style={{
+              width: flex ? 'auto' : leftWidth,
+              flex: flex ? '2 2 0' : 'none'
+            }}>
+          <TextEditor width={leftWidth} />
         </div>
 
         <div
@@ -72,17 +92,18 @@ module.exports = React.createClass({
             onDragStart={this.handleDragStart}
             onDragEnd={this.handleDragEnd}
             onDrag={this.handleDrag}
-            style={{
-              width: '16px',
-              cursor: 'col-resize'
-            }}>
+            style={{ width: '16px', cursor: 'col-resize', marginLeft: -6 }}>
           <div className="absolute" style={{ width: '4px', background: '#ccc', height: '100%', left: '6px' }} />
         </div>
 
 
-        <div className={classnames({"flex-grow": x === null})} style={{
-          width: x === null ? 'auto' : x
-        }}>
+        <div
+            ref="right"
+            className="relative"
+            style={{
+              width: flex ? 'auto' : rightWidth,
+              flex: flex ? '1 1 0' : 'none'
+            }}>
           <Panes />
         </div>
       </div>
