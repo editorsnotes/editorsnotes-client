@@ -103,7 +103,7 @@ module.exports = React.createClass({
               className="relative"
               style={{
                 width: flex ? 'auto' : leftWidth,
-                flex: flex ? '2 2 0' : 'none'
+                flex: flex ? '3 3 0' : 'none'
               }}>
             <TextEditor width={leftWidth} />
           </div>
@@ -124,7 +124,7 @@ module.exports = React.createClass({
               className="relative"
               style={{
                 width: flex ? 'auto' : rightWidth,
-                flex: flex ? '1 1 0' : 'none'
+                flex: flex ? '2 2 0' : 'none'
               }}>
             <Panes />
           </div>
