@@ -60,11 +60,7 @@ NoteEdit = React.createClass({
       , { embeddedItems } = this.state
 
     return (
-      <div className="bg-lightgray absolute flex flex-column" style={{
-        left: 0,
-        right: 0,
-        height: '100%'
-      }}>
+      <div className="bg-lightgray absolute-full-height flex flex-column">
 
         <div className="container mt2 col-12 flex-none">
           { renderBreadcrumb() }

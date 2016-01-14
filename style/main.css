@@ -8,6 +8,7 @@
 
 @import "./variables";
 @import "./colors";
+@import "./utils";
 
 .inline-children * { display: inline; }
 

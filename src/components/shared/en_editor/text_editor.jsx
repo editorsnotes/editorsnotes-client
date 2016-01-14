@@ -5,12 +5,7 @@ var React = require('react')
 
 function CodeMirror() {
   return (
-    <div className="absolute bg-lightgray" style={{
-      overflowY: 'scroll',
-      left: 0,
-      right: 0,
-      height: '100%',
-    }}>
+    <div className="absolute-full-height bg-lightgray" style={{ overflowY: 'scroll' }}>
     </div>
   )
 }
@@ -28,11 +23,7 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <div className="absolute flex flex-column" style={{
-        left: 0,
-        right: 0,
-        height: '100%'
-      }}>
+      <div className="absolute-full-height flex flex-column">
         <div className="flex-grow relative">
           <CodeMirror />
         </div>

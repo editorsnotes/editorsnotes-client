@@ -13,12 +13,7 @@ module.exports = React.createClass({
     var Help = require('./help.jsx')
 
     return (
-      <div className="absolute p2 border-box" style={{
-        overflowY: 'scroll',
-        left: 0,
-        right: 0,
-        height: '100%'
-      }}>
+      <div className="absolute-full-height p2 border-box" style={{ overflowY: 'scroll', }}>
         <Help />
       </div>
     )
