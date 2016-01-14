@@ -1,7 +1,6 @@
 "use strict";
 
 var React = require('react')
-  , Immutable = require('immutable')
   , classnames = require('classnames')
 
 
@@ -16,13 +15,12 @@ module.exports = React.createClass({
   },
 
   getInitialState() {
-    return {
-      currentPane: 'help'
-    }
+    return { currentPane: 'references' }
   },
 
   render() {
     var Help = require('./help.jsx')
+      , References = require('./references.jsx')
       , { currentPane } = this.state
 
     return (
@@ -34,6 +32,12 @@ module.exports = React.createClass({
               className={paneClassName('references', currentPane)}
               onClick={() => this.setState({ currentPane: 'references' })}>
             References
+          </button>
+
+          <button
+              className={paneClassName('browser', currentPane)}
+              onClick={() => this.setState({ currentPane: 'browser' })}>
+            Browser
           </button>
 
           <button
@@ -51,8 +55,12 @@ module.exports = React.createClass({
                 <Help />
               </div>
 
+              <div className={classnames({ 'display-none': currentPane !== 'browser' })}>
+                The browser
+              </div>
+
               <div className={classnames({ 'display-none': currentPane !== 'references' })}>
-                <p>References</p>
+                <References {...this.props} />
               </div>
             </div>
           </div>

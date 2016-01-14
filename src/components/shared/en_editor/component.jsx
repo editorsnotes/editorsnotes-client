@@ -126,7 +126,7 @@ module.exports = React.createClass({
                 width: flex ? 'auto' : rightWidth,
                 flex: flex ? '2 2 0' : 'none'
               }}>
-            <Panes />
+            <Panes {...this.props} />
           </div>
         </div>
       </div>
