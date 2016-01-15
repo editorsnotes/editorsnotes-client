@@ -13,33 +13,6 @@
 .inline-children * { display: inline; }
 
 
-/** Text editor **/
-
-.TextEditor--editor {
-    min-height: 480px;
-    max-width: 600px;
-
-    font-size: 16px;
-    font-family: serif;
-
-    box-shadow: 0px 2px 10px -2px #111;
-}
-
-.TextEditor--references {
-    max-width: 400px;
-    max-height: 90vh;
-
-    overflow: hidden;
-
-    box-shadow: 0px 2px 10px -2px #111;
-}
-
-.CodeMirror-scroll:hover {
-    cursor: text;
-}
-
-
-
 /** Note heading **/
 .NoteInformation--Heading {
     width: 90px;
@@ -96,16 +69,23 @@
     border-top: 1px dotted #ccc;
 }
 
+
 /** Text editor **/
+.CodeMirror-scroll:hover {
+    cursor: text;
+}
+
+.ENEditor .CodeMirror-line {
+    padding-left: 6rem;
+    padding-right: 6rem;
+}
+
+.ENEditor .CodeMirror-lines {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+}
+
 .CITATION-BLOCK {
-    border-left: 1px solid #ccc !important;
-    border-right: 1px solid #ccc !important;
-
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-
-    margin-right: 1px !important;
-
     background: #f0f0f0 !important;
 }
 

@@ -15,7 +15,7 @@ module.exports = function makeEmbeddedItemsHandler(Component) {
     },
 
     initCitationEngine() {
-      var CitationGenerator = require('../../../utils/citation_generator')
+      var CitationGenerator = require('../../utils/citation_generator')
 
       this.setState({
         citationGenerator: new CitationGenerator('chicago-author-date')
@@ -39,7 +39,7 @@ module.exports = function makeEmbeddedItemsHandler(Component) {
 
 
     getItemFromURL(itemURL) {
-      var apiFetch = require('../../../utils/api_fetch')
+      var apiFetch = require('../../utils/api_fetch')
         , { embeddedItems, onAddEmbeddedItem } = this.props
         , item
         , promise
@@ -64,7 +64,7 @@ module.exports = function makeEmbeddedItemsHandler(Component) {
     getReferenceLabel(itemType, itemID) {
       var resolveItemText = require('editorsnotes-markup-renderer/lib/resolve_item_text')
 
-      return this.getEmbeddedItems(itemType, itemID)
+      return this.getEmbeddedItem(itemType, itemID)
         .then(item => {
           var id = item.get('id')
             , data = { [itemType]: { [id]: item.toJS() }}

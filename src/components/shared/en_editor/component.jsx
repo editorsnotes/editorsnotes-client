@@ -105,7 +105,7 @@ module.exports = React.createClass({
                 width: flex ? 'auto' : leftWidth,
                 flex: flex ? '3 3 0' : 'none'
               }}>
-            <TextEditor width={leftWidth} />
+            <TextEditor {...this.props} />
           </div>
 
           <div

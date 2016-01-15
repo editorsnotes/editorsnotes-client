@@ -2,11 +2,11 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , EmbeddedItemsHandler = require('../../util/embedded_items_handler.jsx')
   , Note = require('../../../records/note')
+  , NoteForm
 
-module.exports = React.createClass({
-  displayName: 'NoteForm',
-
+NoteForm = React.createClass({
   propTypes: {
     note: React.PropTypes.instanceOf(Note).isRequired,
     embeddedItems: React.PropTypes.instanceOf(Immutable.Set).isRequired,
@@ -132,17 +132,13 @@ module.exports = React.createClass({
           <FieldErrors errors={errors.get('markup')} />
           <HTMLEditor
               ref="content"
-              projectURL={projectURL}
-              minimal={minimal}
-
+              {...this.props}
               html={note.markup}
-              embeddedItems={embeddedItems}
-
-              onChange={markup => this.mergeValues({ markup })}
-              onAddEmbeddedItem={onAddEmbeddedItem}
-              handleSave={handleSave} />
+              onChange={markup => this.mergeValues({ markup })} />
         </section>
       </div>
     )
   }
 });
+
+module.exports = EmbeddedItemsHandler(NoteForm);
