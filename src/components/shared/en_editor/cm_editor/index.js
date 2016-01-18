@@ -7,7 +7,7 @@ require('./en-markdown_mode');
 
 
 module.exports = function (el, value='', {
-  handleAddReference,
+  onAddEmptyReference,
   getReferenceLabel,
   getInlineCitation,
   getFullCitation
@@ -28,7 +28,7 @@ module.exports = function (el, value='', {
   editor.getReferenceLabel = getReferenceLabel;
   editor.getInlineCitation = getInlineCitation;
   editor.getFullCitation = getFullCitation;
-  editor.handleAddReference = handleAddReference;
+  editor.handleAddReference = onAddEmptyReference;
 
   editor._sectionMarks = [];
 

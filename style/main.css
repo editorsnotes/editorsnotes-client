@@ -2,6 +2,7 @@
 @import "font-awesome";
 @import "openwebicons/css/openwebicons";
 @import "codemirror/lib/codemirror";
+@import "react-select/dist/react-select";
 
 @import "basscss";
 @import "basscss-btn-sizes";
@@ -74,6 +75,8 @@
 .CodeMirror-scroll:hover {
     cursor: text;
 }
+
+.Select-menu-outer { z-index: 3; }
 
 .ENEditor .CodeMirror-line {
     padding-left: 6rem;
