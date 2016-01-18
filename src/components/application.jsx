@@ -20,7 +20,7 @@ Application = React.createClass({
     var classnames = require('classnames')
       , Header = require('./main/header/component.jsx')
       , Footer = require('./main/footer/component.jsx')
-      , { ActiveComponent, noContainer, path } = this.props
+      , { ActiveComponent, noContainer, noFooter, path } = this.props
       , { loading } = this.state
       , user = this.props.__AUTHENTICATED_USER__ || null
       , activeComponentProps
@@ -49,15 +49,13 @@ Application = React.createClass({
 
         */}
 
-        <main className="flex-grow">
-          <div className={classnames({
-            container: !noContainer
-          })}>
+        <main className="flex-grow relative">
+          <div className={classnames({ container: !noContainer })}>
             <ActiveComponent {...activeComponentProps} />
           </div>
         </main>
 
-        <Footer />
+        { !noFooter && <Footer /> }
       </div>
     )
   }

@@ -2,11 +2,11 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , EmbeddedItemsHandler = require('../../util/embedded_items_handler.jsx')
   , Note = require('../../../records/note')
+  , NoteForm
 
-module.exports = React.createClass({
-  displayName: 'NoteForm',
-
+NoteForm = React.createClass({
   propTypes: {
     note: React.PropTypes.instanceOf(Note).isRequired,
     embeddedItems: React.PropTypes.instanceOf(Immutable.Set).isRequired,
@@ -39,20 +39,31 @@ module.exports = React.createClass({
     this.props.onChange(updatedNote);
   },
 
+  handleTopicsChange(topics) {
+    var { onAddEmbeddedItem } = this.props
+
+    this.mergeValues({
+      'related_topics': topics.map(topic => topic.get('url'))
+    });
+
+    topics.forEach(topic => onAddEmbeddedItem(topic));
+  },
+
   mergeValues(value) {
     this.props.onChange(this.props.note.merge(value))
   },
 
   render() {
     var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
-      , HTMLEditor = require('../text_editor/component.jsx')
+      , HTMLEditor = require('../en_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
-      , { note, projectURL, minimal, errors, embeddedItems, onAddEmbeddedItem, handleSave, afterHeader } = this.props
+      , { getEmbedded } = require('../../../helpers/api')
+      , { note, projectURL, errors, embeddedItems, handleSave } = this.props
 
     return (
-      <div className="bg-lightgray">
-        <div className="container">
+      <div className="flex-grow flex flex-column">
+        <div className="container col-12 flex-none">
           <GeneralErrors
               errors={errors.delete('title').delete('markup')} />
 
@@ -61,12 +72,10 @@ module.exports = React.createClass({
               <div className="mb2">
                 <FieldErrors errors={errors.get('title')} />
                 <label>
-                  <span className="h4 bold block">
-                    Title
-                  </span>
                   <input
                       name="title"
                       className="field col-10 h3"
+                      placeholder="Title"
                       maxLength="80"
                       type="text"
                       value={note.title}
@@ -78,17 +87,14 @@ module.exports = React.createClass({
             <div className="col col-3 px2">
               <div className="mb2">
                 <label>
-                  <span className="h4 bold block">
-                    Status
-                  </span>
                   <select
                       className="col-12"
                       name="status"
                       value={note.status}
                       onChange={this.handleChange}>
-                    <option value={"open"}>Open</option>
-                    <option value={"closed"}>Closed</option>
-                    <option value={"hibernating"}>Hibernating</option>
+                    <option value={"open"}>Status: Open</option>
+                    <option value={"closed"}>Status: Closed</option>
+                    <option value={"hibernating"}>Status: Hibernating</option>
                   </select>
                 </label>
               </div>
@@ -97,49 +103,42 @@ module.exports = React.createClass({
             <div className="col col-3 px2">
               <div className="mb2">
                 <label>
-                  <span className="h4 bold block">
-                    Private
-                  </span>
                   <select
                       className="col-12"
                       name="is_private"
                       value={note.is_private}
                       onChange={this.handleChange}>
-                    <option value={false}>No</option>
-                    <option value={true}>Yes</option>
+                    <option value={false}>Public</option>
+                    <option value={true}>Private</option>
                   </select>
                 </label>
               </div>
             </div>
 
-            <div className="col col-6">
-              <span className="h4 bold block">Related topics</span>
-              <RelatedTopicsSelector topics={note.get('related_topics').toSet()} />
-            </div>
-
             <div className="col col-12">
-              { afterHeader && afterHeader() }
+              <RelatedTopicsSelector
+                  topics={getEmbedded(Immutable.Map({
+                    topics: note.related_topics,
+                    embedded: embeddedItems.toMap().mapKeys((key, val) => val.get('url'))
+                  }), 'topics').toSet()}
+                  onChange={this.handleTopicsChange}
+                  projectURL={projectURL} />
             </div>
 
           </header>
         </div>
 
-        <section>
+        <section className="flex-grow flex flex-column">
           <FieldErrors errors={errors.get('markup')} />
           <HTMLEditor
               ref="content"
-              projectURL={projectURL}
-              minimal={minimal}
-
+              {...this.props}
               html={note.markup}
-              embeddedItems={embeddedItems}
-
-              onChange={markup => this.mergeValues({ markup })}
-              onAddEmbeddedItem={onAddEmbeddedItem}
-              handleSave={handleSave} />
-          <br />
+              onChange={markup => this.mergeValues({ markup })} />
         </section>
       </div>
     )
   }
 });
+
+module.exports = EmbeddedItemsHandler(NoteForm);

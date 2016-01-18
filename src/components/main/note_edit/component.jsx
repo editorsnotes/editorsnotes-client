@@ -39,6 +39,7 @@ NoteEdit = React.createClass({
     }));
   },
 
+  /*
   renderAfterHeader() {
     var { saveAndRedirect } = this.props
 
@@ -51,6 +52,7 @@ NoteEdit = React.createClass({
       </div>
     )
   },
+  */
 
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
@@ -58,24 +60,26 @@ NoteEdit = React.createClass({
       , { embeddedItems } = this.state
 
     return (
-      <div className="bg-lightgray py2">
+      <div className="bg-lightgray absolute-full-height flex flex-column">
 
-        <div className="container">
+        <div className="container mt2 col-12 flex-none">
           { renderBreadcrumb() }
         </div>
 
-        <NoteForm
-            note={note}
-            embeddedItems={embeddedItems}
+        <div className="flex-grow flex flex-column">
+          <NoteForm
+              note={note}
+              embeddedItems={embeddedItems}
 
-            errors={errors}
-            projectURL={projectURL}
+              errors={errors}
+              projectURL={projectURL}
 
-            afterHeader={this.renderAfterHeader}
+              afterHeader={this.renderAfterHeader}
 
-            onChange={handleRecordChange}
-            onAddEmbeddedItem={this.handleAddEmbeddedItem}
-            handleSave={saveAndRedirect} />
+              onChange={handleRecordChange}
+              onAddEmbeddedItem={this.handleAddEmbeddedItem}
+              handleSave={saveAndRedirect} />
+        </div>
       </div>
     )
   }

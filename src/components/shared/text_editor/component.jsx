@@ -28,21 +28,9 @@ module.exports = React.createClass({
 
   getInitialState() {
     return {
-      editor: null,
       referenceType: null,
     }
   },
-
-  componentDidMount() {
-    var { noCodeMirror } = this.props
-
-    if (noCodeMirror) return;
-
-    this.initCitationEngine();
-    setTimeout(this.refreshCiteprocEngine, 0);
-    setTimeout(this.initCodeMirror, 0);
-  },
-
 
   onAddEmptyReference(type) {
     this.setState({ referenceType: type || 'empty' });
@@ -52,122 +40,6 @@ module.exports = React.createClass({
   clearReferenceType() {
     this.setState({ referenceType: null });
     this.state.editor.off('beforeChange', this.clearReferenceType);
-  },
-
-  refreshCiteprocEngine() {
-    var cslFromDocuments = require('editorsnotes-markup-renderer/lib/csl_from_documents')
-      , { embeddedItems } = this.props
-      , { citationGenerator } = this.state
-      , documentsByURL
-
-    documentsByURL = embeddedItems
-      .filter(item => item.get('type').indexOf('Document') !== -1)
-      .toMap()
-      .mapKeys((key, item) => item.get('id'))
-
-    citationGenerator.items = cslFromDocuments(documentsByURL.toJS())
-    citationGenerator.engine.updateItems(documentsByURL.keySeq().toJS())
-  },
-
-  getItemFromURL(itemURL) {
-    var apiFetch = require('../../../utils/api_fetch')
-      , { embeddedItems, onAddEmbeddedItem } = this.props
-      , item
-      , promise
-
-    item = embeddedItems.find(_item => _item.get('url') === itemURL);
-
-    if (item) {
-      promise = Promise.resolve(item);
-    } else {
-      promise = apiFetch(itemURL)
-        .then(resp => resp.json())
-        .then(Immutable.fromJS)
-        .then(newItem => {
-          onAddEmbeddedItem(newItem);
-          return newItem;
-        })
-    }
-
-    return promise;
-  },
-
-  getEmbeddedItem(itemType, itemID) {
-    var { projectURL } = this.props
-      , itemURL = `${projectURL}${itemType}s/${itemID}/`
-
-    return this.getItemFromURL(itemURL).then(item => {
-      if (itemType === 'document') this.refreshCiteprocEngine();
-      return item;
-    });
-  },
-
-  getReferenceLabel(itemType, itemID) {
-    var resolveItemText = require('editorsnotes-markup-renderer/lib/resolve_item_text')
-
-    return this.getEmbeddedItem(itemType, itemID)
-      .then(item => {
-        var id = item.get('id')
-          , data = { [itemType]: { [id]: item.toJS() }}
-
-        return resolveItemText(data, itemType, id)
-      })
-  },
-
-  getInlineCitation(itemID) {
-    var makeInlineCitation = require('editorsnotes-markup-renderer/lib/make_inline_citation')
-      , { citationGenerator } = this.state
-
-    return this.getEmbeddedItem('document', itemID)
-      .then(item => makeInlineCitation(citationGenerator.engine, [item.toJS()]))
-      .then(({ citations }) => citations[0]);
-  },
-
-  getFullCitation(itemID) {
-    var makeBibliographyEntry = require('editorsnotes-markup-renderer/lib/make_bibliography_entry')
-      , { citationGenerator } = this.state
-
-    return this.getEmbeddedItem('document', itemID)
-      .then(item => makeBibliographyEntry(citationGenerator.engine, item.toJS()))
-  },
-
-  initCitationEngine() {
-    var CitationGenerator = require('../../../utils/citation_generator')
-
-    this.setState({
-      citationGenerator: new CitationGenerator('chicago-author-date')
-    });
-  },
-
-  initCodeMirror() {
-    var { findDOMNode } = require('react-dom')
-      , codemirrorEditor = require('./cm_editor')
-      , { html, minimal, onChange } = this.props
-      , cmOpts
-      , editor
-
-    cmOpts = {
-      getReferenceLabel: this.getReferenceLabel,
-      getInlineCitation: this.getInlineCitation,
-      getFullCitation: this.getFullCitation
-    }
-
-    if (!minimal) {
-      cmOpts.handleAddReference = this.onAddEmptyReference;
-    }
-
-    editor = codemirrorEditor(findDOMNode(this.refs.content), html, cmOpts);
-
-    editor.display.wrapper.style.fontFamily = '"Times New Roman"';
-    editor.display.wrapper.style.fontSize = '16px';
-    editor.display.wrapper.style.lineHeight = '19px';
-
-    editor.display.wrapper.style.height = 'auto';
-    editor.display.scroller.style.minHeight = '480px';
-
-    editor.on('change', () => onChange(editor.getValue()));
-
-    this.setState({ editor }, () => editor.refresh())
   },
 
   handleReferenceSelect(item) {

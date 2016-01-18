@@ -103,7 +103,6 @@ module.exports = React.createClass({
 
   render() {
     var classnames = require('classnames')
-      , Help = require('./help.jsx')
       , { type } = this.props
       , { shownTab } = this.state
       , show = type && type !== 'empty'
@@ -139,13 +138,6 @@ module.exports = React.createClass({
             )
           }
 
-          {
-            shownTab === 'help' && (
-              <div>
-                <Help />
-              </div>
-            )
-          }
         </div>
       </div>
     )
