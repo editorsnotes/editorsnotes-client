@@ -35,9 +35,6 @@ module.exports = React.createClass({
     return getDisplayTitle(item);
   },
 
-  handleChange(item) {
-  },
-
   render() {
     var Select = require('react-select')
       , { itemType, handleReferenceSelect } = this.props
