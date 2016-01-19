@@ -18,7 +18,7 @@ module.exports = React.createClass({
     return {
       dragEl: null,
       rightWidth: null,
-      searchingReferenceType: null
+      selectingReferenceType: null
     }
   },
 
@@ -74,17 +74,34 @@ module.exports = React.createClass({
   clearReferenceType() {
     var { editor } = this.refs.textEditor.state
 
-    this.setState({ searchingReferenceType: null });
+    this.setState({ selectingReferenceType: null });
     editor.off('beforeChange', this.clearReferenceType);
   },
 
   handleAddEmptyReference(referenceType) {
     var { editor } = this.refs.textEditor.state
 
-    this.setState({ searchingReferenceType: referenceType });
+    this.setState({ selectingReferenceType: referenceType });
     editor.on('beforeChange', this.clearReferenceType);
 
     setTimeout(() => this.refs.topBar.refs.autocomplete.focus(), 10);
+  },
+
+  handleReferenceAdd(selectedItem, itemType) {
+    var { getType } = require('../../../helpers/api')
+      , { editor } = this.refs.textEditor.state
+      , text
+
+    if (!selectedItem) return;
+
+    text = `@@${getType(selectedItem).slice(0, 1).toLowerCase()}`;
+
+    if (itemType === 'citation-block') {
+      text = '::: document ' + text;
+    }
+
+    editor.replaceSelection(text);
+    this.handleReferenceSelect(selectedItem);
   },
 
   handleReferenceSelect(selectedItem) {
@@ -98,7 +115,7 @@ module.exports = React.createClass({
 
     onAddEmbeddedItem(selectedItem);
 
-    this.setState({ searchingReferenceType: null });
+    this.setState({ selectingReferenceType: null });
 
     setTimeout(() => {
       if (getType(selectedItem) === 'Document') {
@@ -134,7 +151,7 @@ module.exports = React.createClass({
       , Panes = require('./panes.jsx')
       , TopBar = require('./top_bar.jsx')
       , { projectURL } = this.props
-      , { rightWidth, searchingReferenceType } = this.state
+      , { rightWidth, selectingReferenceType } = this.state
       , initial = rightWidth === null
 
     return (
@@ -142,8 +159,9 @@ module.exports = React.createClass({
         <div className="flex-none">
           <TopBar
               ref="topBar"
-              itemType={searchingReferenceType}
+              selectingReferenceType={selectingReferenceType}
               handleReferenceSelect={this.handleReferenceSelect}
+              handleReferenceAdd={this.handleReferenceAdd}
               rightWidth={rightWidth}
               projectURL={projectURL} />
         </div>

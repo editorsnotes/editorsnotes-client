@@ -13,10 +13,20 @@ module.exports = React.createClass({
   propTypes: {
   },
 
+  getInitialState() {
+    return { addingReferenceType: null }
+  },
+
   getOptions(q) {
     var url = require('url')
       , apiFetch = require('../../../utils/api_fetch')
-      , { itemType, projectURL } = this.props
+      , { selectingReferenceType, projectURL } = this.props
+      , { addingReferenceType } = this.state
+      , itemType = selectingReferenceType || addingReferenceType
+
+    if (itemType === 'citation-block') {
+      itemType = 'document';
+    }
 
     return apiFetch(url.format({
         pathname: projectURL + itemType + 's/',
@@ -35,10 +45,31 @@ module.exports = React.createClass({
     return getDisplayTitle(item);
   },
 
+  handleReferenceAdd(item) {
+    var { handleReferenceAdd } = this.props
+      , { addingReferenceType } = this.state
+
+    this.setState({ addingReferenceType: null });
+
+    handleReferenceAdd(item, addingReferenceType);
+  },
+
+  handleAddReferenceButtonClick(addingReferenceType) {
+    this.setState({ addingReferenceType });
+
+    setTimeout(() => this.refs.autocomplete.focus(), 10);
+  },
+
   render() {
     var Select = require('react-select')
-      , { itemType, handleReferenceSelect } = this.props
+      , { selectingReferenceType, handleReferenceSelect } = this.props
+      , { addingReferenceType } = this.state
+      , itemType = selectingReferenceType || addingReferenceType
       , style
+
+    if (itemType === 'citation-block') {
+      itemType = 'document';
+    }
 
     style = {
       height: TOOLBAR_HEIGHT,
@@ -52,11 +83,32 @@ module.exports = React.createClass({
             <div className="flex flex-justify flex-center col-12">
               <div className="px3 flex flex-center">
                 <span className="h4 bold mr1">Reference a</span>
-                <div className="inline-block clearfix">
-                  <button className="left btn bg-white x-group-item btn-outline rounded-left">Topic</button>
-                  <button className="left btn bg-white x-group-item btn-outline not-rounded">Note</button>
-                  <button className="left btn bg-white x-group-item btn-outline rounded-right">Document</button>
+                <div className="inline-block clearfix mr3">
+                  <button
+                      className="left btn bg-white x-group-item btn-outline rounded-left"
+                      onClick={this.handleAddReferenceButtonClick.bind(null, 'topic')}>
+                    Topic
+                  </button>
+
+                  <button
+                      className="left btn bg-white x-group-item btn-outline not-rounded"
+                      onClick={this.handleAddReferenceButtonClick.bind(null, 'note')}>
+                    Note
+                  </button>
+
+                  <button
+                      className="left btn bg-white x-group-item btn-outline rounded-right"
+                      onClick={this.handleAddReferenceButtonClick.bind(null, 'document')}>
+                    Document
+                  </button>
                 </div>
+
+                <button
+                    className="btn bg-white btn-outline"
+                    onClick={this.handleAddReferenceButtonClick.bind(null, 'citation-block')}>
+                  Add a citation block
+                </button>
+
               </div>
               <div className="px3">
                 <button
@@ -90,7 +142,11 @@ module.exports = React.createClass({
                   loadOptions={this.getOptions}
                   optionRenderer={this.renderOption}
                   valueRenderer={this.renderOption}
-                  onChange={handleReferenceSelect} />
+                  onBlur={() => this.setState({ addingReferenceType: null })}
+                  onChange={
+                    selectingReferenceType ?
+                      handleReferenceSelect :
+                      this.handleReferenceAdd} />
             </div>
           )
         }
