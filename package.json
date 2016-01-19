@@ -7,6 +7,7 @@
     "babel": "^5.8.23",
     "basscss": "^7.0.3",
     "basscss-btn-sizes": "^1.1.0",
+    "basscss-ui-utility-groups": "^1.0.1",
     "classnames": "^2.2.0",
     "codemirror": "^5.6.0",
     "cookie": "^0.1.2",

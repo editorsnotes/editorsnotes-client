@@ -49,11 +49,14 @@ module.exports = React.createClass({
       <div className="border-box flex flex-center flex-justify-center" style={style}>
         {
           !itemType && (
-            <div className="flex flex-justify col-12">
-              <div className="px3">
-                <button className="btn bg-white mr1 btn-outline">Reference topic</button>
-                <button className="btn bg-white mr1 btn-outline">Reference note</button>
-                <button className="btn bg-white mr1 btn-outline">Reference document</button>
+            <div className="flex flex-justify flex-center col-12">
+              <div className="px3 flex flex-center">
+                <span className="h4 bold mr1">Reference a</span>
+                <div className="inline-block clearfix">
+                  <button className="left btn bg-white x-group-item btn-outline rounded-left">Topic</button>
+                  <button className="left btn bg-white x-group-item btn-outline not-rounded">Note</button>
+                  <button className="left btn bg-white x-group-item btn-outline rounded-right">Document</button>
+                </div>
               </div>
               <div className="px3">
                 <button
