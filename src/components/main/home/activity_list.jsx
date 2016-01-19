@@ -52,8 +52,6 @@ module.exports = React.createClass({
       , { activities } = this.props
       , grouped = groupActivities(activities)
 
-    debugger;
-
     return (
       <div>
       {
