@@ -48,6 +48,17 @@ module.exports = React.createClass({
     return (
       <div className="border-box flex flex-center flex-justify-center" style={style}>
         {
+          !itemType && (
+            <div>
+              <button className="btn bg-white mr1 btn-outline">Reference topic</button>
+              <button className="btn bg-white mr1 btn-outline">Reference note</button>
+              <button className="btn bg-white mr1 btn-outline">Reference document</button>
+              <button className="btn btn-primary mr1">Save</button>
+            </div>
+          )
+        }
+
+        {
           itemType && (
             <div style={{ width: '400px' }}>
               <Select.Async

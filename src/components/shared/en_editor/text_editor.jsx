@@ -61,7 +61,7 @@ module.exports = React.createClass({
     return (
       <div className="absolute-full-height flex flex-column">
         <div className="flex-grow relative">
-          <div className="absolute-full-height bg-lightgray flex flex-stretch" style={{
+          <div className="absolute-full-height bg-gray-warm-light flex flex-stretch" style={{
             overflowY: 'scroll',
             overflowX: 'hidden',
             justifyContent: 'center'
