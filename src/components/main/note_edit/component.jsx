@@ -39,21 +39,6 @@ NoteEdit = React.createClass({
     }));
   },
 
-  /*
-  renderAfterHeader() {
-    var { saveAndRedirect } = this.props
-
-    return (
-      <div>
-        <hr />
-        <div className="p1 mb2 center">
-          <button onClick={saveAndRedirect} className="btn btn-primary btn-large">Save</button>
-        </div>
-      </div>
-    )
-  },
-  */
-
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
       , { note, loading, errors, projectURL, renderBreadcrumb, handleRecordChange, saveAndRedirect } = this.props
@@ -62,7 +47,7 @@ NoteEdit = React.createClass({
     return (
       <div className="bg-lightgray absolute-full-height flex flex-column">
 
-        <div className="container mt2 col-12 flex-none">
+        <div className="px2 py1 flex-none" style={{ marginBottom: '-1rem' }}>
           { renderBreadcrumb() }
         </div>
 

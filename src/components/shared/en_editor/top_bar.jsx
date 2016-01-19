@@ -42,10 +42,11 @@ module.exports = React.createClass({
 
     style = {
       height: TOOLBAR_HEIGHT,
+      borderBottom: '1px solid #ccc'
     }
 
     return (
-      <div className="bg-gray border-box flex flex-center flex-justify-center" style={style}>
+      <div className="border-box flex flex-center flex-justify-center" style={style}>
         {
           itemType && (
             <div style={{ width: '400px' }}>

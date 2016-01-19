@@ -1,16 +1,19 @@
 "use strict";
 
+
 function getJSONFromTrimmedPath(get, pathname) {
   return get(pathname.replace(/edit\/$/, '?embed_style=nested'), { 'Accept': 'application/json' })
     .then(data => JSON.parse(data))
     .then(data => ({ data }))
 }
 
+
 function getProjectJSON(get, pathname) {
   return get(pathname.replace(/(notes|topics|documents)\/add\//, ''), { 'Accept': 'application/json' })
     .then(data => JSON.parse(data))
     .then(project => ({ project }))
 }
+
 
 function transformReturn(transformFn, fn) {
   return function () {
@@ -22,21 +25,24 @@ function transformReturn(transformFn, fn) {
   }
 }
 
+
 const noContainer = transformReturn.bind(null, ret => ret.noContainer = true)
-    , noFooter = transformReturn.bind(null, ret => ret.noFooter = true);
+    , noFooter = transformReturn.bind(null, ret => ret.noFooter = true)
+    , noHeader = transformReturn.bind(null, ret => ret.noHeader = true)
+
 
 module.exports = {
   /* Notes */
   '/projects/:project_slug/notes/add/': {
     name: 'note_add',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: noFooter(noContainer(getProjectJSON))
+    getData: noHeader(noFooter(noContainer(getProjectJSON)))
   },
 
   '/projects/:project_slug/notes/:id/edit/': {
     name: 'note_edit',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: noFooter(noContainer(getJSONFromTrimmedPath))
+    getData: noHeader(noFooter(noContainer(getJSONFromTrimmedPath)))
   },
 
   /* Topics */

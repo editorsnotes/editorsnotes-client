@@ -8,6 +8,9 @@ module.exports = React.createClass({
   displayName: 'ENContentEditor',
 
   propTypes: {
+    onAddEmbeddedItem: React.PropTypes.func,
+    projectURL: React.PropTypes.string.isRequired,
+    additionalPanes: React.PropTypes.array
   },
 
   getInitialState() {
