@@ -10,13 +10,13 @@ module.exports = React.createClass({
   propTypes: {
     onAddEmbeddedItem: React.PropTypes.func,
     projectURL: React.PropTypes.string.isRequired,
+    defaultPane: React.PropTypes.string,
     additionalPanes: React.PropTypes.array
   },
 
   getInitialState() {
     return {
       dragEl: null,
-      leftWidth: null,
       rightWidth: null,
       searchingReferenceType: null
     }
@@ -49,7 +49,8 @@ module.exports = React.createClass({
   handleDrag(e) {
     var { pageX } = e
       , { offset } = this.state
-      , leftWidth, rightWidth
+      , rightWidth
+      , leftWidth
 
     if (!offset) return;
     if (pageX === 0) return;
@@ -59,15 +60,13 @@ module.exports = React.createClass({
     if (leftWidth < 300) leftWidth = 300;
     rightWidth = offset - leftWidth - 16;
 
-    this.setState({ leftWidth, rightWidth });
+    this.setState({ rightWidth });
   },
 
   componentDidMount() {
-    var leftEl = ReactDOM.findDOMNode(this.refs.left)
-      , rightEl = ReactDOM.findDOMNode(this.refs.right)
+    var rightEl = ReactDOM.findDOMNode(this.refs.right)
 
     this.setState({
-      leftWidth: leftEl.clientWidth,
       rightWidth: rightEl.clientWidth
     });
   },
@@ -135,8 +134,8 @@ module.exports = React.createClass({
       , Panes = require('./panes.jsx')
       , TopBar = require('./top_bar.jsx')
       , { projectURL } = this.props
-      , { leftWidth, rightWidth, searchingReferenceType } = this.state
-      , flex = leftWidth === rightWidth
+      , { rightWidth, searchingReferenceType } = this.state
+      , initial = rightWidth === null
 
     return (
       <div className="flex-grow flex flex-column">
@@ -145,6 +144,7 @@ module.exports = React.createClass({
               ref="topBar"
               itemType={searchingReferenceType}
               handleReferenceSelect={this.handleReferenceSelect}
+              rightWidth={rightWidth}
               projectURL={projectURL} />
         </div>
 
@@ -152,10 +152,7 @@ module.exports = React.createClass({
           <div
               ref="left"
               className="relative"
-              style={{
-                width: flex ? 'auto' : leftWidth,
-                flex: flex ? '3 3 0' : 'none'
-              }}>
+              style={{ flex: initial ? '3 3 0' : '1 0 auto' }}>
             <TextEditor
                 ref="textEditor"
                 onAddEmptyReference={this.handleAddEmptyReference}
@@ -163,7 +160,7 @@ module.exports = React.createClass({
           </div>
 
           <div
-              className="relative"
+              className="relative flex-none"
               draggable="true"
               onDragStart={this.handleDragStart}
               onDragEnd={this.handleDragEnd}
@@ -177,8 +174,8 @@ module.exports = React.createClass({
               ref="right"
               className="relative"
               style={{
-                width: flex ? 'auto' : rightWidth,
-                flex: flex ? '2 2 0' : 'none'
+                width: initial ? 'auto' : rightWidth,
+                flex: initial ? '2 2 0' : 'none'
               }}>
             <Panes {...this.props} />
           </div>

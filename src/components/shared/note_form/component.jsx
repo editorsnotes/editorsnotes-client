@@ -148,6 +148,7 @@ NoteForm = React.createClass({
           <HTMLEditor
               ref="content"
               {...this.props}
+              defaultPane="metadata"
               additionalPanes={[
                 {
                   key: 'metadata',

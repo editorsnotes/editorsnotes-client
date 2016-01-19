@@ -47,7 +47,7 @@ NoteEdit = React.createClass({
     return (
       <div className="bg-lightgray absolute-full-height flex flex-column">
 
-        <div className="px2 py1 flex-none" style={{ marginBottom: '-1rem' }}>
+        <div className="px3 py1 flex-none" style={{ marginBottom: '-1rem' }}>
           { renderBreadcrumb() }
         </div>
 

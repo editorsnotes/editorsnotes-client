@@ -17,15 +17,21 @@ module.exports = React.createClass({
     //   1. 'key' (the key of the react element)
     //   2. 'label' (the label that the pane will be listed under)
     //   3. 'render' (the function to be called to render the pane)
-    additionalPanes: React.PropTypes.array
+    additionalPanes: React.PropTypes.array,
+    defaultPane: React.PropTypes.string
   },
 
   getDefaultProps() {
-    return { additionalPanes: [] }
+    return {
+      additionalPanes: [],
+      defaultPane: 'references'
+    }
   },
 
   getInitialState() {
-    return { currentPane: 'references' }
+    var { defaultPane } = this.props
+
+    return { currentPane: defaultPane }
   },
 
   render() {
