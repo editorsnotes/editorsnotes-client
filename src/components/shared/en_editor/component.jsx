@@ -147,7 +147,7 @@ module.exports = React.createClass({
   },
 
   render() {
-    var TextEditor = require('./text_editor.jsx')
+    var TextEditor = require('../text_editor/component.jsx')
       , Panes = require('./panes.jsx')
       , TopBar = require('./top_bar.jsx')
       , { projectURL } = this.props

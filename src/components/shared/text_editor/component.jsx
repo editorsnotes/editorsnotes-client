@@ -7,6 +7,11 @@ module.exports = React.createClass({
   displayName: 'TextEditor',
 
   propTypes: {
+    noCodeMirror: React.PropTypes.bool,
+    onAddEmptyReference: React.PropTypes.func,
+    getReferenceLabel: React.PropTypes.func,
+    getInlineCitation: React.PropTypes.func,
+    getFullCitation: React.PropTypes.func
   },
 
   getInitialState() {
@@ -27,7 +32,7 @@ module.exports = React.createClass({
   initCodeMirror() {
     var { findDOMNode } = require('react-dom')
       , codemirrorEditor = require('./cm_editor')
-      , { html, minimal, onChange } = this.props
+      , { html, onChange } = this.props
       , editor
 
     editor = codemirrorEditor(findDOMNode(this.refs.content), html, this.props);
