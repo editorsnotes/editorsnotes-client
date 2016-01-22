@@ -1,40 +1,41 @@
 "use strict";
 
 var React = require('react')
+  , Immutable = require('immutable')
   , Translate = require('../../shared/translate.jsx')
   , strings = require('./strings')
 
-module.exports = React.createClass({
-  displayName: 'DocumentLinks',
+function DocumentLinks({ doc }) {
+  return (
+    <div>
+      {
+        doc.get('links') && (
+          <div>
+            <h4>
+              <Translate
+                  text={strings.externalLinks}
+                  number={doc.get('links').size} />
+            </h4>
 
-  render: function () {
-    var { doc } = this.props
+            {
+              doc.get('links').map(link =>
+                <li key={link}>
+                  <a style={{ textDecoration: 'underline' }} href={link.get('url')}>
+                    {link.get('url')}
+                  </a>
+                  <div>{link.get('description')}</div>
+                </li>
+              )
+            }
+          </div>
+        )
+      }
+    </div>
+  )
+}
 
-    return (
-      <div>
-        {
-          doc.get('links') && (
-            <div>
-              <h4>
-                <Translate
-                    text={strings.externalLinks}
-                    number={doc.get('links').size} />
-              </h4>
+DocumentLinks.propTypes = {
+  doc: React.PropTypes.instanceOf(Immutable.Map)
+}
 
-              {
-                doc.get('links').map(link =>
-                  <li key={link}>
-                    <a style={{ textDecoration: 'underline' }} href={link.get('url')}>
-                      {link.get('url')}
-                    </a>
-                    <div>{link.get('description')}</div>
-                  </li>
-                )
-              }
-            </div>
-          )
-        }
-      </div>
-    )
-  }
-});
+module.exports = DocumentLinks;

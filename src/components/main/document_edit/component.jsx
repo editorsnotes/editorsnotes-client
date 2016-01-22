@@ -12,9 +12,15 @@ var React = require('react')
 
 DocumentEdit = React.createClass({
   propTypes: {
-    document: React.PropTypes.instanceOf(Document).isRequired,
+    /* from API response */
+    data: React.PropTypes.instanceOf(Immutable.Map),
+
+    /* from Editable */
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+
+    /* from StandaloneForm */
+    document: React.PropTypes.instanceOf(Document).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     saveAndRedirect: React.PropTypes.func.isRequired,
     handleRecordChange: React.PropTypes.func.isRequired
@@ -22,14 +28,12 @@ DocumentEdit = React.createClass({
 
   render() {
     var DocumentForm = require('../../shared/document_form/component.jsx')
-      , { document, loading, errors, projectURL, handleRecordChange, saveAndRedirect } = this.props
+      , { loading, handleRecordChange, saveAndRedirect } = this.props
 
     return (
       <div>
         <DocumentForm
-            document={document}
-            errors={errors}
-            projectURL={projectURL}
+            {...this.props}
             onChange={handleRecordChange} />
 
         <section>

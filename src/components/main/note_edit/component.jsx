@@ -1,7 +1,5 @@
 "use strict";
 
-/* eslint camelcase:0 */
-
 var React = require('react')
   , Immutable = require('immutable')
   , standaloneForm = require('../../util/standalone_form.jsx')
@@ -9,16 +7,24 @@ var React = require('react')
   , Note = require('../../../records/note')
   , NoteEdit
 
+
 NoteEdit = React.createClass({
   propTypes: {
+    /* from API response */
     data: React.PropTypes.instanceOf(Immutable.Map),
-    note: React.PropTypes.instanceOf(Note).isRequired,
+
+    /* from Editable */
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
-    projectURL: React.PropTypes.string.isRequired,
-    renderBreadcrumb: React.PropTypes.func.isRequired,
+
+    /* from StandaloneForm */
+    note: React.PropTypes.instanceOf(Note).isRequired,
     saveAndRedirect: React.PropTypes.func.isRequired,
-    handleRecordChange: React.PropTypes.func.isRequired
+    projectURL: React.PropTypes.string.isRequired,
+    handleRecordChange: React.PropTypes.func.isRequired,
+
+    /* from EditingBreadcrumb */
+    renderBreadcrumb: React.PropTypes.func.isRequired
   },
 
   getInitialState() {
@@ -30,7 +36,7 @@ NoteEdit = React.createClass({
       getEmbedded(data, 'references').toOrderedSet() :
       Immutable.OrderedSet()
 
-    return { note: new Note(data), embeddedItems }
+    return { embeddedItems }
   },
 
   handleAddEmbeddedItem(item) {
@@ -41,8 +47,7 @@ NoteEdit = React.createClass({
 
   render() {
     var NoteForm = require('../../shared/note_form/component.jsx')
-      , { note, loading, errors, projectURL, renderBreadcrumb, handleRecordChange, saveAndRedirect } = this.props
-      , { embeddedItems } = this.state
+      , { renderBreadcrumb, handleRecordChange, saveAndRedirect } = this.props
 
     return (
       <div className="bg-lightgray absolute-full-height flex flex-column">
@@ -53,14 +58,8 @@ NoteEdit = React.createClass({
 
         <div className="flex-grow flex flex-column">
           <NoteForm
-              note={note}
-              embeddedItems={embeddedItems}
-
-              errors={errors}
-              projectURL={projectURL}
-
-              afterHeader={this.renderAfterHeader}
-
+              {...this.props}
+              {...this.state}
               onChange={handleRecordChange}
               onAddEmbeddedItem={this.handleAddEmbeddedItem}
               handleSave={saveAndRedirect} />

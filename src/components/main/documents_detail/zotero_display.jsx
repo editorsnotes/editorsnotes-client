@@ -11,60 +11,67 @@ function getName(creator) {
   )
 }
 
-module.exports = React.createClass({
-  displayName: 'ZoteroDisplay',
-
-  renderZoteroField: function (value, field) {
-    switch (field) {
-    case 'tags':
-    case 'notes':
-    case 'relations':
-    case 'collections':
-      return null;
-    case 'creators':
-      return value.map(creator => (
-        <tr>
-          <td className="zotero-key">
-            <Translate
-                text={creator.get('creatorType')}
-                domain={'messages_zotero'} />
-          </td>
-          <td>{getName(creator)}</td>
-        </tr>
-      )).valueSeq();
-    default:
-      if (!value) return null
-      return (
-        <tr key={value}>
-          <td className="zotero-key">
-            <Translate text={field} domain={'messages_zotero'} />
-          </td>
-          <td>
-            {
-              field !== 'itemType' ?
-                value :
-                <Translate text={value} domain={'messages_zotero'} />
-            }
-          </td>
-        </tr>
-      )
-    }
-  },
-
-  render: function () {
-    var zoteroData = this.props.data;
+function ZoteroField({ value, field }) {
+  switch (field) {
+  case 'tags':
+  case 'notes':
+  case 'relations':
+  case 'collections':
+    return null;
+  case 'creators':
+    return value.map(creator => (
+      <tr>
+        <td className="zotero-key">
+          <Translate
+              text={creator.get('creatorType')}
+              domain={'messages_zotero'} />
+        </td>
+        <td>{getName(creator)}</td>
+      </tr>
+    )).valueSeq();
+  default:
+    if (!value) return null
     return (
-      <div id="zotero">
-        {
-          !zoteroData ?
-            <p><Translate text={strings.noMetadata} /></p> :
-            <div id="zotero-information">
-              <table className="table table-striped table-condensed table-bordered">
-                {zoteroData.map(this.renderZoteroField).valueSeq()}
-              </table>
-            </div>
-        }
-      </div>
+      <tr key={value}>
+        <td className="zotero-key">
+          <Translate text={field} domain={'messages_zotero'} />
+        </td>
+        <td>
+          {
+            field !== 'itemType' ?
+              value :
+              <Translate text={value} domain={'messages_zotero'} />
+          }
+        </td>
+      </tr>
     )
   }
-});
+}
+
+
+function ZoteroDisplay({ data }) {
+  return (
+    <div>
+      {
+        !data ?
+          <p><Translate text={strings.noMetadata} /></p> :
+          <div>
+            <table>
+              {
+                data.map((value, field) =>
+                  <ZoteroField value={value} field={field} />
+                ).toArray()
+              }
+            </table>
+          </div>
+      }
+    </div>
+  )
+}
+
+ZoteroDisplay.propTypes = {
+  data: React.propTypes
+}
+
+
+module.exports = ZoteroDisplay;

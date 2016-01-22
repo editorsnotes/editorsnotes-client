@@ -4,9 +4,11 @@ var React = require('react')
   , Translate = require('../../shared/translate.jsx')
   , strings = require('./strings')
 
+
 function makeListItem(item) {
   return <li key={item.get('url')}><a href={item.get('url')}>{item.get('title')}</a></li>
 }
+
 
 module.exports = React.createClass({
   render: function () {
