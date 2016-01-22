@@ -55,11 +55,9 @@ NoteForm = React.createClass({
 
   renderFields() {
     var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
-      , HTMLEditor = require('../en_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
-      , GeneralErrors = require('../general_errors.jsx')
       , { getEmbedded } = require('../../../helpers/api')
-      , { note, projectURL, errors, embeddedItems, handleSave } = this.props
+      , { note, projectURL, errors, embeddedItems } = this.props
 
     return (
       <div>
@@ -128,26 +126,28 @@ NoteForm = React.createClass({
   },
 
   render() {
-    var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
-      , HTMLEditor = require('../en_editor/component.jsx')
+    var ENEditor = require('../en_editor/component.jsx')
+      , TextEditor = require('../en_editor/text_editor.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
-      , { getEmbedded } = require('../../../helpers/api')
-      , { note, projectURL, errors, embeddedItems, handleSave } = this.props
+      , { note, errors, minimal } = this.props
+      , Editor = minimal ? TextEditor : ENEditor
 
     return (
       <div className="flex-grow flex flex-column">
         <div className="container col-12 flex-none">
           <GeneralErrors
               errors={errors.delete('title').delete('markup')} />
-          { /* renderFields if not minimal (for inline adding) */ }
+          { minimal && this.renderFields() }
         </div>
 
-        <section className="flex-grow flex flex-column">
+        <section className="relative flex-grow flex flex-column">
           <FieldErrors errors={errors.get('markup')} />
-          <HTMLEditor
+          <Editor
               ref="content"
               {...this.props}
+              html={note.markup}
+              onChange={markup => this.mergeValues({ markup })}
               defaultPane="metadata"
               additionalPanes={[
                 {
@@ -155,9 +155,7 @@ NoteForm = React.createClass({
                   label: 'Metadata',
                   render: this.renderFields
                 }
-              ]}
-              html={note.markup}
-              onChange={markup => this.mergeValues({ markup })} />
+              ]} />
         </section>
       </div>
     )
