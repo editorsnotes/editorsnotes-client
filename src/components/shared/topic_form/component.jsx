@@ -15,10 +15,6 @@ module.exports = React.createClass({
     minimal: React.PropTypes.bool
   },
 
-  getDefaultProps() {
-    return { minimal: false }
-  },
-
   handleChange(e) {
     this.props.onChange(this.props.topic.set('preferred_name', e.target.value));
   },

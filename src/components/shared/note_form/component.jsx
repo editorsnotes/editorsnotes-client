@@ -127,7 +127,7 @@ NoteForm = React.createClass({
 
   render() {
     var ENEditor = require('../en_editor/component.jsx')
-      , TextEditor = require('../en_editor/text_editor.jsx')
+      , TextEditor = require('../text_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
       , { note, errors, minimal } = this.props

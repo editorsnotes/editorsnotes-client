@@ -3,54 +3,44 @@
 var React = require('react')
   , Immutable = require('immutable')
 
-module.exports = React.createClass({
-  displayName: 'RelatedTopicSelector',
+function getOptions(projectURL, q) {
+  var url = require('url')
+    , apiFetch = require('../../../utils/api_fetch')
 
-  propTypes: {
-    topics: React.PropTypes.instanceOf(Immutable.Set).isRequired,
-    projectURL: React.PropTypes.string.isRequired,
-  },
+  return apiFetch(url.format({
+      pathname: projectURL + 'topics/',
+      query: q.length === 0 ? undefined : { q }
+    }))
+    .then(resp => resp.json())
+    .then(Immutable.fromJS)
+    .then(data => ({ options: data.get('results').toArray() }));
+}
 
-  renderOption(item) {
-    var { getDisplayTitle } = require('../../../helpers/api')
+function RelatedTopicsSelector({ topics, projectURL, onChange }) {
+  var Select = require('react-select')
+    , { getDisplayTitle } = require('../../../helpers/api')
 
-    return getDisplayTitle(item);
-  },
+  return (
+    <Select.Async
+        minimumInput={1}
+        multi={true}
+        name={"select-thing"}
+        className="mb1"
+        value={topics.toArray()}
+        cache={null}
+        placeholder=<strong>Related topics</strong>
+        filterOptions={opts => opts}
+        loadOptions={query => getOptions(projectURL, query)}
+        optionRenderer={getDisplayTitle}
+        valueRenderer={getDisplayTitle}
+        onChange={onChange} />
+  )
+}
 
-  getOptions(q) {
-    var url = require('url')
-      , apiFetch = require('../../../utils/api_fetch')
-      , { projectURL } = this.props
+RelatedTopicsSelector.propTypes = {
+  topics: React.PropTypes.instanceOf(Immutable.Set).isRequired,
+  projectURL: React.PropTypes.string.isRequired,
+  onChange: React.PropTypes.func.isRequired
+}
 
-    return apiFetch(url.format({
-        pathname: projectURL + 'topics/',
-        query: q.length === 0 ? undefined : { q }
-      }))
-      .then(resp => resp.json())
-      .then(Immutable.fromJS)
-      .then(data => {
-        return { options: data.get('results').toArray() }
-      });
-  },
-
-  render: function () {
-    var Select = require('react-select')
-      , { topics, onChange } = this.props
-
-    return (
-      <Select.Async
-          minimumInput={1}
-          multi={true}
-          name={"select-thing"}
-          className="mb1"
-          value={topics.toArray()}
-          cache={null}
-          placeholder=<strong>Related topics</strong>
-          filterOptions={opts => opts}
-          loadOptions={this.getOptions}
-          optionRenderer={this.renderOption}
-          valueRenderer={this.renderOption}
-          onChange={onChange} />
-    )
-  }
-});
+module.exports = RelatedTopicsSelector;
