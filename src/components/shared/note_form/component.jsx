@@ -141,7 +141,7 @@ NoteForm = React.createClass({
           { minimal && this.renderFields() }
         </div>
 
-        <section className="relative flex-grow flex flex-column">
+        <section className="flex-grow flex flex-column">
           <FieldErrors errors={errors.get('markup')} />
           <Editor
               ref="content"
