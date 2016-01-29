@@ -1,17 +1,12 @@
 "use strict";
 
-/* eslint camelcase:0 */
-
 var React = require('react')
   , Immutable = require('immutable')
+  , { getType, getDisplayTitle } = require('../../../helpers/api')
+  , References
 
-
-function ReferenceHint({ embeddedItems }) {
-  var { getType, getDisplayTitle } = require('../../../helpers/api')
-    , { embeddedItems } = this.props
-
-  return (
-    <ul className="list-reset">
+References = ({ embeddedItems }) => (
+  <ul className="list-reset">
     {
       embeddedItems.map(item =>
         <li key={item.get('url')}>
@@ -28,12 +23,11 @@ function ReferenceHint({ embeddedItems }) {
         </li>
       )
     }
-    </ul>
-  )
+  </ul>
+)
+
+References.propTypes = {
+  embeddedItems: React.PropTypes.instanceOf(Immutable.Set).isRequired
 }
 
-ReferenceHint.propTypes = {
-  embeddedItems: React.PropTypes.instanceOf(Immutable.Set).isRequired,
-}
-
-module.exports = ReferenceHint;
+module.exports = References;
