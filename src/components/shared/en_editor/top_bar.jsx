@@ -14,15 +14,29 @@ module.exports = React.createClass({
   },
 
   getInitialState() {
-    return { addingReferenceType: null }
+    return { insertingReferenceType: null }
+  },
+
+  handleSelect(item) {
+    var { selectingReferenceType, handleReferenceSelect, handleClickAddItem } = this.props
+
+    this.setState({ insertingReferenceType: null });
+
+    if (item.blank) {
+      handleClickAddItem(item.itemType, item.initialText);
+    } else if (selectingReferenceType) {
+      handleReferenceSelect(selectingReferenceType);
+    } else {
+      this.handleReferenceAdd(item);
+    }
   },
 
   getOptions(q) {
     var url = require('url')
       , apiFetch = require('../../../utils/api_fetch')
       , { selectingReferenceType, projectURL } = this.props
-      , { addingReferenceType } = this.state
-      , itemType = selectingReferenceType || addingReferenceType
+      , { insertingReferenceType } = this.state
+      , itemType = selectingReferenceType || insertingReferenceType
 
     if (itemType === 'citation-block') {
       itemType = 'document';
@@ -35,36 +49,50 @@ module.exports = React.createClass({
       .then(resp => resp.json())
       .then(Immutable.fromJS)
       .then(data => {
-        return { options: data.get('results').toArray() }
+        return {
+          options: data
+            .get('results')
+            .push({
+              itemType,
+              initialText: q,
+              blank: true,
+              label: (
+                <div className="center py2">
+                  <button className="btn btn-primary">{ `Add new ${itemType}` }</button>
+                </div>
+              )
+            })
+            .toArray()
+        }
       });
   },
 
   renderOption(item) {
     var { getDisplayTitle } = require('../../../helpers/api')
 
-    return getDisplayTitle(item);
+    return item.label || getDisplayTitle(item);
   },
 
   handleReferenceAdd(item) {
     var { handleReferenceAdd } = this.props
-      , { addingReferenceType } = this.state
+      , { insertingReferenceType } = this.state
 
-    this.setState({ addingReferenceType: null });
+    this.setState({ insertingReferenceType: null });
 
-    handleReferenceAdd(item, addingReferenceType);
+    handleReferenceAdd(item, insertingReferenceType);
   },
 
-  handleAddReferenceButtonClick(addingReferenceType) {
-    this.setState({ addingReferenceType });
+  handleAddReferenceButtonClick(insertingReferenceType) {
+    this.setState({ insertingReferenceType });
 
     setTimeout(() => this.refs.autocomplete.focus(), 10);
   },
 
   render() {
     var Select = require('react-select')
-      , { selectingReferenceType, handleReferenceSelect } = this.props
-      , { addingReferenceType } = this.state
-      , itemType = selectingReferenceType || addingReferenceType
+      , { selectingReferenceType, newItemType } = this.props
+      , { insertingReferenceType } = this.state
+      , itemType = selectingReferenceType || insertingReferenceType
       , style
 
     if (itemType === 'citation-block') {
@@ -79,7 +107,7 @@ module.exports = React.createClass({
     return (
       <div className="border-box flex flex-center flex-justify-center" style={style}>
         {
-          !itemType && (
+          !itemType && !newItemType && (
             <div className="flex flex-justify flex-center col-12">
               <div className="px3 flex flex-center">
                 <span className="h4 bold mr1">Reference a</span>
@@ -129,7 +157,7 @@ module.exports = React.createClass({
         }
 
         {
-          itemType && (
+          itemType && !newItemType && (
             <div style={{ width: '400px' }}>
               <Select.Async
                   name="select"
@@ -142,14 +170,18 @@ module.exports = React.createClass({
                   loadOptions={this.getOptions}
                   optionRenderer={this.renderOption}
                   valueRenderer={this.renderOption}
-                  onBlur={() => this.setState({ addingReferenceType: null })}
-                  onChange={
-                    selectingReferenceType ?
-                      handleReferenceSelect :
-                      this.handleReferenceAdd} />
+                  onBlur={() => this.setState({ insertingReferenceType: null })}
+                  onChange={this.handleSelect} />
             </div>
           )
         }
+
+        {
+          newItemType && (
+            <div>Adding { newItemType }...</div>
+          )
+        }
+
       </div>
     )
   }

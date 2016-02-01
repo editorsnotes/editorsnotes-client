@@ -73,6 +73,7 @@ module.exports = React.createClass({
         <section id="topic-related-topics">
           <h3>Related topics</h3>
           <RelatedTopicsSelector
+            projectURL={projectURL}
             topics={topic.get('related_topics').toSet()} />
         </section>
 

@@ -2,6 +2,7 @@
 
 var React = require('react')
   , ReactDOM = require('react-dom')
+  , classnames = require('classnames')
 
 
 module.exports = React.createClass({
@@ -18,7 +19,11 @@ module.exports = React.createClass({
     return {
       dragEl: null,
       rightWidth: null,
-      selectingReferenceType: null
+
+      newItemType: null,
+      newItemInitialText: null,
+
+      selectingReferenceType: null,
     }
   },
 
@@ -146,12 +151,21 @@ module.exports = React.createClass({
     }, 0)
   },
 
+  handleClickAddItem(newItemType, newItemInitialText) {
+    this.setState({
+      newItemType,
+      newItemInitialText,
+      selectingReferenceType: null
+    })
+  },
+
   render() {
     var TextEditor = require('../text_editor/component.jsx')
       , Panes = require('./panes.jsx')
       , TopBar = require('./top_bar.jsx')
+      , AddInlineItem = require('../add_inline_item.jsx')
       , { projectURL } = this.props
-      , { rightWidth, selectingReferenceType } = this.state
+      , { rightWidth, selectingReferenceType, newItemType, newItemInitialText } = this.state
       , initial = rightWidth === null
 
     return (
@@ -159,11 +173,11 @@ module.exports = React.createClass({
         <div className="flex-none">
           <TopBar
               ref="topBar"
-              selectingReferenceType={selectingReferenceType}
+              {...this.state}
+              projectURL={projectURL}
               handleReferenceSelect={this.handleReferenceSelect}
               handleReferenceAdd={this.handleReferenceAdd}
-              rightWidth={rightWidth}
-              projectURL={projectURL} />
+              handleClickAddItem={this.handleClickAddItem} />
         </div>
 
         <div className="flex-grow bg-white flex flex-stretch">
@@ -198,6 +212,32 @@ module.exports = React.createClass({
             <Panes {...this.props} />
           </div>
         </div>
+
+        {
+          newItemType && (
+            <div className="absolute bg-grey flex flex-justify-center" style={{
+              top: 84,
+              left: 0,
+              right: 0,
+              height: 'calc(100vh - 84px)',
+              background: 'rgba(128,128,128,.5)',
+              zIndex: 10
+            }}>
+              <div className="bg-white p3" style={{ width: 500 }}>
+                <AddInlineItem
+                    autofocus={true}
+                    type={newItemType}
+                    onSelect={this.handleSelect}
+                    onCancel={() => this.setState({
+                      newItemType: null,
+                      newItemInitialText: null
+                    })}
+                    projectURL={projectURL}
+                    initialText={newItemInitialText} />
+              </div>
+            </div>
+          )
+        }
       </div>
     )
   }
