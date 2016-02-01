@@ -2,20 +2,28 @@
 
 var React = require('react')
   , ReactDOM = require('react-dom')
+  , classnames = require('classnames')
 
 
 module.exports = React.createClass({
   displayName: 'ENContentEditor',
 
   propTypes: {
+    onAddEmbeddedItem: React.PropTypes.func,
+    projectURL: React.PropTypes.string.isRequired,
+    defaultPane: React.PropTypes.string,
+    additionalPanes: React.PropTypes.array
   },
 
   getInitialState() {
     return {
       dragEl: null,
-      leftWidth: null,
       rightWidth: null,
-      searchingReferenceType: null
+
+      newItemType: null,
+      newItemInitialText: null,
+
+      selectingReferenceType: null,
     }
   },
 
@@ -46,7 +54,8 @@ module.exports = React.createClass({
   handleDrag(e) {
     var { pageX } = e
       , { offset } = this.state
-      , leftWidth, rightWidth
+      , rightWidth
+      , leftWidth
 
     if (!offset) return;
     if (pageX === 0) return;
@@ -56,15 +65,13 @@ module.exports = React.createClass({
     if (leftWidth < 300) leftWidth = 300;
     rightWidth = offset - leftWidth - 16;
 
-    this.setState({ leftWidth, rightWidth });
+    this.setState({ rightWidth });
   },
 
   componentDidMount() {
-    var leftEl = ReactDOM.findDOMNode(this.refs.left)
-      , rightEl = ReactDOM.findDOMNode(this.refs.right)
+    var rightEl = ReactDOM.findDOMNode(this.refs.right)
 
     this.setState({
-      leftWidth: leftEl.clientWidth,
       rightWidth: rightEl.clientWidth
     });
   },
@@ -72,17 +79,34 @@ module.exports = React.createClass({
   clearReferenceType() {
     var { editor } = this.refs.textEditor.state
 
-    this.setState({ searchingReferenceType: null });
+    this.setState({ selectingReferenceType: null });
     editor.off('beforeChange', this.clearReferenceType);
   },
 
   handleAddEmptyReference(referenceType) {
     var { editor } = this.refs.textEditor.state
 
-    this.setState({ searchingReferenceType: referenceType });
+    this.setState({ selectingReferenceType: referenceType });
     editor.on('beforeChange', this.clearReferenceType);
 
     setTimeout(() => this.refs.topBar.refs.autocomplete.focus(), 10);
+  },
+
+  handleReferenceAdd(itemType, selectedItem) {
+    var { getType } = require('../../../helpers/api')
+      , { editor } = this.refs.textEditor.state
+      , text
+
+    if (!selectedItem) return;
+
+    text = `@@${getType(selectedItem).slice(0, 1).toLowerCase()}`;
+
+    if (itemType === 'citation-block') {
+      text = '::: document ' + text;
+    }
+
+    editor.replaceSelection(text);
+    this.handleReferenceSelect(selectedItem);
   },
 
   handleReferenceSelect(selectedItem) {
@@ -96,7 +120,11 @@ module.exports = React.createClass({
 
     onAddEmbeddedItem(selectedItem);
 
-    this.setState({ searchingReferenceType: null });
+    this.setState({
+      newItemType: null,
+      newItemInitialText: null,
+      selectingReferenceType: null,
+    });
 
     setTimeout(() => {
       if (getType(selectedItem) === 'Document') {
@@ -127,32 +155,40 @@ module.exports = React.createClass({
     }, 0)
   },
 
+  handleClickAddItem(newItemType, newItemInitialText) {
+    this.setState({
+      newItemType,
+      newItemInitialText,
+      selectingReferenceType: null
+    })
+  },
+
   render() {
-    var TextEditor = require('./text_editor.jsx')
+    var TextEditor = require('../text_editor/component.jsx')
       , Panes = require('./panes.jsx')
       , TopBar = require('./top_bar.jsx')
+      , AddInlineItem = require('../add_inline_item.jsx')
       , { projectURL } = this.props
-      , { leftWidth, rightWidth, searchingReferenceType } = this.state
-      , flex = leftWidth === rightWidth
+      , { rightWidth, selectingReferenceType, newItemType, newItemInitialText } = this.state
+      , initial = rightWidth === null
 
     return (
       <div className="flex-grow flex flex-column">
         <div className="flex-none">
           <TopBar
               ref="topBar"
-              itemType={searchingReferenceType}
+              {...this.props}
+              {...this.state}
               handleReferenceSelect={this.handleReferenceSelect}
-              projectURL={projectURL} />
+              handleReferenceAdd={this.handleReferenceAdd}
+              handleClickAddItem={this.handleClickAddItem} />
         </div>
 
         <div className="flex-grow bg-white flex flex-stretch">
           <div
               ref="left"
               className="relative"
-              style={{
-                width: flex ? 'auto' : leftWidth,
-                flex: flex ? '3 3 0' : 'none'
-              }}>
+              style={{ flex: initial ? '3 3 0' : '1 0 auto' }}>
             <TextEditor
                 ref="textEditor"
                 onAddEmptyReference={this.handleAddEmptyReference}
@@ -160,7 +196,7 @@ module.exports = React.createClass({
           </div>
 
           <div
-              className="relative"
+              className="relative flex-none"
               draggable="true"
               onDragStart={this.handleDragStart}
               onDragEnd={this.handleDragEnd}
@@ -174,12 +210,42 @@ module.exports = React.createClass({
               ref="right"
               className="relative"
               style={{
-                width: flex ? 'auto' : rightWidth,
-                flex: flex ? '2 2 0' : 'none'
+                width: initial ? 'auto' : rightWidth,
+                flex: initial ? '2 2 0' : 'none'
               }}>
             <Panes {...this.props} />
           </div>
         </div>
+
+        {
+          newItemType && (
+            <div className="absolute bg-grey flex flex-justify-center" style={{
+              top: 84,
+              left: 0,
+              right: 0,
+              height: 'calc(100vh - 84px)',
+              background: 'rgba(128,128,128,.5)',
+              zIndex: 10
+            }}>
+              <div className="bg-white p3" style={{ width: 500 }}>
+                <AddInlineItem
+                    autofocus={true}
+                    type={newItemType}
+                    onSelect={
+                      selectingReferenceType ?
+                        this.handleReferenceSelect :
+                        this.handleReferenceAdd.bind(null, newItemType)
+                    }
+                    onCancel={() => this.setState({
+                      newItemType: null,
+                      newItemInitialText: null
+                    })}
+                    projectURL={projectURL}
+                    initialText={newItemInitialText} />
+              </div>
+            </div>
+          )
+        }
       </div>
     )
   }

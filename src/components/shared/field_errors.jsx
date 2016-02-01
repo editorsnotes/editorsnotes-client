@@ -2,27 +2,20 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , classnames = require('classnames')
+  , FieldErrors
 
-module.exports = React.createClass({
-  displayName: 'FieldErrors',
 
-  propTypes: {
-    errors: React.PropTypes.instanceOf(Immutable.List)
-  },
+FieldErrors = ({ errors=Immutable.List() }) => (
+  <div className={classnames("px2 py1 bg-red rounded", !errors.size && 'display-none')} >
+    <ul className="m0">
+      { errors.map((err, i) => <li key={i}>{ err }</li>) }
+    </ul>
+  </div>
+)
 
-  getDefaultProps() {
-    return { errors: Immutable.List() }
-  },
+FieldErrors.propTypes = {
+  errors: React.PropTypes.instanceOf(Immutable.List)
+}
 
-  render() {
-    var { errors } = this.props
-
-    return errors.size > 0 && (
-      <div className="px2 py1 bg-red rounded">
-        <ul className="m0">
-          { errors.map((err, i) => <li key={i}>{ err }</li>) }
-        </ul>
-      </div>
-    )
-  }
-});
+module.exports = FieldErrors;

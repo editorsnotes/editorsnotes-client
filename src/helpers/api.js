@@ -3,8 +3,6 @@
 function getEmbedded(data, key) {
   var val = data.get(key)
 
-    debugger;
-
   return typeof val === 'string' ?
     data.getIn(['embedded', val]) :
     val.map(url => data.getIn(['embedded', url]))

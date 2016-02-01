@@ -1,119 +1,92 @@
 "use strict";
 
 var React = require('react')
-  , Immutable = require('immutable')
+
 
 module.exports = React.createClass({
   displayName: 'TextEditor',
 
   propTypes: {
-    projectURL: React.PropTypes.string.isRequired,
-    onChange: React.PropTypes.func.isRequired,
-    handleSave: React.PropTypes.func,
-
-    embeddedItems: React.PropTypes.instanceOf(Immutable.Set),
-    onAddEmbeddedItem: React.PropTypes.func,
-
-    html: React.PropTypes.string,
-    minimal: React.PropTypes.bool,
     noCodeMirror: React.PropTypes.bool,
-  },
-
-  getDefaultProps() {
-    return {
-      style: {},
-      minimal: false
-    }
+    onAddEmptyReference: React.PropTypes.func,
+    getReferenceLabel: React.PropTypes.func,
+    getInlineCitation: React.PropTypes.func,
+    getFullCitation: React.PropTypes.func
   },
 
   getInitialState() {
     return {
-      referenceType: null,
+      editor: null,
+      initializing: true
     }
   },
 
-  onAddEmptyReference(type) {
-    this.setState({ referenceType: type || 'empty' });
-    this.state.editor.on('beforeChange', this.clearReferenceType);
+  componentDidMount() {
+    var { noCodeMirror } = this.props
+
+    if (noCodeMirror) return;
+
+    setTimeout(this.initCodeMirror, 0);
   },
 
-  clearReferenceType() {
-    this.setState({ referenceType: null });
-    this.state.editor.off('beforeChange', this.clearReferenceType);
+  initCodeMirror() {
+    var { findDOMNode } = require('react-dom')
+      , codemirrorEditor = require('./cm_editor')
+      , { html, onChange } = this.props
+      , editor
+
+    editor = codemirrorEditor(findDOMNode(this.refs.content), html, this.props);
+
+    this.setState({ initializing: false });
+
+    editor.display.wrapper.style.fontFamily = '"Times New Roman"';
+    editor.display.wrapper.style.fontSize = '20px';
+    editor.display.wrapper.style.lineHeight = '23px';
+
+    editor.display.wrapper.style.border = '1px solid #ccc';
+    editor.display.wrapper.style.borderTop = 'none';
+    editor.display.wrapper.style.borderBottom = 'none';
+    editor.display.wrapper.style.marginLeft = '-1px';
+    editor.display.wrapper.style.marginRight = '-1px';
+
+    editor.display.wrapper.style.height = 'auto';
+
+    editor.display.scroller.style.minHeight = '480px';
+
+    editor.on('change', () => onChange(editor.getValue()));
+
+    this.setState({ editor }, () => editor.refresh())
   },
 
-  handleReferenceSelect(item) {
-    var { getType } = require('../../../helpers/api')
-      , { onAddEmbeddedItem } = this.props
-      , { editor } = this.state
-
-    editor.focus();
-
-    onAddEmbeddedItem(item);
-
-    setTimeout(() => {
-      if (getType(item) === 'Document') {
-        let end = editor.getCursor()
-          , start = { line: end.line, ch: end.ch - 3 }
-
-        if (start.ch > 0 && editor.getRange({ line: start.line, ch: start.ch - 1 }, start) === '[') {
-          start.ch -= 1;
-        }
-
-        if (editor.getRange(end, { line: end.line, ch: end.ch + 1 }) === ']') {
-          end.ch += 1;
-        }
-
-        if (editor.getLine(end.line) === '::: document @@d') {
-          editor.setSelection({ line: end.line, ch: 16 });
-          editor.replaceSelection(`${item.get('id')}\n\n\n\n:::`);
-          editor.setSelection({ line: end.line + 2, ch: 0 });
-        } else {
-          editor.doc.setSelection(start, end);
-          editor.doc.replaceSelection(`[@@d${item.get('id')}]`);
-        }
-
-
-      } else {
-        editor.doc.replaceSelection(item.get('id') + ' ');
-      }
-    }, 0)
-  },
-
-  renderReferences() {
-    var References = require('./references.jsx')
-      , { projectURL, embeddedItems, onAddEmbeddedItem } = this.props
-      , { referenceType } = this.state
-
-    return (
-      <div className="TextEditor--references col-12 ml3 border bg-white">
-        <References
-            type={referenceType}
-            projectURL={projectURL}
-            embeddedItems={embeddedItems}
-            onSelect={this.handleReferenceSelect}
-            onAddEmbeddedItem={onAddEmbeddedItem} />
-        { /* FIXME
-        <div className="center">
-          <button onClick={handleSave} className="btn btn-primary">Save</button>
-        </div>
-        */ }
-      </div>
-    )
-  },
 
   render() {
-    var { minimal, noCodeMirror, html } = this.props
+    var { noCodeMirror, html } = this.props
+      , { initializing } = this.state
 
     return (
-      <div className="bg-gray py2 px1 flex" style={{ justifyContent: 'center' }}>
-        <div className="TextEditor--editor col-12 p4 border bg-white">
-          <div ref="content">
-            { noCodeMirror && html }
+      <div className="absolute-full-height flex flex-column">
+        <div className="flex-grow relative">
+          <div className="absolute-full-height bg-gray-warm-light flex flex-stretch" style={{
+            overflowY: 'scroll',
+            overflowX: 'hidden',
+            justifyContent: 'center'
+          }}>
+            <div className="bg-white" style={{
+              width: '100%',
+              maxWidth: '740px',
+              boxShadow: '0 0 0 1px #ccc'
+            }}>
+              {
+                !noCodeMirror && initializing && (
+                  <p className="absolute red" style={{ left: '50%', top: '20%' }}>Loading...</p>
+                )
+              }
+              <div className="ENEditor" ref="content">
+                { noCodeMirror && html }
+              </div>
+            </div>
           </div>
         </div>
-
-        { !minimal && this.renderReferences() }
       </div>
     )
   }

@@ -6,6 +6,7 @@
 
 @import "basscss";
 @import "basscss-btn-sizes";
+@import "basscss-ui-utility-groups";
 
 @import "./variables";
 @import "./colors";
@@ -27,6 +28,10 @@
 
 
 /** Zotero items **/
+
+.ZoteroData tr:nth-of-type(even) {
+    background: #f0f0f0;
+}
 
 .ZoteroField > :first-child {
     width: 120px;

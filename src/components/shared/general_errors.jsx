@@ -2,30 +2,27 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , classnames = require('classnames')
+  , GeneralErrors
 
-module.exports = React.createClass({
-  displayName: 'GeneralErrors',
 
-  propTypes: {
-    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired
-  },
+GeneralErrors = ({ errors }) => (
+  <div className={classnames("alert alert-danger", { 'display-none': errors.size === 0 })}>
+    {
+      errors.map((fieldErrors, fieldName) =>
+        <div key={fieldName}>
+          { fieldName !== 'NON_FIELD_ERRORS' && <h4>{ fieldName }</h4> }
+          <ul>
+            { fieldErrors.map((err, i) => <li key={i}>{ err }</li>) }
+          </ul>
+        </div>
+      ).toArray()
+    }
+  </div>
+)
 
-  render() {
-    var { errors } = this.props
+GeneralErrors.propTypes = {
+  errors: React.PropTypes.instanceOf(Immutable.Map).isRequired
+}
 
-    return errors.size > 0 && (
-      <div className="alert alert-danger">
-        {
-          errors.map((fieldErrors, fieldName) =>
-            <div key={fieldName}>
-              { fieldName !== 'NON_FIELD_ERRORS' && <h4>{ fieldName }</h4> }
-              <ul>
-                { fieldErrors.map((err, i) => <li key={i}>{ err }</li>) }
-              </ul>
-            </div>
-          )
-        }
-      </div>
-    )
-  }
-});
+module.exports = GeneralErrors;

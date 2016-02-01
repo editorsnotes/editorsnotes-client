@@ -2,7 +2,35 @@
 
 :root {
     --light-gray: #f5f5f5;
+
+    /* These are from https://playbook.cio.gov/designstandards/visual-style/ */
+    --gray-warm-dark: #494440;
+    --gray-warm-light: #e4e2e0;
+    --gray-cool-light: #dce4ef;
+    --gray-dark: #323a45;
+    --gray-light: #aeb0b5;
+    --gray-lighter: #d6d7d9;
+    --gray-lightest: #f1f1f1;
 }
 
 .lightgray { color: var(--light-gray); }
 .bg-lightgray { background-color: var(--light-gray); }
+
+.gray-warm-dark { color: var(--gray-warm-dark); }
+.bg-gray-warm-dark { background-color: var(--gray-warm-dark); }
+.gray-warm-light { color: var(--gray-warm-light); }
+.bg-gray-warm-light { background-color: var(--gray-warm-light); }
+.gray-cool-light { color: var(--gray-cool-light); }
+.bg-gray-cool-light { background-color: var(--gray-cool-light); }
+
+.gray-dark { color: var(--gray-dark); }
+.bg-gray-dark { background-color: var(--gray-dark); }
+
+.gray-light { color: var(--gray-light); }
+.bg-gray-light { background-color: var(--gray-light); }
+
+.gray-lighter { color: var(--gray-lighter); }
+.bg-gray-lighter { background-color: var(--gray-lighter); }
+
+.gray-lightest { color: var(--gray-lightest); }
+.bg-gray-lightest { background-color: var(--gray-lightest); }

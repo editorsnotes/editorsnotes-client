@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react')
+  , Help
 
 const HEADER_TEXT = `# Level 1 Header
 ## Level 2 Header
@@ -38,7 +39,7 @@ const BLOCKQUOTE_CITATION_TEXT = `> Quotation from cited text.
 > [@@d40, p.12]
 `
 
-module.exports = () => (
+Help = () => (
   <div>
     <p>Notes are written using Markdown with some Working Notes-specific
       extensions for references to notes, topics and documents.
@@ -130,4 +131,6 @@ module.exports = () => (
         <code>an asterisk: \*</code></p>
     </section>
   </div>
-);
+)
+
+module.exports = Help;

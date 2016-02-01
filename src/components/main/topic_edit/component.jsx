@@ -20,17 +20,35 @@ TopicEdit = React.createClass({
     handleRecordChange: React.PropTypes.func.isRequired
   },
 
+  getInitialState() {
+    var { getEmbedded } = require('../../../helpers/api')
+      , { data } = this.props
+      , embeddedItems
+
+    embeddedItems = data ?
+      getEmbedded(data, 'references').toOrderedSet() :
+      Immutable.OrderedSet()
+
+    return { embeddedItems }
+  },
+
+  handleAddEmbeddedItem(item) {
+    this.setState(prev => ({
+      embeddedItems: prev.embeddedItems.add(item)
+    }));
+  },
+
   render() {
     var TopicForm = require('../../shared/topic_form/component.jsx')
-      , { loading, errors, projectURL, topic, handleRecordChange, saveAndRedirect } = this.props
+      , { loading, handleRecordChange, saveAndRedirect } = this.props
 
     return (
       <div>
         <TopicForm
-            topic={topic}
-            errors={errors}
-            projectURL={projectURL}
-            onChange={handleRecordChange} />
+            {...this.props}
+            {...this.state}
+            onChange={handleRecordChange}
+            onAddEmbeddedItem={this.handleAddEmbeddedItem} />
 
         <section>
           <div className="well">
@@ -48,4 +66,4 @@ TopicEdit = React.createClass({
   }
 });
 
-module.exports = standaloneForm(TopicEdit, 'topic')
+module.exports = standaloneForm(TopicEdit, Topic);

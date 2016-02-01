@@ -1,8 +1,7 @@
 "use strict";
 
 var React = require('react')
-  , Translate = require('../../shared/translate.jsx')
-  , strings = require('./strings')
+
 
 module.exports = React.createClass({
   displayName: 'ScanList',
@@ -69,8 +68,8 @@ module.exports = React.createClass({
   render: function () {
     return (
       <div>
-        <div id="scanlist-container">
-          <ul id="scan-list">
+        <div>
+          <ul>
             {
               this.props.scans.map((scan, i) =>
                 <li onClick={this.handleClick.bind(null, scan, i)} key={scan.hashCode()}>

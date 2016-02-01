@@ -4,6 +4,11 @@ module.exports = {
   document: ['Document', 'Documents'],
   topic: ['Topic', 'Topics'],
 
+  addnote: 'Add note',
+  addtopic: 'Add topic',
+  adddocument: 'Add document',
+
+
   relatedTopics: 'Related topics',
 
   lastUpdated: 'Last updated',
