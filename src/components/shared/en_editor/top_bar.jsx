@@ -172,6 +172,7 @@ module.exports = React.createClass({
                   minimumInput={2}
                   cache={null}
                   placeholder={`Search for a ${itemType}`}
+                  ignoreCase={false}
                   filterOptions={opts => opts}
                   loadOptions={this.getOptions}
                   optionRenderer={this.renderOption}
