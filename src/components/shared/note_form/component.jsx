@@ -18,8 +18,7 @@ NoteForm = React.createClass({
     onAddEmbeddedItem: React.PropTypes.func.isRequired,
     handleSave: React.PropTypes.func.isRequired,
 
-    afterHeader: React.PropTypes.func,
-
+    loading: React.PropTypes.bool.isRequired,
     minimal: React.PropTypes.bool,
   },
 

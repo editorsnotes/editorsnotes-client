@@ -90,7 +90,8 @@ module.exports = React.createClass({
 
   render() {
     var Select = require('react-select')
-      , { selectingReferenceType, newItemType } = this.props
+      , Spinner = require('../spinner/component.jsx')
+      , { selectingReferenceType, newItemType, loading, handleSave } = this.props
       , { insertingReferenceType } = this.state
       , itemType = selectingReferenceType || insertingReferenceType
       , style
@@ -140,6 +141,8 @@ module.exports = React.createClass({
               </div>
               <div className="px3">
                 <button
+                    onClick={handleSave}
+                    disabled={loading}
                     className="btn btn-primary mr1"
                     style={{
                       position: 'absolute',
@@ -150,6 +153,9 @@ module.exports = React.createClass({
                       fontSize: '18px'
                     }}>
                   Save
+                  <Spinner
+                      opts={require('../spinner/opts').compact}
+                      spin={loading} />
               </button>
               </div>
             </div>

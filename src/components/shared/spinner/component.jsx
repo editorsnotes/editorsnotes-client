@@ -7,7 +7,8 @@ module.exports = React.createClass({
   displayName: 'Spinner',
   
   propTypes: {
-    spin: React.PropTypes.bool.isRequired
+    spin: React.PropTypes.bool.isRequired,
+    opts: React.PropTypes.object
   },
 
   getInitialState() {
@@ -15,8 +16,8 @@ module.exports = React.createClass({
   },
 
   componentDidMount() {
-    var { spin } = this.props
-      , spinner = new Spinner()
+    var { spin, opts } = this.props
+      , spinner = new Spinner(opts)
 
     if (spin) spinner.spin(React.findDOMNode(this))
 

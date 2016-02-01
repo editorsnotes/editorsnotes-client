@@ -173,8 +173,8 @@ module.exports = React.createClass({
         <div className="flex-none">
           <TopBar
               ref="topBar"
+              {...this.props}
               {...this.state}
-              projectURL={projectURL}
               handleReferenceSelect={this.handleReferenceSelect}
               handleReferenceAdd={this.handleReferenceAdd}
               handleClickAddItem={this.handleClickAddItem} />
