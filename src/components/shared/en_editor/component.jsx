@@ -92,7 +92,7 @@ module.exports = React.createClass({
     setTimeout(() => this.refs.topBar.refs.autocomplete.focus(), 10);
   },
 
-  handleReferenceAdd(selectedItem, itemType) {
+  handleReferenceAdd(itemType, selectedItem) {
     var { getType } = require('../../../helpers/api')
       , { editor } = this.refs.textEditor.state
       , text
@@ -120,7 +120,11 @@ module.exports = React.createClass({
 
     onAddEmbeddedItem(selectedItem);
 
-    this.setState({ selectingReferenceType: null });
+    this.setState({
+      newItemType: null,
+      newItemInitialText: null,
+      selectingReferenceType: null,
+    });
 
     setTimeout(() => {
       if (getType(selectedItem) === 'Document') {
@@ -227,7 +231,11 @@ module.exports = React.createClass({
                 <AddInlineItem
                     autofocus={true}
                     type={newItemType}
-                    onSelect={this.handleSelect}
+                    onSelect={
+                      selectingReferenceType ?
+                        this.handleReferenceSelect :
+                        this.handleReferenceAdd.bind(null, newItemType)
+                    }
                     onCancel={() => this.setState({
                       newItemType: null,
                       newItemInitialText: null

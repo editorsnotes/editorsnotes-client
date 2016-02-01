@@ -3,7 +3,6 @@
 /* eslint camelcase:0 */
 
 var React = require('react')
-  , ReactDOM = require('react-dom')
   , Immutable = require('immutable')
   , Editable = require('../util/editable_component.jsx')
   , Translate = require('./translate.jsx')
@@ -86,6 +85,7 @@ AddInlineItem = React.createClass({
 
   render() {
     var Spinner = require('./spinner/component.jsx')
+      , spinnerOpts = require('./spinner/opts')
       , { type, loading, onCancel, className } = this.props
       , { item } = this.state
       , FormComponent = FORM_COMPONENTS[type]
@@ -99,13 +99,25 @@ AddInlineItem = React.createClass({
         }}>
           <h2><Translate text={commonStrings[`add${type}`]} /></h2>
           <div>
-            <button className="btn btn-outline mr2" onClick={onCancel}>
+            <button
+                className="btn btn-outline mr2"
+                disabled={loading}
+                style={{ width: '85px', height: '32px' }}
+                onClick={onCancel}>
               <Translate text={commonStrings.cancel} />
             </button>
-            <button onClick={this.handleSave} className="btn btn-primary">
+            <button
+                className="btn btn-primary relative"
+                disabled={loading}
+                style={{ width: '85px', height: '32px' }}
+                onClick={this.handleSave} >
               <Translate text={commonStrings.save} />
+              <Spinner spin={loading} opts={Object.assign({}, spinnerOpts.compact, {
+                scale: 1,
+                width: 2,
+                left: '85%'
+              })} />
             </button>
-            <Spinner spin={loading} />
           </div>
       </div>
 

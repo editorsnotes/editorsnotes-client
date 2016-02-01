@@ -79,7 +79,7 @@ module.exports = React.createClass({
 
     this.setState({ insertingReferenceType: null });
 
-    handleReferenceAdd(item, insertingReferenceType);
+    handleReferenceAdd(insertingReferenceType, item);
   },
 
   handleAddReferenceButtonClick(insertingReferenceType) {
