@@ -29,6 +29,10 @@
 
 /** Zotero items **/
 
+.ZoteroData tr:nth-of-type(even) {
+    background: #f0f0f0;
+}
+
 .ZoteroField > :first-child {
     width: 120px;
     flex-basis: auto;

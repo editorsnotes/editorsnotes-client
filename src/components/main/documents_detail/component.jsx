@@ -50,10 +50,32 @@ module.exports = React.createClass({
 
         <header className="h1 mb2" dangerouslySetInnerHTML={{ __html: data.get('description') }} />
 
-        <section id="info">
-          <h3>Metadata</h3>
-          <ZoteroDisplay data={data.get('zotero_data')} />
-          <Links data={data} />
+        <section>
+
+          <div className="clearfix">
+            <div className="col col-6">
+              <h2>Metadata</h2>
+              <ZoteroDisplay data={data.get('zotero_data')} />
+            </div>
+            <div className="col col-6">
+              <h2>Referenced by</h2>
+              { !data.get('referenced_by').size && <p><em>No references to this document.</em></p> }
+              <ul className="list-reset">
+                {
+                  getEmbedded(data, 'referenced_by').map(item =>
+                    <li key={item.hashCode()}>
+                      { getType(item) }:
+                      {' '}
+                      <a href={item.get('url')}>
+                        { getDisplayTitle(item)}
+                      </a>
+                    </li>
+                  )
+                }
+              </ul>
+            </div>
+          </div>
+          <Links doc={data} />
         </section>
 
         <div className="row edit-row">
@@ -77,20 +99,6 @@ module.exports = React.createClass({
         <RelatedTopics topics={data.get('related_topics')} />
         */}
 
-        <h2>Referenced by</h2>
-        {
-          getEmbedded(data, 'referenced_by').map(item =>
-            <ul>
-              <li>
-                { getType(item) }:
-                {' '}
-                <a href={item.get('url')}>
-                  { getDisplayTitle(item)}
-                </a>
-              </li>
-            </ul>
-          )
-        }
         {/* FIXME <Citations doc={data} citations={data.get('cited_by')} /> */}
 
         <div>
