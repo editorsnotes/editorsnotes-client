@@ -2,9 +2,11 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , EmbeddedItemsHandler = require('../../util/embedded_items_handler.jsx')
   , Topic = require('../../../records/topic')
+  , TopicForm
 
-module.exports = React.createClass({
+TopicForm = React.createClass({
   displayName: 'TopicForm',
 
   propTypes: {
@@ -31,6 +33,17 @@ module.exports = React.createClass({
         .update('alternate_names', names => names.delete(name)));
   },
 
+  handleTopicsChange(topics) {
+    var { onAddEmbeddedItem } = this.props
+
+    this.mergeValues({
+      'related_topics': topics.map(topic => topic.get('url'))
+    });
+
+    topics.forEach(topic => onAddEmbeddedItem(topic));
+  },
+
+
   mergeValues(value) {
     this.props.onChange(this.props.topic.merge(value));
   },
@@ -41,7 +54,8 @@ module.exports = React.createClass({
       , HTMLEditor = require('../text_editor/component.jsx')
       , FieldErrors = require('../field_errors.jsx')
       , GeneralErrors = require('../general_errors.jsx')
-      , { topic, projectURL, minimal, errors } = this.props
+      , { getEmbedded } = require('../../../helpers/api')
+      , { topic, projectURL, minimal, errors, embeddedItems } = this.props
 
     return (
       <div>
@@ -53,10 +67,10 @@ module.exports = React.createClass({
           <FieldErrors errors={errors.get('preferred_name')} />
 
           <input
-              id="topic-preferred-name"
+              type="text"
+              className="field"
               name="preferred-name"
               maxLength="80"
-              type="text"
               value={topic.preferred_name}
               onChange={this.handleChange} />
         </header>
@@ -74,7 +88,11 @@ module.exports = React.createClass({
           <h3>Related topics</h3>
           <RelatedTopicsSelector
             projectURL={projectURL}
-            topics={topic.get('related_topics').toSet()} />
+            topics={getEmbedded(Immutable.Map({
+              topics: topic.related_topics,
+              embedded: embeddedItems.toMap().mapKeys((key, val) => val.get('url'))
+            }), 'topics').toSet()}
+            onChange={this.handleTopicsChange} />
         </section>
 
         <section>
@@ -91,3 +109,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = EmbeddedItemsHandler(TopicForm);

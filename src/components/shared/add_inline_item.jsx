@@ -114,6 +114,8 @@ AddInlineItem = React.createClass({
               {...this.props}
               onChange={updatedItem => this.setState({ item: updatedItem })}
               minimal={true}
+              embeddedItems={Immutable.OrderedSet()}
+              onAddEmbeddedItem={() => null}
               {...formProps} />
         </div>
 
