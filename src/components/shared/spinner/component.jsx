@@ -5,7 +5,7 @@ var React = require('react')
 
 module.exports = React.createClass({
   displayName: 'Spinner',
-  
+
   propTypes: {
     spin: React.PropTypes.bool.isRequired,
     opts: React.PropTypes.object
@@ -19,7 +19,7 @@ module.exports = React.createClass({
     var { spin, opts } = this.props
       , spinner = new Spinner(opts)
 
-    if (spin) spinner.spin(React.findDOMNode(this))
+    if (spin) spinner.spin(this.refs.wrapper);
 
     this.setState({ spinner });
   },
@@ -30,7 +30,7 @@ module.exports = React.createClass({
     if (spin === this.props.spin) return;
 
     if (spin) {
-      this.state.spinner.spin(React.findDOMNode(this));
+      this.state.spinner.spin(this.refs.wrapper);
     } else {
       this.state.spinner.stop();
     }
@@ -38,7 +38,7 @@ module.exports = React.createClass({
 
   render() {
     return (
-      <div />
+      <div ref="wrapper" />
     )
   }
 });
