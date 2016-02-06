@@ -257,6 +257,8 @@ router.fallbackHandler = function (matchName, path) {
 }
 
 module.exports = {
+  makeHTML,
+
   serve: function (port, apiURL, developmentMode) {
     global.API_URL = apiURL;
     global.DEVELOPMENT_MODE = developmentMode;
