@@ -17,6 +17,16 @@ CSS_BUNDLE = $(JS_BUNDLE:.js=.css)
 VERSIONED_CSS_BUNDLE = $(VERSIONED_JS_BUNDLE:.js=.css)
 MINIFIED_VERSIONED_CSS_BUNDLE = $(MINIFIED_VERSIONED_JS_BUNDLE:.js=.css)
 
+VERSIONED_DIRECTORY = editorsnotes-$(VERSION)
+VERSIONED_ZIPFILE = dist/$(VERSIONED_DIRECTORY).zip
+
+ZIPPED_FILES = $(MINIFIED_VERSIONED_JS_BUNDLE) \
+	       $(MINIFIED_VERSIONED_JS_BUNDLE).map \
+	       $(MINIFIED_VERSIONED_CSS_BUNDLE) \
+	       LICENSE \
+	       README.md \
+	       CHANGELOG.md
+
 POSTCSS_OPTS = --use postcss-import \
 	       --use postcss-cssnext \
 	       --use postcss-url \
@@ -28,12 +38,11 @@ POSTCSS_OPTS = --use postcss-import \
 JS_FILES = $(shell find src/ -type f -name *js -o -name *jsx)
 CSS_FILES = $(shell find style -type f -name *css)
 
-
 ###################
 #  Phony targets  #
 ###################
 
-all: $(MINIFIED_VERSIONED_JS_BUNDLE) $(MINIFIED_VERSIONED_CSS_BUNDLE)
+all: $(VERSIONED_ZIPFILE)
 
 clean:
 	@rm -rf static
@@ -56,6 +65,9 @@ watch-styleguide: static/style.css | static
 static:
 	mkdir -p $@
 
+dist:
+	mkdir -p $@
+
 node_modules: package.json
 	npm install
 
@@ -76,3 +88,9 @@ $(VERSIONED_CSS_BUNDLE): $(CSS_FILES) node_modules | static
 
 $(MINIFIED_VERSIONED_CSS_BUNDLE): $(VERSIONED_CSS_BUNDLE)
 	$(NPM_BIN)/cleancss $< -o $@
+
+$(VERSIONED_ZIPFILE): $(ZIPPED_FILES) | dist
+	mkdir $(VERSIONED_DIRECTORY)
+	cp $^ $(VERSIONED_DIRECTORY)
+	zip -r $@ $(VERSIONED_DIRECTORY)
+	rm -rf $(VERSIONED_DIRECTORY)
