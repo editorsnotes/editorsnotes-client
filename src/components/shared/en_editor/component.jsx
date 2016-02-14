@@ -2,15 +2,16 @@
 
 var React = require('react')
   , ReactDOM = require('react-dom')
-  , classnames = require('classnames')
 
 
 module.exports = React.createClass({
   displayName: 'ENContentEditor',
 
   propTypes: {
+    html: React.PropTypes.string.isRequired,
     onAddEmbeddedItem: React.PropTypes.func,
     projectURL: React.PropTypes.string.isRequired,
+    onChange: React.PropTypes.func.isRequired,
     defaultPane: React.PropTypes.string,
     additionalPanes: React.PropTypes.array
   },
@@ -20,6 +21,11 @@ module.exports = React.createClass({
       dragEl: null,
       rightWidth: null,
 
+      isFirefox: (
+        global.navigator &&
+        global.navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+      ),
+
       newItemType: null,
       newItemInitialText: null,
 
@@ -27,11 +33,39 @@ module.exports = React.createClass({
     }
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    var shouldUpdate = require('../../../utils/should_update')
+
+    return (
+      shouldUpdate(this.props, nextProps, ['html']) ||
+      shouldUpdate(this.state, nextState)
+    )
+  },
+
   handleDragStart(e) {
-    var dragEl = document.createElement('span')
+    var { isFirefox } = this.state
+      , dragEl = document.createElement('span')
+
+
+    // Firefox doesn't set pageX on ondrag events. Boo.
+    // See https://bugzil.la/505521
+    if (isFirefox) document.ondragover = this.handleDrag;
+
+
+    // Browsers are inconsistent about whether the setDragImage element has
+    // to be visible or not. This seems to take care of it.
+    dragEl.style.height = '1px';
+    dragEl.style.width = '1px';
+    dragEl.style.background = 'red';
+    dragEl.style.opacity = '0.1';
+    dragEl.style.position = 'absolute';
+    dragEl.style.top = '0';
+
 
     document.body.appendChild(dragEl);
     e.dataTransfer.setDragImage(dragEl, 0, 0);
+    e.dataTransfer.setData('nothing', '');
+
 
     this.setState({
       dragEl,
@@ -42,8 +76,9 @@ module.exports = React.createClass({
   },
 
   handleDragEnd() {
-    var { dragEl } = this.state
+    var { dragEl, isFirefox } = this.state
 
+    if (isFirefox) document.ondragover = undefined;
     dragEl.parentNode.removeChild(dragEl);
 
     this.setState({ dragEl: null });
@@ -169,30 +204,31 @@ module.exports = React.createClass({
       , TopBar = require('./top_bar.jsx')
       , AddInlineItem = require('../add_inline_item.jsx')
       , { projectURL } = this.props
-      , { rightWidth, selectingReferenceType, newItemType, newItemInitialText } = this.state
+      , { dragEl, isFirefox, rightWidth, selectingReferenceType, newItemType, newItemInitialText } = this.state
       , initial = rightWidth === null
 
     return (
-      <div className="flex-grow flex flex-column">
-        <div className="flex-none">
-          <TopBar
-              ref="topBar"
-              {...this.props}
-              {...this.state}
-              handleReferenceSelect={this.handleReferenceSelect}
-              handleReferenceAdd={this.handleReferenceAdd}
-              handleClickAddItem={this.handleClickAddItem} />
-        </div>
+      <div>
+        <TopBar
+            ref="topBar"
+            {...this.props}
+            {...this.state}
+            handleReferenceSelect={this.handleReferenceSelect}
+            handleReferenceAdd={this.handleReferenceAdd}
+            handleClickAddItem={this.handleClickAddItem} />
 
-        <div className="flex-grow bg-white flex flex-stretch">
+        <div className="flex bg-white" style={{ height: 'calc(100vh - 84px)', overflowY: 'hidden' }}>
           <div
               ref="left"
               className="relative"
               style={{ flex: initial ? '3 3 0' : '1 0 auto' }}>
-            <TextEditor
-                ref="textEditor"
-                onAddEmptyReference={this.handleAddEmptyReference}
-                {...this.props} />
+
+            <div className={(dragEl && isFirefox) ? 'display-none' : ''}>
+              <TextEditor
+                  ref="textEditor"
+                  onAddEmptyReference={this.handleAddEmptyReference}
+                  {...this.props} />
+            </div>
           </div>
 
           <div
