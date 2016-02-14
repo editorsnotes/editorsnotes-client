@@ -42,7 +42,9 @@ CSS_FILES = $(shell find style -type f -name *css)
 #  Phony targets  #
 ###################
 
-all: $(VERSIONED_ZIPFILE)
+all: node_modules $(MINIFIED_VERSIONED_JS_BUNDLE) $(MINIFIED_VERSIONED_CSS_BUNDLE)
+
+zip: $(VERSIONED_ZIPFILE)
 
 clean:
 	@rm -rf static
@@ -55,7 +57,7 @@ watch-styleguide: static/style.css | static
 	NODE_ENV=styleguide ./bin/watch-styleguide.sh
 
 
-.PHONY: all clean watch watch-styleguide
+.PHONY: all clean watch watch-styleguide zip
 
 
 #############
@@ -71,7 +73,7 @@ dist:
 node_modules: package.json
 	npm install
 
-$(VERSIONED_JS_BUNDLE): $(JS_FILES) node_modules | static
+$(VERSIONED_JS_BUNDLE): $(JS_FILES) | static
 	NODE_ENV=production $(NPM_BIN)/browserify -d $(BROWSERIFY_ENTRY) \
 		 | $(NPM_BIN)/exorcist $@.map > $@
 
@@ -83,11 +85,13 @@ $(MINIFIED_VERSIONED_JS_BUNDLE): $(VERSIONED_JS_BUNDLE)
 		-o $@
 
 
-$(VERSIONED_CSS_BUNDLE): $(CSS_FILES) node_modules | static
+$(VERSIONED_CSS_BUNDLE): $(CSS_FILES) | static
 	$(NPM_BIN)/postcss $(POSTCSS_OPTS) -o $@
 
 $(MINIFIED_VERSIONED_CSS_BUNDLE): $(VERSIONED_CSS_BUNDLE)
 	$(NPM_BIN)/cleancss $< -o $@
+	rm -f static/editorsnotes.css
+	ln -s $(notdir $@) static/editorsnotes.css
 
 $(VERSIONED_ZIPFILE): $(ZIPPED_FILES) | dist
 	mkdir $(VERSIONED_DIRECTORY)
