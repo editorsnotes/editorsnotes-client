@@ -2,6 +2,7 @@
 
 var test = require('tape')
 
+
 test('Citation generator', function (t) {
   var CitationGenerator = require('../utils/citation_generator')
     , generator = new CitationGenerator()
@@ -28,4 +29,23 @@ test('Citation generator', function (t) {
     'Emma Goldman, <em>Living My Life</em>, 1931.',
     'should be able to produce citations'
   );
+});
+
+
+test('Generic shouldComponentUpdate function', function (t) {
+  var shouldUpdate = require('../utils/should_update')
+    , Immutable = require('immutable')
+
+  t.plan(4);
+
+  t.equals(true, shouldUpdate({}, {a: 1}));
+
+  t.equals(false, shouldUpdate({a: 1}, {a: 1}));
+
+  t.equals(false, shouldUpdate(
+    {a: Immutable.fromJS({ key: 'value'})},
+    {a: Immutable.fromJS({ key: 'value' })}
+  ));
+
+  t.equals(false, shouldUpdate({a: 1, b: 2}, {b: 2}, ['a']))
 });
