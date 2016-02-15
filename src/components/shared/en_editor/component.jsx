@@ -176,7 +176,7 @@ module.exports = React.createClass({
 
         if (editor.getLine(end.line) === '::: document @@d') {
           editor.setSelection({ line: end.line, ch: 16 });
-          editor.replaceSelection(`${selectedItem.get('id')}\n\n\n\n:::`);
+          editor.replaceSelection(`${selectedItem.get('id')}\n\n\n\n ::: `);
           editor.setSelection({ line: end.line + 2, ch: 0 });
         } else {
           editor.doc.setSelection(start, end);

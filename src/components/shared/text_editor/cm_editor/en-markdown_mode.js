@@ -54,7 +54,7 @@ CodeMirror.defineMode('en-markdown', function (config) {
         return 'citationBlock-start';
       }
 
-      if (state.inCitationBlock && stream.match(/^:::/, true)) {
+      if (state.inCitationBlock && stream.match(/^:::$/, true)) {
         state.inCitationBlock = false;
         return 'citationBlock-stop';
       }

@@ -63,8 +63,17 @@ function markCitationBlock(cm, { itemID, startPos, endPos }) {
     openingEl.style.padding = '0 3px';
     openingEl.style.borderRadius = '4px';
 
+    closingEl.innerHTML = '&nbsp;';
+    closingEl.style.background = 'green';
+
     cm.doc.markText(startPos, endPos, { replacedWith: openingEl });
-    cm.doc.markText(closingToken.startPos, closingToken.endPos, { replacedWith: closingEl });
+    cm.doc.markText(closingToken.startPos, closingToken.endPos, {
+      className: 'CITATION-BLOCK-END',
+      collapsed: true,
+      readOnly: true,
+      inclusiveLeft: true,
+      inclusiveRight: true,
+    });
 
     mark = cm.doc.markText(startPos, closingToken.endPos);
 

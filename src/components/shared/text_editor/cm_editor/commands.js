@@ -28,6 +28,31 @@ CodeMirror.commands.newlineAndIndentPromptForCitation = function (cm) {
     [, indent, quotes, after] = match;
   }
 
+  // Check if we are at the end of a citation block
+  let citationBlockEnd = cm.findMarksAt({ line: lastLine + 1 })
+    .filter(mark => mark.className === 'CITATION-BLOCK-END' && mark.atomic)
+
+  if (
+      citationBlockEnd.length &&
+      !cm.getLine(lastLine - 1).trim() &&
+      !cm.getLine(lastLine - 2).trim()
+  ) {
+    let pos = {
+      line: lastLine + 1,
+      ch: cm.getLine(lastLine + 1).length - 1
+    }
+
+    citationBlockEnd = citationBlockEnd[0];
+    citationBlockEnd.inclusiveRight = false;
+
+    cm.setSelection(pos);
+    CodeMirror.commands.newlineAndIndent(cm);
+
+    citationBlockEnd.inclusiveRight = true;
+
+    return null;
+  }
+
   CodeMirror.commands.newlineAndIndentContinueMarkdownList(cm);
 
   noLongerInQuote = cm.getStateAfter(cm.getCursor().line).quote === 0;
@@ -55,5 +80,6 @@ CodeMirror.commands.newlineAndIndentPromptForCitation = function (cm) {
       actions.checkEmptyReferences(cm, { to: cm.getCursor(), text: 'd' });
     }
 
+    return null;
   }
 }
