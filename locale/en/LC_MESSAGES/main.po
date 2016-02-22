@@ -21,6 +21,9 @@ msgstr "Hibernating"
 msgid "username"
 msgstr "Username"
 
+msgid "Working Notes"
+msgstr "Working Notes"
+
 msgid "email"
 msgstr "Email"
 
