@@ -5,6 +5,8 @@ var _ = require('underscore')
   , Immutable = require('immutable')
   , React = require('react')
   , Router = require('./router')
+  , remoteServers
+  , currentRemoteServer
   , router
 
 
@@ -14,8 +16,41 @@ require('whatwg-fetch');
 
 /* Globals */
 window.EditorsNotes = {};
+window.EditorsNotes.clientRendered = !window.EDITORSNOTES_SERVER_RENDERED;
 window.EditorsNotes.jed = require('./jed');
 window.EditorsNotes.events = new EventEmitter();
+
+
+try {
+  remoteServers = JSON.parse(localStorage.EN_REMOTE_SERVERS);
+  window.EditorsNotes.remoteServers = (
+    Object.keys(remoteServers)
+      .map(key => {
+        var [ domain, token ] = atob(key).split('|')
+          , created = remoteServers[key]
+
+        return { key, domain, token, created }
+      }))
+} catch (e) {
+  localStorage.EN_REMOTE_SERVERS = '{}';
+  window.EditorsNotes.remoteServers = {};
+}
+
+try {
+  if (localStorage.currentRemoteServer) {
+    let key = localStorage.currentRemoteServer
+      , [ domain, token ] = atob(key).split('|')
+      , created = remoteServers[key]
+
+    if (domain && token && created) {
+      currentRemoteServer = { key, domain, token, created };
+    }
+  }
+} catch (e) {
+  currentRemoteServer = null;
+}
+
+window.EditorsNotes.currentRemoteServer = currentRemoteServer;
 
 
 /* Function that will render the whole application */
@@ -62,5 +97,12 @@ router.fallbackHandler = function (name, path) {
 
 /* Render the react application when DOM is ready */
 window.onload = function () {
-  router.execute(window.location.pathname);
+  var { clientRendered } = window.EditorsNotes
+    , path
+
+  path = clientRendered ?
+    '/' + window.location.hash.slice(1) :
+    window.location.pathname;
+
+  router.execute(path);
 }

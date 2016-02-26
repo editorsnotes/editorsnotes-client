@@ -110,6 +110,7 @@ function makeHTML(body, bootstrap) {
 
   bootstrapScript = !bootstrap ? '' : `
     <script type="text/javascript">
+      window.EDITORSNOTES_SERVER_RENDERED = true;
       window.EDITORSNOTES_BOOTSTRAP = ${JSON.stringify(bootstrap)};
     </script>
   `
