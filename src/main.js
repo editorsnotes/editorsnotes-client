@@ -21,36 +21,38 @@ window.EditorsNotes.jed = require('./jed');
 window.EditorsNotes.events = new EventEmitter();
 
 
-try {
-  remoteServers = JSON.parse(localStorage.EN_REMOTE_SERVERS);
-  window.EditorsNotes.remoteServers = (
-    Object.keys(remoteServers)
-      .map(key => {
-        var [ domain, token ] = atob(key).split('|')
-          , created = remoteServers[key]
+if (window.EditorsNotes.clientRendered) {
+  try {
+    remoteServers = JSON.parse(localStorage.EN_REMOTE_SERVERS);
+    window.EditorsNotes.remoteServers = (
+      Object.keys(remoteServers)
+        .map(key => {
+          var [ domain, token ] = atob(key).split('|')
+            , created = remoteServers[key]
 
-        return { key, domain, token, created }
-      }))
-} catch (e) {
-  localStorage.EN_REMOTE_SERVERS = '{}';
-  window.EditorsNotes.remoteServers = {};
-}
-
-try {
-  if (localStorage.currentRemoteServer) {
-    let key = localStorage.currentRemoteServer
-      , [ domain, token ] = atob(key).split('|')
-      , created = remoteServers[key]
-
-    if (domain && token && created) {
-      currentRemoteServer = { key, domain, token, created };
-    }
+          return { key, domain, token, created }
+        }))
+  } catch (e) {
+    localStorage.EN_REMOTE_SERVERS = '{}';
+    window.EditorsNotes.remoteServers = {};
   }
-} catch (e) {
-  currentRemoteServer = null;
+
+  try {
+    if (localStorage.currentRemoteServer) {
+      let key = localStorage.currentRemoteServer
+        , [ domain, token ] = atob(key).split('|')
+        , created = remoteServers[key]
+
+      if (domain && token && created) {
+        currentRemoteServer = { key, domain, token, created };
+      }
+    }
+  } catch (e) {
+    currentRemoteServer = null;
+  }
 }
 
-window.EditorsNotes.currentRemoteServer = currentRemoteServer;
+window.EditorsNotes.currentRemoteServer = currentRemoteServer || null;
 
 
 /* Function that will render the whole application */
