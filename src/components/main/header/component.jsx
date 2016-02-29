@@ -37,6 +37,7 @@ module.exports = React.createClass({
   render: function () {
     var classnames = require('classnames')
       , { noContainer } = this.props
+      , { clientRendered, currentRemoteServer } = global.EditorsNotes
 
     return (
       <nav className={classnames('bg-black', {
@@ -46,6 +47,11 @@ module.exports = React.createClass({
           <div className="container flex flex-center flex-justify">
             <div className="h2">
               <a className="silver" href="/">Working Notes</a>
+              { clientRendered && currentRemoteServer && (
+                <div className="lightgray h5">
+                  Remote: { currentRemoteServer.domain }
+                </div>
+              )}
             </div>
 
             <form action="/search/" method="get">
