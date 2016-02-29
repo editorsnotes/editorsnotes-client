@@ -20,16 +20,14 @@ module.exports = React.createClass({
     return !user ?
       <a href={loginURL} className="silver">Sign in</a> :
       <div>
-        <span key={1} className="silver">Logged in as </span>
-        <a key={2} href={user.get('url')} className="silver bold">
+        <span className="silver">Logged in as </span>
+        <a href={user.get('url')} className="silver bold">
           { user.get('display_name') }
         </a>
         {
-          /*
-        <span key={3}>
-          <a href="/auth/signout">Sign out</a>
+        <span className="ml1">
+          <a className="silver" href="/auth/signout">Sign out</a>
         </span>
-          */
         }
       </div>
   },
