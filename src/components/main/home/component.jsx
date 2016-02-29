@@ -33,8 +33,7 @@ UserHomepage = React.createClass({
 
   render() {
     var ActivityList = require('./activity_list.jsx')
-      , { getEmbedded } = require('../../../helpers/api')
-      , { user, data } = this.props
+      , { data } = this.props
       , { activity } = this.state
       , projects
 
@@ -209,12 +208,12 @@ module.exports = React.createClass({
   displayName: 'Homepage',
 
   render() {
-    var { clientRendered } = window.EditorsNotes
+    var { clientRendered } = global.EditorsNotes
       , { user } = this.props
       , HomeComponent
 
     if (!clientRendered && !user) {
-      HomeComponent = NonUserHompage;
+      HomeComponent = NonUserHomepage;
     } else if (clientRendered) {
       HomeComponent = ChooseServerHomepage;
     } else {
