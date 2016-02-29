@@ -160,7 +160,15 @@ ChooseServerHomepage = React.createClass({
                   <td>{ server.domain }</td>
 
                   {/* TODO: hide this except for onhover */}
-                  <td>{ server.token }</td>
+                  <td>
+                    <span className="block" title={server.token} style={{
+                      width: '12ch',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }}>
+                      { server.token }
+                    </span>
+                  </td>
                   <td>{ (new Date(server.created)).toLocaleString() }</td>
                   <td>X</td>
                 </tr>
