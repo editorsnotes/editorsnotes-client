@@ -14,8 +14,6 @@ module.exports = React.createClass({
 
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
-      , { getEmbedded } = require('../../../helpers/api')
-      //, project = getEmbedded(this.props.data, 'project')
       , crumbs
 
     crumbs = Immutable.List([
@@ -56,8 +54,6 @@ module.exports = React.createClass({
               <div className="bg-darken-2 flex flex-center overflow-hidden" style={{ height: 30 }}>
                 <span className="bg-black white rounded mr1 ml1"></span>
               </div>
-              <div className="flex flex-center" style={{ height: 30 }}></div>
-              <div className="px1" style={{ marginLeft: "auto" }}></div>
             </div>
           )
         }
