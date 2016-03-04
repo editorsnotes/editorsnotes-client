@@ -6,7 +6,7 @@ var React = require('react')
   , commonStrings = require('../../common_strings')
 
 module.exports = React.createClass({
-  displayName: 'ProejctsList',
+  displayName: 'ProjectsList',
 
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map)
