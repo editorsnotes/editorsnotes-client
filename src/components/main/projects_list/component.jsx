@@ -25,23 +25,24 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { data } = this.props
+    var { data, user } = this.props
       , projects = data.get('results')
 
     return (
       <div>
         { this.renderBreadcrumb() }
-        <div className="clearfix">
-          <a className="btn btn-primary right">Create new project</a>
-        </div>
-        <h1>Projects</h1>
-        <h3>Featured item</h3>
-        <div className="flex flex-center" style={{ height: 200 }}>
-          <div className="bg-darken-1 flex-column mr2" style={{ width: "40%", height: "100%"}}></div>
-          <div className="flex-column">
+
+        { user && (
+          <div className="right mt2">
+            <a href="/auth/account/projects/" className="btn btn-primary">
+              Create new project
+            </a>
           </div>
-        </div>
-        <h3>Latest projects</h3>
+        )}
+
+        <h1>Projects</h1>
+
+        <h2>Latest projects</h2>
         <div className="flex overflow-hidden">
         {
           projects.map(project =>
