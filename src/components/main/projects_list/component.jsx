@@ -12,11 +12,6 @@ module.exports = React.createClass({
     data: React.PropTypes.instanceOf(Immutable.Map)
   },
 
-  getInitialState() {
-    console.log(this.props.data.get('results'));
-    return { projects: this.props.data.get('results') }
-  },
-
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , { getEmbedded } = require('../../../helpers/api')
@@ -32,9 +27,8 @@ module.exports = React.createClass({
   },
 
   render() {
-    var List = require('./list.jsx')
-      , NotesList = require('./note_list.jsx')
-      , { projects } = this.state
+    var { data } = this.props
+      , projects = data.get('results')
 
     return (
       <div>
