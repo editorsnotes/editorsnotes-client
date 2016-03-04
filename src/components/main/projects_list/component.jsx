@@ -17,8 +17,7 @@ module.exports = React.createClass({
       , crumbs
 
     crumbs = Immutable.List([
-      //Immutable.Map({ href: project.get('url'), label: project.get('name') }),
-      Immutable.Map({ label: <Translate text={commonStrings.note} number={1} /> })
+      Immutable.Map({ label: <Translate text={commonStrings.project} number={2} /> })
     ]);
 
     return <Breadcrumb crumbs={crumbs} />
