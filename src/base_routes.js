@@ -55,8 +55,12 @@ module.exports = {
     Component: require('./components/main/topics_detail/component.jsx'),
     getData: getJSONFromPath
   },
-
-  /*
+  '/projects/': {
+    name: 'projects_list',
+    Component: require('./components/main/projects_list/component.jsx'),
+    getData: getJSONFromPath
+  }
+/*
   '/projects/': {
     name: 'projects_list',
     View: require('./projects_list'),
