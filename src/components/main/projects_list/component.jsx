@@ -46,16 +46,12 @@ module.exports = React.createClass({
         {
           projects.map(project =>
             <div key={project.get('url')} className="col col-4 border-box border rounded mr2">
-              <div className="bg-darken-2 flex flex-center" style={{ height: 100 }}>
-                <h3>
+              <div className="bg-darken-2 flex flex-center flex-justify-center" style={{ height: 100 }}>
+                <h3 className="m0">
                   <a href={project.get('url')}>
                     { project.get('name') }
                   </a>
                 </h3>
-              </div>
-
-              <div className="bg-darken-2 flex flex-center overflow-hidden" style={{ height: 30 }}>
-                <span className="bg-black white rounded mr1 ml1"></span>
               </div>
             </div>
           )
