@@ -9,8 +9,6 @@ var process = require('process')
   , cookie = require('cookie')
   , React = require('react')
   , Immutable = require('immutable')
-  , Router = require('./router')
-  , router = new Router()
 
 
 const VERSION = require('../package.json').version
@@ -20,7 +18,6 @@ const VERSION = require('../package.json').version
 
 global.EditorsNotes = {};
 global.EditorsNotes.jed = getJed();
-
 
 function getJed() {
   var child_process = require('child_process')
@@ -140,10 +137,6 @@ function makeHTML(body, bootstrap) {
 }
 
 
-router.add(require('./base_routes'))
-router.add(require('./admin_routes'))
-
-
 function render(props, bootstrap) {
   var Application = require('./components/application.jsx')
     , { renderToString } = require('react-dom/server')
@@ -198,73 +191,80 @@ function getUserData(req) {
 //
 // FIXME: needs to be able to be cached better- maybe use
 // React.renderToStaticMarkup if user is not logged in
-router.fallbackHandler = function (matchName, path) {
-  return function (config, params, queryParams) {
-    var promise = Promise.resolve({})
-      , bootstrap
+function handleRoute(path, config, params, queryParams) {
+  var promise = Promise.resolve({})
+    , bootstrap
 
-    if (config.getData) {
-      promise = promise
-        .then(() => config.getData(
-          fetchFn.bind(null, this.req),
-          this.req.url,
-          params,
-          queryParams))
-    }
-
+  if (config.getData) {
     promise = promise
-      .then(data => getUserData(this.req).then(userData => {
-        if (userData) data[USER_DATA] = userData;
+      .then(() => config.getData(
+        fetchFn.bind(null, this.req),
+        this.req.url,
+        params,
+        queryParams))
+  }
 
-        return data;
-      }))
-      .then(data => (bootstrap = data))
-      .then(data => {
-        var immutableData = {};
+  promise = promise
+    .then(data => getUserData(this.req).then(userData => {
+      if (userData) data[USER_DATA] = userData;
 
-        Object.keys(data).forEach(key => {
-          immutableData[key] = Immutable.fromJS(data[key]);
-        });
+      return data;
+    }))
+    .then(data => (bootstrap = data))
+    .then(data => {
+      var immutableData = {};
 
-        return immutableData;
-      })
-      .then(props => {
-        var hadError = props.data && props.data.has(FETCH_ERROR)
-          , component = hadError ? require('./components/main/error/component.jsx') : config.Component
-
-        return _.extend(props, {
-          ActiveComponent: component,
-          path
-        })
-      })
-      .then(props => render(props, bootstrap))
-      .then(html => {
-        this.res.writeHead(200, { 'Content-Type': 'text/html' });
-        this.res.end(html);
+      Object.keys(data).forEach(key => {
+        immutableData[key] = Immutable.fromJS(data[key]);
       });
 
-    promise.catch(err => {
-      let msg = '<h1>Server error</h1>';
+      return immutableData;
+    })
+    .then(props => {
+      var hadError = props.data && props.data.has(FETCH_ERROR)
+        , component = hadError ? require('./components/main/error/component.jsx') : config.Component
 
-      // FIXME Actually render within the framework of the site
-      logError(err);
-
-      this.res.writeHead(500);
-      this.res.end(makeHTML(
-        msg +
-        `<iframe height=100% width=100% src="data:text/html;charset=utf-8,${encodeURI(err)}" />`))
+      return _.extend(props, {
+        ActiveComponent: component,
+        path
+      })
+    })
+    .then(props => render(props, bootstrap))
+    .then(html => {
+      this.res.writeHead(200, { 'Content-Type': 'text/html' });
+      this.res.end(html);
     });
-  }
+
+  promise.catch(err => {
+    let msg = '<h1>Server error</h1>';
+
+    // FIXME Actually render within the framework of the site
+    logError(err);
+
+    this.res.writeHead(500);
+    this.res.end(makeHTML(
+      msg +
+      `<iframe height=100% width=100% src="data:text/html;charset=utf-8,${encodeURI(err)}" />`))
+  });
 }
 
 module.exports = {
   makeHTML,
 
   serve: function (port, apiURL, developmentMode) {
+    var Router = require('./router')
+      , router
+      , server
+
     global.API_URL = apiURL;
     global.DEVELOPMENT_MODE = developmentMode;
 
-    var server = http.createServer(function (req, res) {
+    router = new Router([
+      require('./base_routes'),
+      require('./admin_routes')
+    ], handleRoute)
+
+    server = http.createServer(function (req, res) {
       router.dispatch(req, res, function (err) {
         if (err) {
 

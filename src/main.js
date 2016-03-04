@@ -66,36 +66,34 @@ function renderApplication(props) {
 }
 
 
-/* Router */
-router = new Router();
+function handleRoute(path, config, params, queryParams) {
+  var promise = Promise.resolve({})
+
+  if (window.EDITORSNOTES_BOOTSTRAP) {
+    promise = promise
+      .then(() => {
+        var data = window.EDITORSNOTES_BOOTSTRAP
+          , immutableData = {}
+
+        Object.keys(data).forEach(key => {
+          immutableData[key] = Immutable.fromJS(data[key]);
+        });
+
+        return immutableData;
+      });
+  }
+
+  promise = promise
+    .then(props => _.extend(props, { ActiveComponent: config.Component, path }))
+    .then(renderApplication)
+}
 
 // TODO: Only add admin_routes if user is logged in?
-router.add(require('./base_routes'));
-router.add(require('./admin_routes'));
+router = new Router([
+  require('./base_routes'),
+  require('./admin_routes')
+], handleRoute);
 
-router.fallbackHandler = function (name, path) {
-  return function (config, params, queryParams) {
-    var promise = Promise.resolve({})
-
-    if (window.EDITORSNOTES_BOOTSTRAP) {
-      promise = promise
-        .then(() => {
-          var data = window.EDITORSNOTES_BOOTSTRAP
-            , immutableData = {}
-
-          Object.keys(data).forEach(key => {
-            immutableData[key] = Immutable.fromJS(data[key]);
-          });
-
-          return immutableData;
-        });
-    }
-
-    promise = promise
-      .then(props => _.extend(props, { ActiveComponent: config.Component, path }))
-      .then(renderApplication)
-  }
-}
 
 /* Render the react application when DOM is ready */
 window.onload = function () {

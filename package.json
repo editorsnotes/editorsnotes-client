@@ -35,9 +35,9 @@
     "zotero-to-csl": "^1.1.0"
   },
   "devDependencies": {
-    "babelify": "^6.0.2",
     "babel-plugin-react-display-name": "^2.0.0",
     "babel-plugin-react-transform": "^1.1.1",
+    "babelify": "^6.0.2",
     "brfs": "1.0.0",
     "browserify": "^11.2.0",
     "browserify-hmr": "^0.3.1",
@@ -45,8 +45,8 @@
     "clean-css": "^3.1.9",
     "envify": "^3.4.0",
     "exorcist": "^0.4.0",
-    "font-awesome": "^4.4.0",
     "factor-bundle": "^2.3.3",
+    "font-awesome": "^4.4.0",
     "jedify": "0.0.1",
     "less": "^1.7.0",
     "normalize.css": "^3.0.3",
@@ -59,6 +59,7 @@
     "react-transform-catch-errors": "^1.0.0",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.1.1",
+    "sinon": "^1.17.3",
     "tape": "^4.0.0",
     "tape-run": "^1.0.0",
     "testling": "^1.6.1",

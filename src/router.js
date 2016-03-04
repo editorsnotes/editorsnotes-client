@@ -1,36 +1,34 @@
 "use strict";
 
-var _ = require('underscore')
-  , RouteRecognizer = require('route-recognizer')
+var RouteRecognizer = require('route-recognizer')
   , isNode = typeof window === 'undefined'
 
-function Router() {
+
+// Routes should be an array of Objects with the following shape:
+//
+// {
+//   '/routeA/': {
+//     name: 'routename',
+//     Component: RouteComponent,
+//     getData: functionToGetData (Promise-returning)
+//   },
+//
+//   '/routeB/': { ... },
+//   etc.
+// }
+//
+function Router(routes, onRoute) {
+  var allRoutes = Object.assign.apply(Object, [{}].concat(routes))
+
   this.recognizer = new RouteRecognizer();
-  this.handlers = {};
-  this.fallbackHandler = null;
+  this.onRoute = onRoute;
+
+  Object.keys(allRoutes).forEach(path => {
+    var handler = allRoutes[path];
+    this.recognizer.add([{ path, handler }], { as: handler.name });
+  })
 }
 
-Router.prototype.add = function (path, opts) {
-  var _path;
-
-  if (_.isObject(path)) {
-    _.forEach(path, function (opts, path) {
-      this.add(path, opts);
-    }, this);
-  } else {
-    if (typeof path === 'object') {
-      _path = path.path;
-      delete path.path;
-      opts = path;
-    } else {
-      _path = path;
-    }
-    this.recognizer.add([{ path: _path, handler: opts }], { as: opts.name });
-  }
-}
-
-Router.prototype.registerHandlers = function (obj) { this.handlers = obj; }
-Router.prototype.registerFallbackHandler = function (fn) { this.fallbackHandler = fn }
 
 Router.prototype.match = function (url) {
   var match = this.recognizer.recognize(url)
@@ -43,29 +41,16 @@ Router.prototype.match = function (url) {
   return ret;
 }
 
-// Match the URL, and then execute the given handler. Throws an error if no
-// match is made.
+
+// Attempt to match the given URL, and then execute the onRoute handler if a match is found.
 Router.prototype.execute = function (url, context) {
   var match = this.match(url)
-    , handler
 
   if (!match) throw new Error('No route found for "' + url + '".');
-  handler = this.handlers[match.handler.name];
 
-  if (!handler) {
-    if (!this.fallbackHandler) {
-      throw new Error('No handler found for route "' + match.handler.name + '".');
-    } else {
-      handler = this.fallbackHandler(match.handler.name, url);
-    }
-  }
-
-  if (context !== undefined) {
-    handler.call(context, match.handler, match.params, match.queryParams);
-  } else {
-    handler(match.handler, match.params, match.queryParams);
-  }
+  this.onRoute.call(context || null, url, match.handler, match.params, match.queryParams);
 }
+
 
 Router.prototype.reverse = function (name) {
   var args = Array.prototype.slice.call(arguments, 1)
@@ -87,7 +72,8 @@ Router.prototype.reverse = function (name) {
   });
 
   if (args.length === 1 && typeof args[0] === 'object' && !Array.isArray(args[0])) {
-    params = args;
+    params = args[0];
+
     namedParams.forEach(function (requiredParam) {
       if (!params.hasOwnProperty(requiredParam)) {
         throw new Error('Route for ' + name + ' requires a parameter named: ' + requiredParam);
@@ -112,6 +98,7 @@ Router.prototype.reverse = function (name) {
   return url;
 }
 
+
 if (isNode) {
   Router.prototype.dispatch = function (req, res, errorCallback) {
     try {
@@ -121,5 +108,6 @@ if (isNode) {
     }
   }
 }
+
 
 module.exports = Router;
