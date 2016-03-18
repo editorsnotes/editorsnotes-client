@@ -15,7 +15,7 @@ TopicDetail = React.createClass({
 
   renderBreadcrumb: function () {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
-      , { getEmbedded } = require('../../../helpers/api')
+      , { getEmbedded, getDisplayTitle } = require('../../../helpers/api')
       , topic = this.props.data
       , project = getEmbedded(topic, 'project')
       , crumbs
@@ -23,7 +23,7 @@ TopicDetail = React.createClass({
     crumbs = Immutable.fromJS([
       { href: project.get('url'), label: project.get('name') },
       { href: project.get('url') + 'topics/', label: 'Topics' },
-      { label: topic.get('preferred_name') }
+      { label: getDisplayTitle(topic) }
     ]);
 
     return <Breadcrumb crumbs={crumbs} />
@@ -32,16 +32,17 @@ TopicDetail = React.createClass({
   render: function () {
     var { data, canReplace } = this.props
       , { getEmbedded, getType, getDisplayTitle } = require('../../../helpers/api')
-      , topic = data
+      , { getWNGraph } = require('../../../helpers/topic')
+      , wnTopic = getWNGraph(data).set('embedded', data.get('embedded'))
 
     return (
       <div>
 
         {this.renderBreadcrumb()}
 
-        <h1>Topic: {topic.get('preferred_name')}</h1>
+        <h1>Topic: {wnTopic.get('preferred_name')}</h1>
         <p className="quiet">
-          Last updated {topic.get('last_updated')}
+          Last updated {data.get('last_updated')}
         </p>
 
         {
@@ -52,31 +53,31 @@ TopicDetail = React.createClass({
           )
         }
         {
-          !topic.get('alternate_names').size ? null :
+          !wnTopic.get('alternate_names').size ? null :
             <section>
               <h2>Alternate names</h2>
             </section>
         }
 
         {
-          !topic.get('related_topics').size ? null :
+          !wnTopic.get('related_topics').size ? null :
             <section>
               <h2>Related topics</h2>
             </section>
         }
 
         {
-          !topic.get('markup_html') ? null :
+          !wnTopic.get('markup_html') ? null :
             <section>
               <h2>Summary</h2>
-              <div dangerouslySetInnerHTML={{ __html: topic.get('markup_html') }} />
+              <div dangerouslySetInnerHTML={{ __html: wnTopic.get('markup_html') }} />
             </section>
         }
 
         <h2>Referenced by</h2>
         <ul>
         {
-          getEmbedded(topic, 'referenced_by').map(item =>
+          getEmbedded(wnTopic, 'referenced_by').map(item =>
               <li>
                 { getType(item) }:
                 {' '}

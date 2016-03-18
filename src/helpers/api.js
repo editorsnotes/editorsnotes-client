@@ -1,5 +1,7 @@
 "use strict";
 
+var { getWNGraph } = require('./topic')
+
 function getEmbedded(data, key) {
   var val = data.get(key)
 
@@ -8,14 +10,19 @@ function getEmbedded(data, key) {
     val.map(url => data.getIn(['embedded', url]))
 }
 
-const DISPLAY_ATTRS = {
-  'Note': 'title',
-  'Topic': 'preferred_name',
-  'Document': 'description'
-}
-
 function getDisplayTitle(item) {
-  return item.get(DISPLAY_ATTRS[getType(item)]);
+  var type = getType(item);
+
+  switch(type) {
+    case 'Note':
+      return item.get('title');
+    case 'Document':
+      return item.get('description');
+    case 'Topic':
+      return getWNGraph(item).get('preferred_name');
+    default:
+      throw new Error(`Not able to get label for item of type: ${type}`);
+  }
 }
 
 function getType(item) {

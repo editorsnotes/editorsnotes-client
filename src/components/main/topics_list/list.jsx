@@ -11,7 +11,8 @@ module.exports = React.createClass({
   },
 
   render() {
-    var { topics } = this.props
+    var { getDisplayTitle } = require('../../../helpers/api')
+      , { topics } = this.props
 
     return (
       <div>
@@ -20,7 +21,7 @@ module.exports = React.createClass({
             <div key={topic.get('id')}>
               <h3>
                 <a href={topic.get('url')}>
-                  { topic.get('preferred_name') }
+                  { getDisplayTitle(topic) }
                 </a>
               </h3>
             </div>
