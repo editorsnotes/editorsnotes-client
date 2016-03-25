@@ -49,3 +49,26 @@ test('Generic shouldComponentUpdate function', function (t) {
 
   t.equals(false, shouldUpdate({a: 1, b: 2}, {b: 2}, ['a']))
 });
+
+
+test('LD Parser', function (t) {
+  var parseLD = require('../utils/parse_ld')
+    , handleErr = err => { console.error(err) }
+
+  t.plan(2);
+
+  parseLD('<http://example.com/a> <http://example.com/b> <http://example.com/c> .')
+    .then(store => {
+      t.equal(1, store.find().length);
+    }, handleErr);
+
+  parseLD({
+    '@id': 'http://example.com/a',
+    'http://example.com/b': { '@id': 'http://example.com/c' }
+  }).then(store => {
+    t.equal(1, store.find().length);
+  }, handleErr);
+
+
+
+});
