@@ -236,6 +236,9 @@ router.fallbackHandler = function (matchName, path) {
           path
         })
       })
+      .then(props => !config.getStore ? props :
+          config.getStore(bootstrap)
+            .then(store => Object.assign({}, props, { store })))
       .then(props => render(props, bootstrap))
       .then(html => {
         this.res.writeHead(200, { 'Content-Type': 'text/html' });

@@ -44,13 +44,16 @@ router.fallbackHandler = function (name, path) {
       promise = promise
         .then(() => {
           var data = window.EDITORSNOTES_BOOTSTRAP
-            , immutableData = {}
+            , props = {}
 
           Object.keys(data).forEach(key => {
-            immutableData[key] = Immutable.fromJS(data[key]);
+            props[key] = Immutable.fromJS(data[key]);
           });
 
-          return immutableData;
+          return !config.getStore ?
+            props :
+            config.getStore(data)
+              .then(store => Object.assign({}, props, { store }))
         });
     }
 

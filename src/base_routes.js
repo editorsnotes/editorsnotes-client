@@ -1,16 +1,23 @@
 "use strict";
 
+var parseLD = require('./utils/parse_ld')
+
 function getJSONFromPath(get, pathname) {
-  return get(pathname, { 'Accept': 'application/json' })
+  return get(pathname, { 'Accept': 'application/ld+json' })
     .then(data => JSON.parse(data))
     .then(data => ({ data }))
+}
+
+function getStoreFromData({ data }) {
+  return parseLD(data);
 }
 
 module.exports = {
   '/': {
     name: 'home',
     Component: require('./components/main/home/component.jsx'),
-    getData: getJSONFromPath
+    getData: getJSONFromPath,
+    getStore: getStoreFromData
   },
   '/browse/': {
     name: 'browse',
