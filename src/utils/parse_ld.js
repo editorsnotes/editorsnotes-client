@@ -10,9 +10,11 @@ module.exports = function(text) {
     , parser = N3.Parser()
     , rdfStringPromise
 
-    rdfStringPromise = typeof text === 'string' ?
-      text :
-      jsonld.promises.toRDF(text, { format: 'application/nquads' });
+  store.addPrefixes(require('../namespaces'));
+
+  rdfStringPromise = typeof text === 'string' ?
+    text :
+    jsonld.promises.toRDF(text, { format: 'application/nquads' });
 
   return (
     Promise.resolve(rdfStringPromise)
