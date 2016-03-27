@@ -32,12 +32,20 @@ UserHomepage = React.createClass({
 
   render() {
     var ActivityList = require('./activity_list.jsx')
-      , { getEmbedded } = require('../../../helpers/api')
-      , { user, data } = this.props
+      , { getPredicateLiteral, getLinkURI } = require('../../../utils/store')
+      , { store } = this.props
       , { activity } = this.state
       , projects
 
-    projects = data.get('affiliated_projects').toList();
+    projects = store
+      .find(null, 'rdf:type', 'wn:Project')
+      .map(({ subject }) => ({
+        uri: subject,
+        createNoteLink: getLinkURI(
+            store,
+            `${subject}vocab#Note`,
+            'hydra:CreateResourceOperation')
+      }));
 
     return (
       <div>
@@ -50,13 +58,17 @@ UserHomepage = React.createClass({
           <div className="col col-6">
             <h3>My projects</h3>
             {
-              projects.map((project, i) =>
-                <div key={i}>
-                  <h3><a href={project.get('url')}>{ project.get('name') }</a></h3>
-                  <div>
-                    <a className="btn btn-primary" href={project.get('notes') + 'add/'}>
-                      Add note
+              projects.map(project =>
+                <div key={project.uri}>
+                  <h3>
+                    <a href={project.uri}>
+                      { getPredicateLiteral(store, project.uri, 'schema:name') }
                     </a>
+                  </h3>
+                  <div>
+                  <a className="btn btn-primary" href={project.createNoteLink + 'add/'}>
+                    Add note
+                  </a>
                   </div>
                 </div>
               )
