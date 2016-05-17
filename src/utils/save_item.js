@@ -24,6 +24,10 @@ module.exports = function (type, id, projectURL, data) {
 
   if (!isNew) url += `${id}/`;
 
+  if (type === 'topic' && !isNew) {
+    url += 'w/';
+  }
+
   onStart();
 
   return (

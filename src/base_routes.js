@@ -60,7 +60,8 @@ module.exports = {
   '/projects/:project_slug/topics/:id/': {
     name: 'topics_detail',
     Component: require('./components/main/topics_detail/component.jsx'),
-    getData: getJSONFromPath
+    getData: getJSONFromPath,
+    getStore: getStoreFromData
   },
   '/projects/': {
     name: 'projects_list',

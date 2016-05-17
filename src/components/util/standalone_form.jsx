@@ -34,7 +34,14 @@ module.exports = function (Component, RecordType) {
     },
 
     originalData() {
-      return new RecordType(this.props.data)
+      const { data } = this.props
+          , type = types.get(RecordType)
+
+      return new RecordType(
+        (type === 'topic' && !this.isNew())
+          ? data.getIn(['wn_data', '@graph', '@graph'])
+          : data
+      )
     },
 
     isNew() {

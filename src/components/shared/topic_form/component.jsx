@@ -97,13 +97,15 @@ TopicForm = React.createClass({
 
         <section>
           <h3>Summary</h3>
-          <HTMLEditor
-              onChange={markup => this.mergeValues({ markup })}
-              embeddedItems={Immutable.Set()}
-              projectURL={projectURL}
-              minimal={minimal}
-              html={topic.markup} />
-          <br />
+          <div className="absolute" style={{ height: 300, left: 0, right: 0 }}>
+            <HTMLEditor
+                onChange={markup => this.mergeValues({ markup })}
+                embeddedItems={Immutable.Set()}
+                projectURL={projectURL}
+                minimal={minimal}
+                html={topic.markup} />
+          </div>
+          <div style={{ height: 320 }} />
         </section>
       </div>
     )

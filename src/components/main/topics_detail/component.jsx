@@ -33,12 +33,16 @@ TopicDetail = React.createClass({
     var { data, canReplace } = this.props
       , { getEmbedded, getType, getDisplayTitle } = require('../../../helpers/api')
       , { getWNGraph } = require('../../../helpers/topic')
-      , wnTopic = getWNGraph(data).set('embedded', data.get('embedded'))
+      , wnTopic
+
+    wnTopic = data
+      .getIn(['wn_data', '@graph', '@graph'])
+      .set('embedded', data.get('embedded'))
 
     return (
       <div>
 
-        {this.renderBreadcrumb()}
+        { this.renderBreadcrumb() }
 
         <h1>Topic: {wnTopic.get('preferred_name')}</h1>
         <p className="quiet">
@@ -77,7 +81,7 @@ TopicDetail = React.createClass({
         <h2>Referenced by</h2>
         <ul>
         {
-          getEmbedded(wnTopic, 'referenced_by').map(item =>
+          getEmbedded(data, 'referenced_by').map(item =>
               <li>
                 { getType(item) }:
                 {' '}

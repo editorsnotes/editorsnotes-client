@@ -22,8 +22,22 @@ module.exports = function makeHydraLinkAware(Component) {
       return this.hasHydraOperation('Create')
     },
 
+    canReplaceTopic() {
+      var { getHydraLinks } = require('../../utils/store')
+        , { store } = this.props
+
+      return getHydraLinks(store).some(link => link.type === (
+        "http://www.w3.org/ns/hydra/core#ReplaceResourceOperation"
+      ));
+    },
+
     canReplace() {
-      return this.hasHydraOperation('Replace')
+      var { getType } = require('../../helpers/api')
+        , { data } = this.props
+
+      return getType(data) === 'Topic' ?
+        this.canReplaceTopic() :
+        this.hasHydraOperation('Replace')
     },
 
     canDelete() {

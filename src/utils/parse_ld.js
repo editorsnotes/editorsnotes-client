@@ -21,9 +21,10 @@ module.exports = function(text) {
       .then(rdfString => new Promise(function (resolve, reject) {
         parser.parse(rdfString.trim(), function (err, triple, prefixes) {
           if (err) {
-            console.log('rejecting')
             reject(err);
           } else if (triple) {
+            // FIXME
+            triple.graph = '';
             store.addTriple(triple);
           } else {
             resolve(store);
