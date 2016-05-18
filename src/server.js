@@ -2,52 +2,89 @@
 
 /* eslint camelcase:0 */
 
-var process = require('process')
-  , http = require('http')
-  , _ = require('underscore')
-  , request = require('request')
-  , cookie = require('cookie')
-  , React = require('react')
-  , Immutable = require('immutable')
-  , Router = require('./router')
-  , router = new Router()
+const Jed = require('jed')
+    , http = require('http')
+    , path = require('path')
+    , React = require('react')
+    , cookie = require('cookie')
+    , process = require('process')
+    , request = require('request')
+    , po2json = require('po2json')
+    , Immutable = require('immutable')
+    , { execSync } = require('child_process')
+    , { createStore } = require('redux')
+    , { renderToString } = require('react-dom/server')
+    , Router = require('./router')
 
 
 const VERSION = require('../package.json').version
     , FETCH_ERROR = '__error__'
-    , USER_DATA = '__AUTHENTICATED_USER__'
 
 
-global.EditorsNotes = {};
-global.EditorsNotes.jed = getJed();
+const jed = (() => {
+  const localePath = path.join(__dirname, '..', 'locale');
 
-
-function getJed() {
-  var child_process = require('child_process')
-    , Jed = require('jed')
-    , path = require('path')
-    , po2json = require('po2json')
-    , localePath
-    , files
-    , data
-
-  localePath = path.join(__dirname, '..', 'locale');
-
-  files = child_process
-    .execSync('find ' + localePath + ' -type f -name *po', { encoding: 'utf-8' })
+  const files = (
+    execSync('find ' + localePath + ' -type f -name *po', { encoding: 'utf-8' })
     .trim()
-    .split('\n');
+    .split('\n'));
 
-  data = files.reduce(function (acc, file) {
-    var domain = 'messages_' + path.basename(file).replace('.po', '')
-      , poData = po2json.parseFileSync(file, { format: 'jed1.x', domain: domain })
+  const data = files.reduce((acc, file) => {
+    const domain = 'messages_' + path.basename(file).replace('.po', '')
+        , poData = po2json.parseFileSync(file, { format: 'jed1.x', domain })
 
     acc.locale_data[domain] = poData.locale_data[domain];
     return acc;
   }, { domain: 'messages_main', locale_data: {} });
 
   return new Jed(data);
+})()
+
+
+// Render view template, unless there is no template, in which case just
+// render a blank page.
+//
+// FIXME: needs to be able to be cached better- maybe use
+// React.renderToStaticMarkup if user is not logged in
+function generateRouteHandler(matchName, path) {
+  return function ({ name, Component, resourceList }, params, queryParams) {
+    const userDataPromise = getUserData(this.req)
+
+    const resourceDataPromise = Promise.all(resourceList(path).map(resourceURL =>
+      fetchJSON(this.req, resourceURL, params, queryParams).then(data => ({
+        [resourceURL]: data
+      }))
+    )).then(resourceData => Object.assign({}, ...resourceData))
+
+    Promise.all([userDataPromise, resourceDataPromise])
+      .then(([user, resources]) => Immutable.fromJS({ user, resources, jed }))
+      .then(store => render(Component, store))
+      .then(html => {
+        this.res.writeHead(200, { 'Content-Type': 'text/html' });
+        this.res.end(html);
+      })
+      .catch(err => {
+        logError(err);
+
+        renderError(userDataPromise, err).then(html => {
+          this.res.writeHead(200, { 'Content-Type': 'text/html' });
+          this.res.end(html);
+        })
+      })
+  }
 }
+
+      /*
+      .then(props => {
+        var hadError = props.data && props.data.has(FETCH_ERROR)
+          , component = hadError ? require('./components/main/error/component.jsx') : config.Component
+
+        return _.extend(props, {
+          ActiveComponent: component,
+          path
+        })
+      })
+*/
 
 
 function getSessionID(req) {
@@ -56,26 +93,26 @@ function getSessionID(req) {
 
 
 // fetchFn should __never__ return anything except 200. Anything else is an error.
-const fetchFn = function (req, pathname, headers={}) {
-  var sessionID = getSessionID(req)
-    , url
-
+function fetchJSON(req, pathname, headers={}) {
   if (pathname[0] !== '/') throw Error('Can only fetch data relative to local API.');
 
-  url = global.API_URL + pathname;
+  const url = global.API_URL + pathname;
 
+  const sessionID = getSessionID(req)
   if (sessionID) {
     headers.cookie = cookie.serialize('sessionid', sessionID);
   }
 
   headers.Host = req.headers.host;
+  headers.Accept = 'application/ld+json';
 
   return new Promise((resolve, reject) => {
-    request.get({ url, headers }, function (error, response, body) {
+    request.get({ url, headers }, (error, response, body) => {
       if (error) {
         reject(error);
       } else if (response.statusCode === 200) {
-        resolve(body);
+        // FIXME: may not return JSON?
+        resolve(JSON.parse(body));
       } else {
         let errorMessage
           , message
@@ -104,21 +141,17 @@ const fetchFn = function (req, pathname, headers={}) {
 
 
 function makeHTML(body, bootstrap) {
-  var bootstrapScript
-    , jsBundleFilename
-    , cssBundleFilename
-
-  bootstrapScript = !bootstrap ? '' : `
+  const bootstrapScript = !bootstrap ? '' : `
     <script type="text/javascript">
-      window.EDITORSNOTES_BOOTSTRAP = ${JSON.stringify(bootstrap)};
+      window.EDITORSNOTES_BOOTSTRAP = ${JSON.stringify(bootstrap, true, '  ')};
     </script>
   `
 
-  jsBundleFilename = global.DEVELOPMENT_MODE ?
+  const jsBundleFilename = global.DEVELOPMENT_MODE ?
     'editorsnotes.js' :
     `editorsnotes-${VERSION}.min.js`
 
-  cssBundleFilename = jsBundleFilename.replace(/.js$/, '.css');
+  const cssBundleFilename = jsBundleFilename.replace(/.js$/, '.css');
 
 
   return `<!doctype html>
@@ -132,24 +165,41 @@ function makeHTML(body, bootstrap) {
   <body>
     <div id="react-app" style="height: 100%">${body}</div>
     ${bootstrapScript}
-    <script type="text/javascript" src="/static/${jsBundleFilename}"></script>
   </body>
 </html>
 `
 }
 
 
-router.add(require('./base_routes'))
-router.add(require('./admin_routes'))
+function render(Component, initialState) {
+  const Application = require('./components/application.jsx')
+      , store = createStore(state => state, initialState)
+
+  return makeHTML(renderToString(React.createElement(Application, {
+    store,
+    ActiveComponent: Component
+  })), initialState);
+}
 
 
-function render(props, bootstrap) {
-  var Application = require('./components/application.jsx')
-    , { renderToString } = require('react-dom/server')
-    , application = React.createElement(Application, props)
-    , html = makeHTML(renderToString(application), bootstrap)
+function renderError(userDataPromise, error) {
+  var ErrorComponent = require('./components/main/error/component.jsx')
 
-  return html;
+  return new Promise(resolve => {
+    userDataPromise
+      .then(user => resolve(render(ErrorComponent, Immutable.fromJS({
+        user,
+        serverRenderError: global.DEVELOPMENT_MODE
+          ? error.stack
+          : error
+      }))))
+      .catch(err => resolve(
+        `<h1>Server error</h1>
+        <iframe
+            height=100%
+            width=100%
+            src="data:text/html;charset=utf-8,${encodeURI(err)}" />`))
+  });
 }
 
 
@@ -162,20 +212,19 @@ function logError(err) {
 
 
 function getUserData(req) {
-  var sessionID = getSessionID(req)
+  const sessionID = getSessionID(req)
 
   if (!sessionID) return Promise.resolve(null);
 
   return new Promise((resolve, reject) => {
-    var url = global.API_URL + '/me/'
-      , headers = {}
+    const url = global.API_URL + '/me/'
+        , headers = {}
 
     headers.cookie = cookie.serialize('sessionid', sessionID);
     headers.Accept = 'application/json';
     headers.Host = req.headers.host;
 
-
-    request.get({ url, headers }, function (err, response, body) {
+    request.get({ url, headers }, (err, response, body) => {
       // TODO: Maybe, if status code is 403, invalidate the sessionid cookie?
       if (err) {
         reject(err);
@@ -192,106 +241,27 @@ function getUserData(req) {
 }
 
 
-// Render view template, unless there is no template, in which case just
-// render a blank page.
-//
-// FIXME: needs to be able to be cached better- maybe use
-// React.renderToStaticMarkup if user is not logged in
-router.fallbackHandler = function (matchName, path) {
-  return function (config, params, queryParams) {
-    var promise = Promise.resolve({})
-      , bootstrap
-
-    if (config.getData) {
-      promise = promise
-        .then(() => config.getData(
-          fetchFn.bind(null, this.req),
-          this.req.url,
-          params,
-          queryParams))
-    }
-
-    promise = promise
-      .then(data => getUserData(this.req).then(userData => {
-        if (userData) data[USER_DATA] = userData;
-
-        return data;
-      }))
-      .then(data => (bootstrap = data))
-      .then(data => {
-        var immutableData = {};
-
-        Object.keys(data).forEach(key => {
-          immutableData[key] = Immutable.fromJS(data[key]);
-        });
-
-        return immutableData;
-      })
-      .then(props => {
-        var hadError = props.data && props.data.has(FETCH_ERROR)
-          , component = hadError ? require('./components/main/error/component.jsx') : config.Component
-
-        return _.extend(props, {
-          ActiveComponent: component,
-          path
-        })
-      })
-      .then(props => !config.getStore ? props :
-          config.getStore(bootstrap)
-            .then(store => Object.assign({}, props, { store })))
-      .then(props => render(props, bootstrap))
-      .then(html => {
-        this.res.writeHead(200, { 'Content-Type': 'text/html' });
-        this.res.end(html);
-      });
-
-    promise.catch(err => {
-      let msg = '<h1>Server error</h1>';
-
-      // FIXME Actually render within the framework of the site
-      logError(err);
-
-      this.res.writeHead(500);
-      this.res.end(makeHTML(
-        msg +
-        `<iframe height=100% width=100% src="data:text/html;charset=utf-8,${encodeURI(err)}" />`))
-    });
-  }
-}
-
 module.exports = {
   makeHTML,
 
-  serve: function (port, apiURL, developmentMode) {
+  serve(port, apiURL, developmentMode) {
     global.API_URL = apiURL;
     global.DEVELOPMENT_MODE = developmentMode;
 
-    var server = http.createServer(function (req, res) {
-      router.dispatch(req, res, function (err) {
+    const router = new Router(generateRouteHandler);
+
+    router.add(require('./base_routes'));
+    router.add(require('./admin_routes'));
+
+    const server = http.createServer((req, res) => {
+      router.dispatch(req, res, (err) => {
         if (err) {
-
-          getUserData(req)
-            .then(userData => {
-              var props = {}
-                , data = {}
-
-              if (userData) data[USER_DATA] = props[USER_DATA] = Immutable.fromJS(userData);
-              props.ActiveComponent = require('./components/main/not_found/component.jsx');
-
-              res.writeHead(404, { 'Content-Type': 'text/html' });
-
-              res.end(render(props, data));
-            })
-            .catch(serverErr => {
-              let msg = '<h1>Server error</h1>';
-
-              logError(serverErr);
-
-              res.writeHead(500);
-              res.end(makeHTML(msg));
-            })
+          renderError(getUserData(req), err).then(html => {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            res.end(html);
+          })
         }
-      });
+      })
     });
 
     server.listen(port);

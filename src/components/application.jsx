@@ -1,69 +1,44 @@
 "use strict";
 
-var _ = require('underscore')
-  , React = require('react')
-  , Application
+const React = require('react')
+    , Immutable = require('immutable')
+    , classnames = require('classnames')
+    , { Provider } = require('react-redux')
 
-Application = React.createClass({
-  displayName: 'EditorsNotesApplication',
+const Header = require('./main/header/component.jsx')
+    , Footer = require('./main/footer/component.jsx')
 
-  getInitialState() {
-    return { loading: false }
+
+module.exports = React.createClass({
+  displayName: 'Application',
+
+  propTypes: {
+    ActiveComponent: React.PropTypes.element.isRequired,
+    store: React.PropTypes.instanceOf(Immutable.Map)
   },
 
-  componentDidMount() {
-    window.EditorsNotes.events.on('loadstart', () => this.setState({ loading: true }));
-    window.EditorsNotes.events.on('loadstop', () => this.setState({ loading: false }));
-  },
-
-  render: function () {
-    var classnames = require('classnames')
-      , Header = require('./main/header/component.jsx')
-      , Footer = require('./main/footer/component.jsx')
-      , { ActiveComponent, noContainer, noFooter, noHeader, path } = this.props
-      , { loading } = this.state
-      , user = this.props.__AUTHENTICATED_USER__ || null
-      , activeComponentProps
-
-    activeComponentProps = _.omit(this.props, ['ActiveComponent', '__AUTHENTICATED_USER__']);
-    activeComponentProps.user = user;
+  render() {
+    const { ActiveComponent, store } = this.props
+        , { noContainer, noFooter, noHeader } = ActiveComponent.prototype
 
     return (
-      <div className="flex flex-column" style={{ minHeight: '100vh' }}>
-        {
-          !noHeader && (
-            <Header
-                user={user}
-                path={path}
-                loading={loading}
-                noContainer={noContainer} />
-          )
-        }
+      <Provider store={store}>
+        <div className="flex flex-column" style={{ minHeight: '100vh' }}>
+          { !noHeader && <Header noContainer={noContainer} /> }
 
-        {/* FIXME: messages
+          <main className="flex-grow relative">
+            <div className={classnames({ container: !noContainer })}>
+              <ActiveComponent
+                noContainer={noContainer}
+                noHeader={noHeader}
+                noFooter={noFooter}
+              />
+            </div>
+          </main>
 
-        {% if messages %}
-        <div id="message-list" class="container">
-          {% for message in messages %}
-          <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">
-            {{ message|safe }}
-          </div>
-          {% endfor %}
+          { !noFooter && <Footer noFooter={noFooter} /> }
         </div>
-        {% endif %}
-
-        */}
-
-        <main className="flex-grow relative">
-          <div className={classnames({ container: !noContainer })}>
-            <ActiveComponent {...activeComponentProps} />
-          </div>
-        </main>
-
-        { !noFooter && <Footer /> }
-      </div>
+      </Provider>
     )
   }
 });
-
-module.exports = Application;
