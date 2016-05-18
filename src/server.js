@@ -14,6 +14,7 @@ const Jed = require('jed')
     , { execSync } = require('child_process')
     , { createStore } = require('redux')
     , { renderToString } = require('react-dom/server')
+    , parseLD = require('./utils/parse_ld')
     , Router = require('./router')
 
 
@@ -46,19 +47,39 @@ const jed = (() => {
 //
 // FIXME: needs to be able to be cached better- maybe use
 // React.renderToStaticMarkup if user is not logged in
-function generateRouteHandler(matchName, path) {
-  return function ({ name, Component, resourceList }, params, queryParams) {
+function generateRouteHandler(matchName, requestedPath) {
+  return function ({ name, Component, resource, makeTripleStore }, params, queryParams) {
     const userDataPromise = getUserData(this.req)
 
-    const resourceDataPromise = Promise.all(resourceList(path).map(resourceURL =>
-      fetchJSON(this.req, resourceURL, params, queryParams).then(data => ({
-        [resourceURL]: data
-      }))
-    )).then(resourceData => Object.assign({}, ...resourceData))
+    let resourceDataPromise = Promise.resolve();
+    let resourceURL = null;
+
+    if (resource) {
+      resourceURL = resource(requestedPath);
+
+      resourceDataPromise = resourceDataPromise
+        .then(() => fetchJSON(this.req, resourceURL, params, queryParams))
+        .then(data => ({ [resourceURL]: data }))
+    }
 
     Promise.all([userDataPromise, resourceDataPromise])
-      .then(([user, resources]) => Immutable.fromJS({ user, resources, jed }))
-      .then(store => render(Component, store))
+      .then(([user, resources]) => {
+        if (resourceURL && makeTripleStore) {
+          return parseLD(resources[resourceURL]).then(tripleStore => ({
+            tripleStore, user, resources
+          }));
+        }
+
+        return { tripleStore: null, user, resources }
+      })
+      .then(({ tripleStore, user, resources }) =>
+        render(Component, Immutable.Map({
+          jed,
+          tripleStore,
+          user: Immutable.fromJS(user),
+          resources: Immutable.fromJS(resources)
+        }))
+      )
       .then(html => {
         this.res.writeHead(200, { 'Content-Type': 'text/html' });
         this.res.end(html);
@@ -175,15 +196,18 @@ function render(Component, initialState) {
   const Application = require('./components/application.jsx')
       , store = createStore(state => state, initialState)
 
+  const bootstrap = initialState
+    .filter((val, key) => key === 'user' || key === 'resources')
+
   return makeHTML(renderToString(React.createElement(Application, {
     store,
     ActiveComponent: Component
-  })), initialState);
+  })), bootstrap);
 }
 
 
 function renderError(userDataPromise, error) {
-  var ErrorComponent = require('./components/main/error/component.jsx')
+  const ErrorComponent = require('./components/main/error/component.jsx')
 
   return new Promise(resolve => {
     userDataPromise
