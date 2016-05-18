@@ -3,6 +3,8 @@
 const React = require('react')
     , { connect } = require('react-redux')
 
+const Translate = require('../../shared/translate.jsx')
+
 function mapStateToProps(state) {
   return {
     store: state.get('tripleStore'),
@@ -63,7 +65,7 @@ const LoggedInUserHomepage = React.createClass({
 
         <div className="clearfix">
           <div className="col col-6">
-            <h3>My projects</h3>
+            <h3><Translate text="My projects" /></h3>
             {
               projects.map(project =>
                 <div key={project.uri}>

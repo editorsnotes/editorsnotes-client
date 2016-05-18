@@ -62,3 +62,6 @@ msgstr "Find note"
 
 msgid "Find document"
 msgstr "Find document"
+
+msgid "My projects"
+msgstr "My projects"
