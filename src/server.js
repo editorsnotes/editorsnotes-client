@@ -201,7 +201,7 @@ function render(Component, initialState) {
       , store = createStore(state => state, initialState)
 
   const bootstrap = initialState
-    .filter((val, key) => key === 'user' || key === 'resources')
+    .filter((val, key) => key !== 'jed' && key !== 'tripleStore')
 
   return makeHTML(renderToString(React.createElement(Application, {
     store,
