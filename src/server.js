@@ -48,7 +48,7 @@ const jed = (() => {
 // FIXME: needs to be able to be cached better- maybe use
 // React.renderToStaticMarkup if user is not logged in
 function generateRouteHandler(matchName, requestedPath) {
-  return function ({ name, Component, resource, makeTripleStore }, params, queryParams) {
+  return function ({ name, Component, componentProps, resource, makeTripleStore }, params, queryParams) {
     const userDataPromise = getUserData(this.req)
 
     let resourceDataPromise = Promise.resolve();
@@ -73,7 +73,7 @@ function generateRouteHandler(matchName, requestedPath) {
         return { tripleStore: null, user, resources }
       })
       .then(({ tripleStore, user, resources }) =>
-        render(Component, Immutable.Map({
+        render(Component, componentProps && componentProps(requestedPath), Immutable.Map({
           jed,
           tripleStore,
 
@@ -190,23 +190,30 @@ function makeHTML(body, bootstrap) {
   <body>
     <div id="react-app" style="height: 100%">${body}</div>
     ${bootstrapScript}
+    <script src="/static/${jsBundleFilename}" type="text/javascript"></script>
   </body>
 </html>
 `
 }
 
 
-function render(Component, initialState) {
-  const Application = require('./components/application.jsx')
+function render(Component, componentProps={}, initialState) {
+  const { Provider } = require('react-redux')
+      , Application = require('./components/application.jsx')
       , store = createStore(state => state, initialState)
 
   const bootstrap = initialState
     .filter((val, key) => key !== 'jed' && key !== 'tripleStore')
 
-  return makeHTML(renderToString(React.createElement(Application, {
-    store,
-    ActiveComponent: Component
-  })), bootstrap);
+  const application = (
+    <Provider store={store}>
+      <Application>
+        <Component {...componentProps} />
+      </Application>
+    </Provider>
+  )
+
+  return makeHTML(renderToString(application), bootstrap);
 }
 
 
@@ -215,7 +222,7 @@ function renderError(userDataPromise, error) {
 
   return new Promise(resolve => {
     userDataPromise
-      .then(user => resolve(render(ErrorComponent, Immutable.fromJS({
+      .then(user => resolve(render(ErrorComponent, null, Immutable.fromJS({
         user,
         serverRenderError: global.DEVELOPMENT_MODE
           ? error.stack

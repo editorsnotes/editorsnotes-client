@@ -8,7 +8,7 @@ const React = require('react')
 function mapStateToProps(state) {
   return {
     user: state.get('user'),
-    path: state.get('path'),
+    path: state.get('currentPath'),
   }
 }
 
@@ -49,7 +49,7 @@ const Header = ({ user, path, noContainer }) =>
 Header.propTypes = UserMenu.propTypes = {
   path: React.PropTypes.string.isRequired,
   user: React.PropTypes.instanceOf(Immutable.Map),
-  noContainer: React.PropTypes.boolean
+  noContainer: React.PropTypes.bool
 }
 
 module.exports = connect(mapStateToProps)(Header);

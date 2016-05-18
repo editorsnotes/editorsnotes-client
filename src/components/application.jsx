@@ -1,44 +1,34 @@
 "use strict";
 
 const React = require('react')
-    , Immutable = require('immutable')
     , classnames = require('classnames')
-    , { Provider } = require('react-redux')
 
 const Header = require('./main/header/component.jsx')
     , Footer = require('./main/footer/component.jsx')
-
 
 module.exports = React.createClass({
   displayName: 'Application',
 
   propTypes: {
-    ActiveComponent: React.PropTypes.element.isRequired,
-    store: React.PropTypes.instanceOf(Immutable.Map)
+    noContainer: React.PropTypes.bool,
+    children: React.PropTypes.element.isRequired
   },
 
   render() {
-    const { ActiveComponent, store } = this.props
-        , { noContainer, noFooter, noHeader } = ActiveComponent.prototype
+    const { children, noContainer } = this.props
 
     return (
-      <Provider store={store}>
-        <div className="flex flex-column" style={{ minHeight: '100vh' }}>
-          { !noHeader && <Header noContainer={noContainer} /> }
+      <div className="flex flex-column" style={{ minHeight: '100vh' }}>
+        <Header {...this.props} />
 
-          <main className="flex-grow relative">
-            <div className={classnames({ container: !noContainer })}>
-              <ActiveComponent
-                noContainer={noContainer}
-                noHeader={noHeader}
-                noFooter={noFooter}
-              />
-            </div>
-          </main>
+        <main className="flex-grow relative">
+          <div className={classnames({ container: !noContainer })}>
+            { children }
+          </div>
+        </main>
 
-          { !noFooter && <Footer noFooter={noFooter} /> }
-        </div>
-      </Provider>
+        <Footer {...this.props} />
+      </div>
     )
   }
 });
