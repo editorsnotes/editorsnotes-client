@@ -69,4 +69,4 @@ const NoteEdit = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(editingBreadcrumb(standaloneForm(NoteEdit, Note), 'note'))
+module.exports = standaloneForm(editingBreadcrumb(NoteEdit, 'note'), Note)

@@ -14,14 +14,22 @@ const types = Immutable.Map([
 
 
 module.exports = function (Component, RecordType) {
+  const type = types.get(RecordType);
+
   var StandaloneForm = React.createClass({
     getInitialState() {
-      return { [types.get(RecordType)]: this.originalData() }
+      return {
+        [type]: this.originalData(),
+
+        // FIXME
+        loading: false,
+        errors: Immutable.Map()
+      }
     },
 
     componentDidMount() {
       window.onbeforeunload = () => {
-        var updated = this.state[types.get(RecordType)]
+        var updated = this.state[type]
           , original = this.originalData()
 
         if (!updated.equals(original)) {
@@ -36,7 +44,6 @@ module.exports = function (Component, RecordType) {
 
     originalData() {
       const { data } = this.props
-          , type = types.get(RecordType)
 
       return new RecordType(
         (type === 'topic' && !this.isNew())
@@ -50,19 +57,19 @@ module.exports = function (Component, RecordType) {
     },
 
     getProjectURL() {
-      return this.isNew() ?
-        this.props.project.get('url') :
-        this.props.data.get('project')
+      return this.isNew()
+        ? this.props.data.get('url')
+        : this.props.data.get('project')
     },
 
     handleRecordChange(updatedRecord) {
-      this.setState({ [types.get(RecordType)]: updatedRecord });
+      this.setState({ [type]: updatedRecord });
     },
 
     handleSaveSuccess(response) {
-      var redirect = this.isNew() ?
-        response.headers.get('Location') :
-        this.props.data.get('url')
+      var redirect = this.isNew()
+        ? response.headers.get('Location')
+        : this.props.data.get('url')
 
       window.onbeforeunload = null;
       window.location.href = redirect;
@@ -88,6 +95,5 @@ module.exports = function (Component, RecordType) {
     }
   });
 
-  return connect(require('../main/default_api_mapper.js')())(
-    StandaloneForm, types.get(RecordType))
+  return connect(require('../main/default_api_mapper.js')())(StandaloneForm);
 }
