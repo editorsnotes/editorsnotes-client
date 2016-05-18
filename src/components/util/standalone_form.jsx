@@ -3,6 +3,7 @@
 var React = require('react')
   , Immutable = require('immutable')
   , editableComponent = require('./editable_component.jsx')
+  , { connect } = require('react-redux')
 
 
 const types = Immutable.Map([
@@ -45,6 +46,8 @@ module.exports = function (Component, RecordType) {
     },
 
     isNew() {
+      console.log(this.props);
+
       return !this.props.data
     },
 
@@ -87,5 +90,6 @@ module.exports = function (Component, RecordType) {
     }
   });
 
-  return editableComponent(StandaloneForm, types.get(RecordType))
+  return connect(require('../main/default_api_mapper.js')())(
+    StandaloneForm, types.get(RecordType))
 }

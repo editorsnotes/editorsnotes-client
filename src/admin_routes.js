@@ -25,6 +25,9 @@ function transformReturn(transformFn, fn) {
   }
 }
 
+const projectURL = pathname => pathname.replace(/(notes|topics|documents)\/add\//, '')
+const trimmedURL = pathname => pathname.replace(/edit\/$/, '?embed_style=nested')
+
 
 const noContainer = transformReturn.bind(null, ret => ret.noContainer = true)
     , noFooter = transformReturn.bind(null, ret => ret.noFooter = true)
@@ -36,37 +39,37 @@ module.exports = {
   '/projects/:project_slug/notes/add/': {
     name: 'note_add',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: noHeader(noFooter(noContainer(getProjectJSON)))
+    resource: projectURL
   },
 
   '/projects/:project_slug/notes/:id/edit/': {
     name: 'note_edit',
     Component: require('./components/main/note_edit/component.jsx'),
-    getData: noHeader(noFooter(noContainer(getJSONFromTrimmedPath)))
+    resource: trimmedURL
   },
 
   /* Topics */
   '/projects/:project_slug/topics/add/': {
     name: 'topic_add',
     Component: require('./components/main/topic_edit/component.jsx'),
-    getData: getProjectJSON
+    resource: projectURL
   },
   '/projects/:project_slug/topics/:id/edit/': {
     name: 'topic_edit',
     Component: require('./components/main/topic_edit/component.jsx'),
-    getData: getJSONFromTrimmedPath
+    resource: trimmedURL
   },
 
   /* Documents */
   '/projects/:project_slug/documents/add/': {
     name: 'document_add',
     Component: require('./components/main/document_edit/component.jsx'),
-    getData: getProjectJSON
+    resource: projectURL
   },
   '/projects/:project_slug/documents/:id/edit/': {
     name: 'document_edit',
     Component: require('./components/main/document_edit/component.jsx'),
-    getData: getJSONFromTrimmedPath
+    resource: trimmedURL
   },
 
 }
