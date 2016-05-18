@@ -46,8 +46,6 @@ module.exports = function (Component, RecordType) {
     },
 
     isNew() {
-      console.log(this.props);
-
       return !this.props.data
     },
 
