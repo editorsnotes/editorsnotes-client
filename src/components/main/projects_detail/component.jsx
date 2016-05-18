@@ -1,36 +1,39 @@
 "use strict";
 
-var React = require('react')
-  , Immutable = require('immutable')
+const React = require('react')
+    , Immutable = require('immutable')
+    , { connect } = require('react-redux')
 
+const Project = React.createClass({
+  propTypes: {
+    project: React.PropTypes.instanceOf(Immutable.Map)
+  },
 
-module.exports = React.createClass({
-  displayName: 'Project',
+  renderBreadcrumb() {
+    const Breadcrumb = require('../../shared/breadcrumb/component.jsx')
+        , { project } = this.props
 
-  renderBreadcrumb: function () {
-    var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
-      , project = this.props.data
-      , crumbs
-
-    crumbs = Immutable.fromJS([
+    const crumbs = Immutable.fromJS([
       { href: project.get('url'), label: project.get('name') }
     ]);
 
     return <Breadcrumb crumbs={crumbs} />
   },
 
-  render: function () {
-    var project = this.props.data
+  render() {
+    const { project } = this.props
 
     return (
     <div id="project">
 
       {this.renderBreadcrumb()}
 
-      <header><h2>{project.get('name')}</h2></header>
-      <section id="project-details">
-        <div id="project-about">
-          <p>{project.get('description')}</p>
+      <header>
+        <h2>{project.get('name')}</h2>
+      </header>
+      <section>
+        <div>
+          <p>{ project.get('description') }</p>
         </div>
         <ul>
           <li><a href={project.get('notes')}>All notes</a></li>
@@ -42,3 +45,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = connect(require('../default_api_mapper')('project'))(Project)

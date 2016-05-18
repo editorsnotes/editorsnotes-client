@@ -2,6 +2,7 @@
 
 var React = require('react')
   , Immutable = require('immutable')
+  , { connect } = require('react-redux')
 
 module.exports = function makeHydraLinkAware(Component) {
   var HydraAwareComponent = React.createClass({

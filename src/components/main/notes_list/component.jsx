@@ -4,10 +4,9 @@ var React = require('react')
   , Immutable = require('immutable')
   , Translate = require('../../shared/translate.jsx')
   , commonStrings = require('../../common_strings')
+  , { connect } = require('react-redux')
 
-module.exports = React.createClass({
-  displayName: 'NotesList',
-
+const NotesList = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map)
   },
@@ -16,7 +15,7 @@ module.exports = React.createClass({
     return { notes: this.props.data.get('results') }
   },
 
-  renderBreadcrumb: function () {
+  renderBreadcrumb() {
     var Breadcrumb = require('../../shared/breadcrumb/component.jsx')
       , { getEmbedded } = require('../../../helpers/api')
       , project = getEmbedded(this.props.data, 'project')
@@ -43,3 +42,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = connect(require('../default_api_mapper')())(NotesList)

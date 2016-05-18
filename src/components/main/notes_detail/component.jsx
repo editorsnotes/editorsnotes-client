@@ -3,9 +3,9 @@
 var React = require('react')
   , Immutable = require('immutable')
   , HydraAwareComponent = require('../../util/hydra_aware.jsx')
-  , NoteDetail
+  , { connect } = require('react-redux')
 
-NoteDetail = React.createClass({
+const NoteDetail = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     canReplace: React.PropTypes.func.isRequired
@@ -54,4 +54,4 @@ NoteDetail = React.createClass({
   }
 });
 
-module.exports = HydraAwareComponent(NoteDetail)
+module.exports = connect(require('../default_api_mapper')())(HydraAwareComponent(NoteDetail))

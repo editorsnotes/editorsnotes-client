@@ -76,6 +76,10 @@ function generateRouteHandler(matchName, requestedPath) {
         render(Component, Immutable.Map({
           jed,
           tripleStore,
+
+          currentPath: requestedPath,
+          currentAPIPath: resourceURL,
+
           user: Immutable.fromJS(user),
           resources: Immutable.fromJS(resources)
         }))

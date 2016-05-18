@@ -3,6 +3,7 @@
 var React = require('react')
   , Translate = require('../../shared/translate.jsx')
   , strings = require('./strings')
+  , { connect } = require('react-redux')
 
 
 function makeListItem(item) {
@@ -10,7 +11,7 @@ function makeListItem(item) {
 }
 
 
-module.exports = React.createClass({
+const Browse = React.createClass({
   render: function () {
     return (
       <div>
@@ -47,3 +48,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = connect(require('../default_api_mapper')())(Browse);

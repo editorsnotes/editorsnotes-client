@@ -5,10 +5,10 @@ var React = require('react')
   , standaloneForm = require('../../util/standalone_form.jsx')
   , editingBreadcrumb = require('../../util/editing_breadcrumb.jsx')
   , Note = require('../../../records/note')
-  , NoteEdit
+  , { connect } = require('react-redux')
 
 
-NoteEdit = React.createClass({
+const NoteEdit = React.createClass({
   propTypes: {
     /* from API response */
     data: React.PropTypes.instanceOf(Immutable.Map),
@@ -69,4 +69,4 @@ NoteEdit = React.createClass({
   }
 });
 
-module.exports = editingBreadcrumb(standaloneForm(NoteEdit, Note), 'note');
+module.exports = connect(require('../default_api_mapper')())(editingBreadcrumb(standaloneForm(NoteEdit, Note), 'note'))

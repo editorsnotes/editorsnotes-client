@@ -10,10 +10,9 @@ var React = require('react')
   , Translate = require('../../shared/translate.jsx')
   , commonStrings = require('../../common_strings')
   , strings = require('./strings')
+  , { connect } = require('react-redux')
 
-module.exports = React.createClass({
-  displayName: 'DocumentDetail',
-
+const DocumentDetail = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map).isRequired
   },
@@ -113,3 +112,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = connect(require('../default_api_mapper')())(DocumentDetail);

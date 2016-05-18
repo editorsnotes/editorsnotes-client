@@ -8,9 +8,9 @@ var React = require('react')
   , Document = require('../../../records/document')
   , commonStrings = require('../../common_strings')
   , standaloneForm = require('../../util/standalone_form.jsx')
-  , DocumentEdit
+  , { connect } = require('react-redux')
 
-DocumentEdit = React.createClass({
+const DocumentEdit = React.createClass({
   propTypes: {
     /* from API response */
     data: React.PropTypes.instanceOf(Immutable.Map),
@@ -51,4 +51,4 @@ DocumentEdit = React.createClass({
   }
 });
 
-module.exports = standaloneForm(DocumentEdit, Document);
+module.exports = connect(require('../default_api_mapper')())(standaloneForm(DocumentEdit, Document))

@@ -4,10 +4,9 @@ var React = require('react')
   , Immutable = require('immutable')
   , Translate = require('../../shared/translate.jsx')
   , commonStrings = require('../../common_strings')
+  , { connect } = require('react-redux')
 
-module.exports = React.createClass({
-  displayName: 'ProjectsList',
-
+const ProjectsList = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map)
   },
@@ -61,3 +60,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = connect(require('../default_api_mapper')())(ProjectsList);
