@@ -1,69 +1,85 @@
 "use strict";
 
-var _ = require('underscore')
-  , EventEmitter = require('events')
-  , Immutable = require('immutable')
-  , React = require('react')
-  , Router = require('./router')
-  , router
-
-
-/* Polyfills */
 require('whatwg-fetch');
 
+const Immutable = require('immutable')
+    , React = require('react')
+    , { createStore } = require('redux')
+    , Router = require('./router')
 
-/* Globals */
-window.EditorsNotes = {};
-window.EditorsNotes.jed = require('./jed');
-window.EditorsNotes.events = new EventEmitter();
+window.onload = initialize;
 
+const ClientRouter = React.createClass({
+  componentWillMount() {
+    const router = new Router(this.generateRouteHandler)
 
-/* Function that will render the whole application */
-function renderApplication(props) {
-  var Application = require('./components/application.jsx')
+    router.add(require('./base_routes'));
+    router.add(require('./admin_routes'));
+
+    router.execute(window.location.pathname);
+  },
+
+  generateRouteHandler(matchName, requestedPath) {
+    return ({ Component, componentProps }, params, queryParams) => {
+      this.setState({
+        ActiveComponent: Component,
+        activeComponentProps: componentProps
+          ? componentProps(requestedPath, queryParams)
+          : {}
+      })
+    }
+  },
+
+  render() {
+    const Application = require('./components/application.jsx')
+        , { ActiveComponent, componentProps } = this.state
+
+    return (
+      <Application>
+        <ActiveComponent {...componentProps} />
+      </Application>
+    )
+  }
+})
+
+function initialize() {
+  const { Provider } = require('react-redux')
     , { render } = require('react-dom')
 
-  return render(
-      React.createElement(Application, props),
-      document.body.querySelector('#react-app'))
+  getInitialState().then(initialState => {
+    const store = createStore(
+      state => state,
+      initialState,
+      window.devToolsExtension ? window.devToolsExtension() : undefined
+    )
+
+    const tree = (
+      <Provider store={store}>
+        <ClientRouter />
+      </Provider>
+    )
+
+    render(tree, document.body.querySelector('#react-app'))
+  });
 }
 
+function getInitialState() {
+  const bootstrap = window.EDITORSNOTES_BOOTSTRAP
+      , ProgramState = require('./records/state')
+      , parseLD = require('./utils/parse_ld')
 
-/* Router */
-router = new Router();
+  let state = new ProgramState();
 
-// TODO: Only add admin_routes if user is logged in?
-router.add(require('./base_routes'));
-router.add(require('./admin_routes'));
-
-router.fallbackHandler = function (name, path) {
-  return function (config, params, queryParams) {
-    var promise = Promise.resolve({})
-
-    if (window.EDITORSNOTES_BOOTSTRAP) {
-      promise = promise
-        .then(() => {
-          var data = window.EDITORSNOTES_BOOTSTRAP
-            , props = {}
-
-          Object.keys(data).forEach(key => {
-            props[key] = Immutable.fromJS(data[key]);
-          });
-
-          return !config.getStore ?
-            props :
-            config.getStore(data)
-              .then(store => Object.assign({}, props, { store }))
-        });
-    }
-
-    promise = promise
-      .then(props => _.extend(props, { ActiveComponent: config.Component, path }))
-      .then(renderApplication)
+  if (bootstrap) {
+    state = state.merge(
+      Immutable.fromJS(bootstrap).delete('makeTripleStoreOnRender')
+    );
   }
-}
 
-/* Render the react application when DOM is ready */
-window.onload = function () {
-  router.execute(window.location.pathname);
+  state = state.set('jed', require('./jed'))
+
+  return !bootstrap.makeTripleStoreOnRender
+    ? Promise.resolve(state)
+    : parseLD(bootstrap.resources[bootstrap.currentAPIPath])
+        .then(tripleStore => state.set('tripleStore', tripleStore))
 }
