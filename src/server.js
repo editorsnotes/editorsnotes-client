@@ -77,7 +77,7 @@ function generateRouteHandler(matchName, requestedPath) {
           jed,
           tripleStore,
 
-          makeTripleStoreOnRender: !tripleStore,
+          makeTripleStoreOnRender: !!tripleStore,
 
           currentPath: requestedPath,
           currentAPIPath: resourceURL,

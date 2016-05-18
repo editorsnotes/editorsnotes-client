@@ -45,10 +45,11 @@ const ClientRouter = React.createClass({
 function initialize() {
   const { Provider } = require('react-redux')
     , { render } = require('react-dom')
+    , rootReducer = require('./reducers')
 
   getInitialState().then(initialState => {
     const store = createStore(
-      state => state,
+      rootReducer,
       initialState,
       window.devToolsExtension ? window.devToolsExtension() : undefined
     )
