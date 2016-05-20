@@ -1,20 +1,33 @@
 "use strict";
 
-var _ = require('underscore')
-
 function defaultOpts() {
-  var cookie = require('cookie-cutter');
-
-  return {
-    credentials: 'same-origin',
+  const opts = {
     headers: {
       'Accept': 'application/json',
       'Content-type': 'application/json; charset=utf-8',
-      'X-CSRFToken': cookie.get('csrftoken')
     }
   }
+
+  if (process.browser) {
+    const cookie = require('cookie-cutter');
+
+    opts.credentials = 'same-origin';
+    opts.headers['X-CSRFToken'] = cookie.get('csrftoken')
+  }
+
+  return opts;
 }
 
-module.exports = function (url, opts) {
-  return fetch(url, _.extend(defaultOpts(), opts))
+module.exports = function (url, extraOpts={}) {
+  const opts = defaultOpts()
+
+  Object.keys(extraOpts).forEach(key => {
+    if (key.toLowerCase() === 'headers') {
+      opts.headers = Object.assign({}, opts.headers, extraOpts[key]);
+    } else {
+      opts[key] = extraOpts[key];
+    }
+  });
+
+  return fetch(url, opts);
 }

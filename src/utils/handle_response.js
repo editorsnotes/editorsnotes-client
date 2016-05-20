@@ -1,15 +1,12 @@
 "use strict";
 
-var { HTTPClientError, HTTPServerError } = require('../errors')
+const { HTTPClientError, HTTPServerError } = require('../errors')
 
 module.exports = function (response) {
-  var contentType
-    , isJSON
-
   if (response.ok) return response;
 
-  contentType = response.headers.get('Content-Type') || '';
-  isJSON = contentType.indexOf('json') !== -1;
+  const contentType = response.headers.get('Content-Type') || ''
+      , isJSON = contentType.indexOf('json') !== -1;
 
   return (isJSON ? response.json() : response.text())
     .then(msg => {

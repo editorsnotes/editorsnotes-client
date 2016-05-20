@@ -47,40 +47,30 @@ function initialize() {
     , { render } = require('react-dom')
     , rootReducer = require('./reducers')
 
-  getInitialState().then(initialState => {
-    const store = createStore(
-      rootReducer,
-      initialState,
-      window.devToolsExtension ? window.devToolsExtension() : undefined
-    )
+  const store = createStore(
+    rootReducer,
+    getInitialState(),
+    window.devToolsExtension ? window.devToolsExtension() : undefined
+  )
 
-    const tree = (
-      <Provider store={store}>
-        <ClientRouter />
-      </Provider>
-    )
+  const tree = (
+    <Provider store={store}>
+      <ClientRouter />
+    </Provider>
+  )
 
-    render(tree, document.body.querySelector('#react-app'))
-  });
+  render(tree, document.body.querySelector('#react-app'))
 }
 
 function getInitialState() {
   const bootstrap = window.EDITORSNOTES_BOOTSTRAP
       , ProgramState = require('./records/state')
-      , parseLD = require('./utils/parse_ld')
 
-  let state = new ProgramState();
+  let state = new ProgramState({ jed: require('./jed') });
 
   if (bootstrap) {
-    state = state.merge(
-      Immutable.fromJS(bootstrap).delete('makeTripleStoreOnRender')
-    );
+    state = state.merge(Immutable.fromJS(bootstrap));
   }
 
-  state = state.set('jed', require('./jed'))
-
-  return !bootstrap.makeTripleStoreOnRender
-    ? Promise.resolve(state)
-    : parseLD(bootstrap.resources[bootstrap.currentAPIPath])
-        .then(tripleStore => state.set('tripleStore', tripleStore))
+  return state
 }

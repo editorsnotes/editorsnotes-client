@@ -6,20 +6,22 @@ const Jed = require('jed')
     , http = require('http')
     , path = require('path')
     , React = require('react')
+    , thunk = require('redux-thunk').default
     , cookie = require('cookie')
-    , process = require('process')
-    , request = require('request')
     , po2json = require('po2json')
     , Immutable = require('immutable')
     , { execSync } = require('child_process')
-    , { createStore } = require('redux')
+    , { createStore, applyMiddleware } = require('redux')
     , { renderToString } = require('react-dom/server')
-    , parseLD = require('./utils/parse_ld')
-    , Router = require('./router')
 
+const rootReducer = require('./reducers')
+    , Router = require('./router')
+    , Store = require('./records/state')
+    , { fetchAPIResource, fetchUser } = require('./actions')
 
 const VERSION = require('../package.json').version
-    , FETCH_ERROR = '__error__'
+
+require('isomorphic-fetch')
 
 
 const jed = (() => {
@@ -49,121 +51,62 @@ const jed = (() => {
 // React.renderToStaticMarkup if user is not logged in
 function generateRouteHandler(matchName, requestedPath) {
   return function ({ name, Component, componentProps, resource, makeTripleStore }, params, queryParams) {
-    const userDataPromise = getUserData(this.req)
+    const headers = { Host: this.req.headers.host }
+        , sessionID = getSessionID(this.req)
+        , resourceURL = resource ? resource(requestedPath) : null;
 
-    let resourceDataPromise = Promise.resolve();
-    let resourceURL = null;
+    let initialState = new Store({
+      jed,
+      currentPath: requestedPath,
+    })
 
-    if (resource) {
-      resourceURL = resource(requestedPath);
-
-      resourceDataPromise = resourceDataPromise
-        .then(() => fetchJSON(this.req, resourceURL, params, queryParams))
-        .then(data => ({ [resourceURL]: data }))
+    if (resourceURL) {
+      initialState = initialState.set('currentAPIPath', resourceURL);
     }
 
-    Promise.all([userDataPromise, resourceDataPromise])
-      .then(([user, resources]) => {
-        if (resourceURL && makeTripleStore) {
-          return parseLD(resources[resourceURL]).then(tripleStore => ({
-            tripleStore, user, resources
-          }));
-        }
+    const store = createStore(
+      rootReducer,
+      initialState,
+      applyMiddleware(thunk)
+    )
 
-        return { tripleStore: null, user, resources }
-      })
-      .then(({ tripleStore, user, resources }) =>
-        render(Component, componentProps && componentProps(requestedPath), Immutable.Map({
-          jed,
-          tripleStore,
+    // FIXME, deal with these here?
+    queryParams;
 
-          makeTripleStoreOnRender: !!tripleStore,
+    if (sessionID) {
+      headers.cookie = cookie.serialize('sessionid', sessionID);
+    }
 
-          currentPath: requestedPath,
-          currentAPIPath: resourceURL,
+    const promises = [ store.dispatch(fetchUser(headers)) ]
 
-          user: Immutable.fromJS(user),
-          resources: Immutable.fromJS(resources)
-        }))
-      )
-      .then(html => {
+    if (resourceURL) {
+      promises.push(
+        store.dispatch(fetchAPIResource(
+          resourceURL,
+          headers,
+          makeTripleStore
+        ))
+      );
+    }
+
+    Promise.all(promises)
+      .then(() => {
+        const props = componentProps && componentProps(requestedPath)
+            , html = render(Component, props, store)
+
         this.res.writeHead(200, { 'Content-Type': 'text/html' });
         this.res.end(html);
       })
       .catch(err => {
         logError(err);
-
-        renderError(userDataPromise, err).then(html => {
-          this.res.writeHead(200, { 'Content-Type': 'text/html' });
-          this.res.end(html);
-        })
+        this.res.writeHead(200, { 'Content-Type': 'text/html' });
+        this.res.end(err.stack || err);
       })
   }
 }
-
-      /*
-      .then(props => {
-        var hadError = props.data && props.data.has(FETCH_ERROR)
-          , component = hadError ? require('./components/main/error/component.jsx') : config.Component
-
-        return _.extend(props, {
-          ActiveComponent: component,
-          path
-        })
-      })
-*/
-
 
 function getSessionID(req) {
   return cookie.parse(req.headers.cookie || '').sessionid;
-}
-
-
-// fetchFn should __never__ return anything except 200. Anything else is an error.
-function fetchJSON(req, pathname, headers={}) {
-  if (pathname[0] !== '/') throw Error('Can only fetch data relative to local API.');
-
-  const url = global.API_URL + pathname;
-
-  const sessionID = getSessionID(req)
-  if (sessionID) {
-    headers.cookie = cookie.serialize('sessionid', sessionID);
-  }
-
-  headers.Host = req.headers.host;
-  headers.Accept = 'application/ld+json';
-
-  return new Promise((resolve, reject) => {
-    request.get({ url, headers }, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else if (response.statusCode === 200) {
-        // FIXME: may not return JSON?
-        resolve(JSON.parse(body));
-      } else {
-        let errorMessage
-          , message
-
-        errorMessage = 'Request resulted in non-200 status code\n. Request content:';
-        errorMessage += JSON.stringify(response, true, ' ');
-
-        logError(errorMessage);
-
-        try {
-          message = JSON.parse(body).detail;
-          resolve(JSON.stringify({
-            [FETCH_ERROR]: {
-              message,
-              statusCode: response.statusCode
-            }
-          }));
-        } catch (e) {
-          reject(body);
-        }
-
-      }
-    });
-  });
 }
 
 
@@ -198,14 +141,14 @@ function makeHTML(body, bootstrap) {
 `
 }
 
-
-function render(Component, componentProps={}, initialState) {
+function render(Component, componentProps={}, store) {
   const { Provider } = require('react-redux')
       , Application = require('./components/application.jsx')
-      , store = createStore(state => state, initialState)
 
-  const bootstrap = initialState
-    .filter((val, key) => key !== 'jed' && key !== 'tripleStore')
+  const bootstrap = store
+    .getState()
+    .toMap()
+    .filter((val, key) => key !== 'jed')
 
   const application = (
     <Provider store={store}>
@@ -248,36 +191,6 @@ function logError(err) {
 }
 
 
-function getUserData(req) {
-  const sessionID = getSessionID(req)
-
-  if (!sessionID) return Promise.resolve(null);
-
-  return new Promise((resolve, reject) => {
-    const url = global.API_URL + '/me/'
-        , headers = {}
-
-    headers.cookie = cookie.serialize('sessionid', sessionID);
-    headers.Accept = 'application/json';
-    headers.Host = req.headers.host;
-
-    request.get({ url, headers }, (err, response, body) => {
-      // TODO: Maybe, if status code is 403, invalidate the sessionid cookie?
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      if (response.statusCode === 200) {
-        resolve(JSON.parse(body));
-      }
-
-      resolve(null);
-    });
-  })
-}
-
-
 module.exports = {
   makeHTML,
 
@@ -293,10 +206,8 @@ module.exports = {
     const server = http.createServer((req, res) => {
       router.dispatch(req, res, (err) => {
         if (err) {
-          renderError(getUserData(req), err).then(html => {
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(html);
-          })
+          res.writeHead(200, { 'Content-Type': 'text/html' });
+          res.end(err.stack || err);
         }
       })
     });

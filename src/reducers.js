@@ -3,26 +3,32 @@ const Immutable = require('immutable')
 
 module.exports = function rootReducer(state=(new State()), action) {
   switch (action.type) {
-    case 'API_REQUEST':
-      return state.setIn(['pendingAPIRequests', action.requestID], Immutable.Map({
-        loading: true,
-        statusCode: null,
-        errors: []
+    case 'REQUEST_API_RESOURCE':
+      return state.setIn(['resources', action.url], Immutable.Map({
+        readyState: 'loading',
+        error: null,
+        data: null
+      }));
+
+    case 'RECEIVE_API_RESOURCE':
+      const updatedState = state.setIn(['resources', action.url], Immutable.Map({
+        readyState: 'success',
+        error: null,
+        data: action.data,
+        triples: action.triples || null
       }))
 
-    case 'API_RECEIVE':
-      return state
-        .update(['pendingAPIRequests', action.requestID], status =>
-          status
-            .set('loading', false)
-            .set('statusCode', action.statusCode)
-            .set('errors', action.errors))
-        .setIn(['resources', action.uri], action.data)
-        .update('tripleStore', tripleStore => {
-          tripleStore.add(action.triples)
+      return action.url !== '/me/'
+        ? updatedState
+        : updatedState.set('user', updatedState.getIn(['resources', '/me/', 'data']))
 
-          return tripleStore;
-        })
+    case 'ERRORED_API_RESOURCE':
+      return state.setIn(['resources', action.url], Immutable.Map({
+        readyState: 'error',
+        error: action.error,
+        data: null
+      }));
+
     default:
       return state;
   }
