@@ -1,35 +1,28 @@
 "use strict"
 
-var N3 = require('n3')
-  , jsonld = require('jsonld')
+const jsonld = require('jsonld')
+    , parser = require('n3').Parser()
 
 // if `text` is an object, it will be assumed to be JSON-LD. If not, it will
 // be parsed as is by N3, which allows turtle, TriG, n-triples, and n-quads.
 module.exports = function(text) {
-  var store = N3.Store()
-    , parser = N3.Parser()
-    , rdfStringPromise
+  const rdfString = typeof text === 'object'
+    ? jsonld.promises.toRDF(text, { format: 'application/nquads' })
+    : text
 
-  store.addPrefixes(require('../namespaces'));
+  return Promise.resolve(rdfString).then(rdfString =>
+    new Promise((resolve, reject) => {
+      const triples = [];
 
-  rdfStringPromise = typeof text === 'string' ?
-    text :
-    jsonld.promises.toRDF(text, { format: 'application/nquads' });
-
-  return (
-    Promise.resolve(rdfStringPromise)
-      .then(rdfString => new Promise(function (resolve, reject) {
-        parser.parse(rdfString.trim(), function (err, triple, prefixes) {
-          if (err) {
-            reject(err);
-          } else if (triple) {
-            // FIXME
-            triple.graph = '';
-            store.addTriple(triple);
-          } else {
-            resolve(store);
-          }
-        });
-      }))
+      parser.parse(rdfString.trim(), (err, triple) => {
+        if (err) {
+          reject(err);
+        } else if (triple) {
+          triples.push(triple);
+        } else {
+          resolve(triples);
+        }
+      });
+    })
   )
 }

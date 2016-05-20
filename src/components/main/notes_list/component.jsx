@@ -43,4 +43,4 @@ const NotesList = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(NotesList)
+module.exports = connect(require('../default_api_mapper'))(NotesList)

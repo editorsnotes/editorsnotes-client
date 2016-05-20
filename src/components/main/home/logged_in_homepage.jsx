@@ -3,13 +3,8 @@
 const React = require('react')
     , { connect } = require('react-redux')
 
-const Translate = require('../../shared/translate.jsx')
 
-function mapStateToProps(state) {
-  return {
-    store: state.get('tripleStore'),
-  }
-}
+const Translate = require('../../shared/translate.jsx')
 
 const LoggedInUserHomepage = React.createClass({
   propTypes: {
@@ -95,4 +90,4 @@ const LoggedInUserHomepage = React.createClass({
   }
 });
 
-module.exports = connect(mapStateToProps)(LoggedInUserHomepage);
+module.exports = connect(require('../default_api_mapper'))(LoggedInUserHomepage);

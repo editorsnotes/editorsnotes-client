@@ -7,9 +7,7 @@ module.exports = Immutable.Record({
   currentAPIPath: null,
   user: null,
 
-  pendingAPIRequests: Immutable.Map(),
   resources: Immutable.Map(),
 
-  tripleStore: null,
   jed: null
 });

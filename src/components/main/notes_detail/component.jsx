@@ -54,4 +54,4 @@ const NoteDetail = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(HydraAwareComponent(NoteDetail))
+module.exports = connect(require('../default_api_mapper'))(HydraAwareComponent(NoteDetail))

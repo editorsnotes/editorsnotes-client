@@ -43,4 +43,4 @@ const TopicsList = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(TopicsList);
+module.exports = connect(require('../default_api_mapper'))(TopicsList);

@@ -51,4 +51,4 @@ const DocumentEdit = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(standaloneForm(DocumentEdit, Document))
+module.exports = connect(require('../default_api_mapper'))(standaloneForm(DocumentEdit, Document))

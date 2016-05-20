@@ -66,4 +66,4 @@ const TopicEdit = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(standaloneForm(TopicEdit, Topic));
+module.exports = connect(require('../default_api_mapper'))(standaloneForm(TopicEdit, Topic));

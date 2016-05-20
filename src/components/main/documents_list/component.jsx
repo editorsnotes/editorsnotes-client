@@ -43,4 +43,4 @@ const DocumentsList = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(DocumentsList);
+module.exports = connect(require('../default_api_mapper'))(DocumentsList);

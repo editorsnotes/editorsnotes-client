@@ -6,22 +6,22 @@ const React = require('react')
 
 const Project = React.createClass({
   propTypes: {
-    project: React.PropTypes.instanceOf(Immutable.Map)
+    data: React.PropTypes.instanceOf(Immutable.Map)
   },
 
   renderBreadcrumb() {
     const Breadcrumb = require('../../shared/breadcrumb/component.jsx')
-        , { project } = this.props
+        , { data } = this.props
 
     const crumbs = Immutable.fromJS([
-      { href: project.get('url'), label: project.get('name') }
+      { href: data.get('url'), label: data.get('name') }
     ]);
 
     return <Breadcrumb crumbs={crumbs} />
   },
 
   render() {
-    const { project } = this.props
+    const { data } = this.props
 
     return (
     <div id="project">
@@ -29,16 +29,16 @@ const Project = React.createClass({
       {this.renderBreadcrumb()}
 
       <header>
-        <h2>{project.get('name')}</h2>
+        <h2>{data.get('name')}</h2>
       </header>
       <section>
         <div>
-          <p>{ project.get('description') }</p>
+          <p>{ data.get('description') }</p>
         </div>
         <ul>
-          <li><a href={project.get('notes')}>All notes</a></li>
-          <li><a href={project.get('topics')}>All topics</a></li>
-          <li><a href={project.get('documents')}>All documents</a></li>
+          <li><a href={data.get('notes')}>All notes</a></li>
+          <li><a href={data.get('topics')}>All topics</a></li>
+          <li><a href={data.get('documents')}>All documents</a></li>
         </ul>
       </section>
     </div>
@@ -46,4 +46,4 @@ const Project = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')('project'))(Project)
+module.exports = connect(require('../default_api_mapper'))(Project)

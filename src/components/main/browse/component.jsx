@@ -49,4 +49,4 @@ const Browse = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(Browse);
+module.exports = connect(require('../default_api_mapper'))(Browse);

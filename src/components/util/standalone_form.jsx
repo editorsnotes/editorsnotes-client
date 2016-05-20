@@ -95,5 +95,5 @@ module.exports = function (Component, RecordType) {
     }
   });
 
-  return connect(require('../main/default_api_mapper.js')())(StandaloneForm);
+  return connect(require('../main/default_api_mapper'))(StandaloneForm);
 }

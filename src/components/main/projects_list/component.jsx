@@ -61,4 +61,4 @@ const ProjectsList = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(ProjectsList);
+module.exports = connect(require('../default_api_mapper'))(ProjectsList);

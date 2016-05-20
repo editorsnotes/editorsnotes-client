@@ -6,7 +6,7 @@ var React = require('react')
   , { connect } = require('react-redux')
 
 function mapStateToProps(state) {
-  const props = require('../default_api_mapper')()(state);
+  const props = require('../default_api_mapper')(state);
 
   props.store = state.get('tripleStore');
 

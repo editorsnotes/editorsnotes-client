@@ -113,4 +113,4 @@ const DocumentDetail = React.createClass({
   }
 });
 
-module.exports = connect(require('../default_api_mapper')())(DocumentDetail);
+module.exports = connect(require('../default_api_mapper'))(DocumentDetail);
