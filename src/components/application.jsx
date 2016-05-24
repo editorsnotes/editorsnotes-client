@@ -2,33 +2,62 @@
 
 const React = require('react')
     , classnames = require('classnames')
+    , { connect } = require('react-redux')
 
-const Header = require('./main/header/component.jsx')
+const Router = require('../router')
+    , { Route } = require('../records/state')
+    , Header = require('./main/header/component.jsx')
     , Footer = require('./main/footer/component.jsx')
 
-module.exports = React.createClass({
-  displayName: 'Application',
 
+function mapStateToProps(state) {
+  return {
+    currentRoute: new Route(state.getIn(['application', 'current'])),
+    nextRoute: new Route(state.getIn(['application', 'next']))
+  }
+}
+
+const Application = React.createClass({
   propTypes: {
-    noContainer: React.PropTypes.bool,
-    children: React.PropTypes.element.isRequired
+    router: React.PropTypes.instanceOf(Router).isRequired,
+    currentRoute: React.PropTypes.instanceOf(Route),
+    nextRoute: React.PropTypes.instanceOf(Route),
   },
 
   render() {
-    const { children, noContainer } = this.props
+    const { router, currentRoute } = this.props
+
+    let child = null
+      , childProps = {}
+
+    if (currentRoute) {
+      const match = router.match(currentRoute.get('path'))
+
+      if (match) {
+        const { Component, componentProps } = match.handler
+
+        if (componentProps) childProps = componentProps()
+        child = <Component {...childProps} />
+      } else {
+        child = <span>Could not find { currentRoute.get('path') }</span>
+      }
+    }
+
 
     return (
       <div className="flex flex-column" style={{ minHeight: '100vh' }}>
-        <Header {...this.props} />
+        <Header {...childProps} />
 
         <main className="flex-grow relative">
-          <div className={classnames({ container: !noContainer })}>
-            { children }
+          <div className={classnames({ container: !childProps.noContainer })}>
+            { child }
           </div>
         </main>
 
-        <Footer {...this.props} />
+        <Footer {...childProps} />
       </div>
     )
   }
 });
+
+module.exports = connect(mapStateToProps)(Application);

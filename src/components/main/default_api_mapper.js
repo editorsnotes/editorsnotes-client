@@ -3,7 +3,7 @@
 const N3 = require('n3')
 
 module.exports = function mapStateToProps(state) {
-  const apiResourceURL = state.get('currentAPIPath')
+  const apiResourceURL = state.getIn(['application', 'current', 'APIPath'])
       , resource = state.getIn(['resources', apiResourceURL])
 
   let store = null;
@@ -14,5 +14,5 @@ module.exports = function mapStateToProps(state) {
     store.addTriples(resource.get('triples').toJS());
   }
 
-  return resource.set('store', store).toObject();
+  return resource.toMap().set('store', store).toObject();
 }

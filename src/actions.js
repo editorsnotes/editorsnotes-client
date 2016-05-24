@@ -27,10 +27,69 @@ function receiveAPIResource(url, data, triples) {
   }
 }
 
-function receiveUser(data) {
+
+function navigationRequest(path) {
   return {
-    type: 'RECEIVE_USER',
-    data
+    type: 'NAVIGATION_REQUEST',
+    path
+  }
+}
+
+function navigationSucess(path, APIPath) {
+  return {
+    type: 'NAVIGATION_SUCCESS',
+    path,
+    APIPath
+  }
+}
+
+function navigationNotFound() {
+}
+
+function navigationError(path, error) {
+  return {
+    type: 'NAVIGATION_ERROR',
+    path,
+    error
+  }
+}
+
+
+function navigateToPath(router, path, req=null) {
+  return dispatch => {
+    const match = router.match(path)
+
+    if (!match) {
+      dispatch(navigationNotFound());
+      return;
+    }
+
+    dispatch(navigationRequest(path));
+
+    const { resource, makeTripleStore } = match.handler
+        , resourceURL = resource ? resource(path) : null
+        , headers = {}
+
+    if (req) {
+      headers.Host = req.headers.host;
+      headers.cookie = req.headers.cookie;
+    }
+
+    const promises = [
+      dispatch(fetchUser(headers)),
+      resourceURL && dispatch(
+        fetchAPIResource(resourceURL, headers, makeTripleStore)
+      )
+    ]
+
+    return Promise.all(promises)
+      .then(() => {
+        dispatch(navigationSucess(path, resourceURL));
+      })
+      .catch(err => {
+        dispatch(navigationError(path, err));
+      })
+
   }
 }
 
@@ -78,4 +137,4 @@ function fetchUser(headers={}) {
   }
 }
 
-module.exports = { fetchAPIResource, fetchUser }
+module.exports = { fetchAPIResource, fetchUser, navigateToPath }

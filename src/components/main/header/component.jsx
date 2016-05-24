@@ -8,7 +8,7 @@ const React = require('react')
 function mapStateToProps(state) {
   return {
     user: state.get('user'),
-    path: state.get('currentPath'),
+    path: state.getIn(['application', 'current', 'path']),
   }
 }
 

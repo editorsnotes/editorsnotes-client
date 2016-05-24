@@ -1,11 +1,12 @@
 "use strict";
 
 const RouteRecognizer = require('route-recognizer')
-    , isNode = typeof window === 'undefined'
 
-function Router(generateRouteHandler) {
+function Router() {
   this.recognizer = new RouteRecognizer();
-  this.generateRouteHandler = generateRouteHandler;
+
+  this.add(require('./base_routes'));
+  this.add(require('./admin_routes'));
 }
 
 Router.prototype.add = function (paths) {
@@ -25,21 +26,6 @@ Router.prototype.match = function (url) {
   ret.queryParams = match.queryParams;
 
   return ret;
-}
-
-
-// Match the URL, and then execute the given handler. Throws an error if no
-// match is made.
-Router.prototype.execute = function (url, context=null) {
-  const match = this.match(url)
-
-  if (!match) throw new Error(`No route found for "${url}".`);
-
-  this.generateRouteHandler(match.handler.name, url).apply(context, [
-    match.handler,
-    match.params,
-    match.queryParams
-  ]);
 }
 
 
@@ -91,17 +77,6 @@ Router.prototype.reverse = function (name, ...args) {
   }
 
   return url;
-}
-
-
-if (isNode) {
-  Router.prototype.dispatch = function (req, res, errorCallback) {
-    try {
-      this.execute(req.url, { req, res });
-    } catch(err) {
-      errorCallback(err);
-    }
-  }
 }
 
 module.exports = Router;
