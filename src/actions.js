@@ -6,6 +6,7 @@ const Immutable = require('immutable')
     , parseLD = require('./utils/parse_ld')
     , parseURL = require('url').parse
 
+
 function requestAPIResource(url) {
   url = parseURL(url).path
 
@@ -14,6 +15,7 @@ function requestAPIResource(url) {
     url
   }
 }
+
 
 function receiveAPIResource(url, data, triples) {
   url = parseURL(url).path
@@ -35,6 +37,7 @@ function navigationRequest(path) {
   }
 }
 
+
 function navigationSucess(path, APIPath) {
   return {
     type: 'NAVIGATION_SUCCESS',
@@ -43,8 +46,6 @@ function navigationSucess(path, APIPath) {
   }
 }
 
-function navigationNotFound() {
-}
 
 function navigationError(path, error) {
   return {
@@ -88,6 +89,7 @@ function navigateToPath(router, path, req=null) {
   }
 }
 
+
 function fetchAPIResource(url, headers={}, parseTriples=false) {
   return (dispatch) => {
     if (!process.browser) {
@@ -116,6 +118,7 @@ function fetchAPIResource(url, headers={}, parseTriples=false) {
   }
 }
 
+
 function fetchUser(headers={}) {
   return dispatch => {
     const url = global.API_URL + '/me/'
@@ -132,4 +135,9 @@ function fetchUser(headers={}) {
   }
 }
 
-module.exports = { fetchAPIResource, fetchUser, navigateToPath }
+
+module.exports = {
+  fetchAPIResource,
+  fetchUser,
+  navigateToPath
+}

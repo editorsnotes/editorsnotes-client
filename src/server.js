@@ -85,7 +85,7 @@ module.exports = {
         .catch(err => {
           // It should never get here, right?
           throw err;
-        });
+        })
     });
 
     server.listen(port);
