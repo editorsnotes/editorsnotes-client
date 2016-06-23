@@ -59,11 +59,6 @@ function navigateToPath(router, path, req=null) {
   return dispatch => {
     const match = router.match(path)
 
-    if (!match) {
-      dispatch(navigationNotFound());
-      return;
-    }
-
     dispatch(navigationRequest(path));
 
     const { resource, makeTripleStore } = match.handler

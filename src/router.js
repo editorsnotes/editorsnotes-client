@@ -20,7 +20,13 @@ Router.prototype.add = function (paths) {
 Router.prototype.match = function (url) {
   const match = this.recognizer.recognize(url)
 
-  if (!match) return null;
+  if (!match) {
+    return {
+      handler: {
+        Component: require('./components/main/not_found/component.jsx')
+      }
+    }
+  }
 
   const ret = match[0];
   ret.queryParams = match.queryParams;
