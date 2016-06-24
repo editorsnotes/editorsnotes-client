@@ -60,7 +60,7 @@ const LoggedInUserHomepage = React.createClass({
 
         <div className="clearfix">
           <div className="col col-6">
-            <h3><Translate text="My projects" /></h3>
+            <h3><Translate text="Projects" /></h3>
             {
               projects.map(project =>
                 <div key={project.uri}>
@@ -74,6 +74,16 @@ const LoggedInUserHomepage = React.createClass({
                     Add note
                   </a>
                   </div>
+                </div>
+              )
+            }
+
+            {
+              projects.length === 0 && (
+                <div>
+                  <span className="gray">
+                    You are not a member of any projects.
+                  </span>
                 </div>
               )
             }
