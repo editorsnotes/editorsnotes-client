@@ -4,6 +4,7 @@ var React = require('react')
   , Immutable = require('immutable')
   , editableComponent = require('./editable_component.jsx')
   , { connect } = require('react-redux')
+  , { getType } = require('../../helpers/api')
 
 
 const types = Immutable.Map([
@@ -43,17 +44,23 @@ module.exports = function (Component, RecordType) {
     },
 
     originalData() {
+      let recordData
+
       const { data } = this.props
 
-      return new RecordType(
-        (type === 'topic' && !this.isNew())
-          ? data.getIn(['wn_data', '@graph', '@graph'])
-          : data
-      )
+      if (getType(data) === 'Project') {
+        recordData = {};
+      } else if (type === 'topic') {
+        recordData = data.getIn(['wn_data', '@graph', '@graph'])
+      } else {
+        recordData = data;
+      }
+
+      return new RecordType(recordData);
     },
 
     isNew() {
-      return !this.props.data
+      return getType(this.props.data) === 'Project'
     },
 
     getProjectURL() {
@@ -88,6 +95,8 @@ module.exports = function (Component, RecordType) {
         <Component
             {...this.props}
             {...this.state}
+            data={this.isNew() ? null : this.props.data}
+            project={this.isNew() ? this.props.data : undefined}
             projectURL={this.getProjectURL()}
             handleRecordChange={this.handleRecordChange}
             saveAndRedirect={this.saveAndRedirect} />
