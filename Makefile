@@ -53,11 +53,7 @@ watch: node_modules | static
 	$(NPM_BIN)/watchify $(BROWSERIFY_ENTRY) -o $(JS_BUNDLE) -dv & \
 		$(NPM_BIN)/postcss $(POSTCSS_OPTS) --watch -o $(CSS_BUNDLE)
 
-watch-styleguide: static/style.css | static
-	NODE_ENV=styleguide ./bin/watch-styleguide.sh
-
-
-.PHONY: all clean watch watch-styleguide zip
+.PHONY: all clean watch zip
 
 
 #############
