@@ -1,17 +1,16 @@
 "use strict";
 
-var test = require('blue-tape')
+const test = require('blue-tape')
 
 
 if (process.browser) {
-  test('Citation generator', function (t) {
-    var CitationGenerator = require('../utils/citation_generator')
-      , generator = new CitationGenerator()
-      , testData
+  test('Citation generator', t => {
+    const CitationGenerator = require('../utils/citation_generator')
+        , generator = new CitationGenerator()
 
     t.plan(2);
 
-    testData = {
+    const testData = {
       id: 'testing',
       type: 'book',
       title: 'Living My Life',
@@ -73,3 +72,32 @@ test('LD Parser', t => {
       })
     )
 });
+
+test('Generic response handler', t => {
+  const handleResponse = require('../utils/handle_response')
+
+  return Promise.resolve()
+    .then(() => {
+      const fakeResponse = { ok: true }
+
+      return handleResponse(fakeResponse).then(ret => {
+        t.equal(fakeResponse, ret, 'should pass through responses if they are marked OK');
+      })
+    })
+    .then(() => {
+      const { HTTPClientError, HTTPServerError } = require('../errors')
+
+      const fakeResponse = {
+        headers: new Map([['Content-Type', 'application/json']]),
+        json: () => Promise.resolve({})
+      }
+
+      const fakeClientErrorResp = Object.assign({}, fakeResponse, { status: 400 })
+          , fakeServerErrorResp = Object.assign({}, fakeResponse, { status: 500 })
+
+      return Promise.all([
+        t.shouldFail(handleResponse(fakeClientErrorResp), HTTPClientError),
+        t.shouldFail(handleResponse(fakeServerErrorResp), HTTPServerError)
+      ])
+    })
+})
