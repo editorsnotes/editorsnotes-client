@@ -1,15 +1,26 @@
 const { Store, Resource, Route } = require('./records/state')
+    , { createReducer } = require('redux-immutablejs')
 
-module.exports = function rootReducer(state=(new Store()), action) {
-  let updatedState
+const {
+  REQUEST_API_RESOURCE,
+  REQUEST_NAVIGATION,
+} = require('./types/actions')
 
-  switch (action.type) {
-    case 'REQUEST_API_RESOURCE':
-      return state.setIn(['resources', action.url], new Resource({
-        readyState: 'loading',
+const {
+  PENDING,
+  SUCCESS,
+  FAILURE,
+} = require('./types/readyStates')
+
+module.exports = createReducer(new Store(), {
+    [REQUEST_API_RESOURCE]:
+    (state, action) =>
+      state.setIn(['resources', action.url], new Resource({
+        readyState: LOADING,
         error: null,
         data: null
-      }));
+      })),
+
 
     case 'RECEIVE_API_RESOURCE':
       updatedState = state.setIn(['resources', action.url], new Resource({

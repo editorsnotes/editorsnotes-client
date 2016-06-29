@@ -1,0 +1,18 @@
+exports.items = {
+  NOTE: 'NOTE',
+  TOPIC: 'TOPIC',
+  DOCUMENT: 'DOCUMENT',
+  PROJECT: 'PROJECT',
+}
+
+exports.actions = {
+  REQUEST_API_RESOURCE: 'REQUEST_API_RESOURCE',
+  REQUEST_NAVIGATION: 'REQUEST_NAVIGATION',
+}
+
+exports.readyStates = {
+  UNSENT: 'UNSENT',
+  PENDING: 'PENDING',
+  SUCCESS: 'SUCCESS',
+  FAILURE: 'FAILURE',
+}

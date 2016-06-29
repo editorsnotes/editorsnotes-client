@@ -4,56 +4,17 @@ const Immutable = require('immutable')
     , apiFetch = require('./utils/api_fetch')
     , handleResponse = require('./utils/handle_response')
     , parseLD = require('./utils/parse_ld')
-    , parseURL = require('url').parse
 
 
-function requestAPIResource(url) {
-  url = parseURL(url).path
+const {
+  REQUEST_API_RESOURCE
+} = require('./types').actions
 
-  return {
-    type: 'REQUEST_API_RESOURCE',
-    url
-  }
-}
-
-
-function receiveAPIResource(url, data, triples) {
-  url = parseURL(url).path
-
-  return {
-    type: 'RECEIVE_API_RESOURCE',
-    url,
-    data,
-    triples,
-    time: new Date()
-  }
-}
-
-
-function navigationRequest(path) {
-  return {
-    type: 'NAVIGATION_REQUEST',
-    path
-  }
-}
-
-
-function navigationSucess(path, APIPath) {
-  return {
-    type: 'NAVIGATION_SUCCESS',
-    path,
-    APIPath
-  }
-}
-
-
-function navigationError(path, error) {
-  return {
-    type: 'NAVIGATION_ERROR',
-    path,
-    error
-  }
-}
+const {
+  PENDING,
+  SUCCESS,
+  FAILURE,
+} = require('./types').readyStates
 
 
 function navigateToPath(router, path, req=null) {
@@ -89,31 +50,58 @@ function navigateToPath(router, path, req=null) {
   }
 }
 
-
-function fetchAPIResource(url, headers={}, parseTriples=false) {
+function fetchAPIResource(url, opts={}, parseTriples=false) {
   return (dispatch) => {
+    let statusCode
+
     if (!process.browser) {
       url = global.API_URL + url;
     }
 
-    dispatch(requestAPIResource(url));
+    dispatch({
+      type: REQUEST_API_RESOURCE,
+      url,
+      readyState: PENDING,
+    })
 
-    headers.Accept = 'application/ld+json';
+    opts.headers = Object.assign({}, opts.headers, {
+      Accept: 'application/ld+json'
+    });
 
-    return apiFetch(url, { headers })
+    return apiFetch(url, opts)
       .then(handleResponse)
-      .then(resp => resp.json())
+      .then(resp => {
+        statusCode = resp.status;
+
+        return resp.json();
+      })
       .then(data => Promise.all([
         data,
         Promise.resolve(parseTriples && parseLD(data))
       ]))
       .then(([data, triples]) => {
-        dispatch(receiveAPIResource(url, Immutable.fromJS(data), Immutable.fromJS(triples)));
+        dispatch({
+          type: REQUEST_API_RESOURCE,
+          url,
+          readyState: SUCCESS,
+          statusCode,
+
+          responseData: Immutable.fromJS(data),
+          responseTriples: triples
+        })
 
         return [data, triples];
       })
       .catch(err => {
-        throw new Error(err);
+        // TODO: Log stacktrace
+        dispatch({
+          type: REQUEST_API_RESOURCE,
+          url,
+          readyState: FAILURE,
+          statusCode: err.statusCode,
+
+          responseError: err.data
+        })
       });
   }
 }

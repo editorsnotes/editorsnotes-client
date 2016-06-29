@@ -27,6 +27,7 @@
     "react-redux": "^4.4.5",
     "react-select": "^1.0.0-beta13",
     "redux": "^3.5.2",
+    "redux-immutablejs": "0.0.8",
     "redux-thunk": "^2.1.0",
     "request": "^2.72.0",
     "route-recognizer": "^0.1.11",
@@ -63,6 +64,7 @@
     "postcss-cssnext": "^2.7.0",
     "postcss-import": "^8.1.2",
     "postcss-url": "^5.1.2",
+    "redux-mock-store": "^1.1.1",
     "sinon": "^1.17.4",
     "tape": "^4.6.0",
     "uglify-js": "^2.6.4"

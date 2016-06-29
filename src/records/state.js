@@ -2,7 +2,7 @@
 
 const Immutable = require('immutable')
 
-exports.Store = Immutable.Record({
+exports.ApplicationState = Immutable.Record({
   jed: null,
   user: null,
   application: Immutable.Map({
@@ -10,20 +10,25 @@ exports.Store = Immutable.Record({
     next: null
   }),
   resources: Immutable.Map(),
-});
+}, 'ApplicationState');
 
-exports.Resource = Immutable.Record({
+exports.APIRequest = Immutable.Record({
+  url: null,
   readyState: null,
-  error: null,
-  data: null,
-  triples: null
-});
+  statusCode: null,
+
+  payload: null,
+  responseData: null,
+  responseTriples: null,
+
+  responseError: null
+}, 'APIRequest');
 
 exports.Route = Immutable.Record({
   path: null,
   APIPath: null,
   readyState: null,
   error: null,
-});
+}, 'Route');
 
 Object.freeze(exports);
