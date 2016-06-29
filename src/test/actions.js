@@ -1,10 +1,9 @@
+"use strict";
+
 const test = require('blue-tape')
     , sinon = require('sinon')
-    , thunk = require('redux-thunk').default
-    , configureMockStore = require('redux-mock-store')
     , Immutable = require('immutable')
-
-const mockStore = configureMockStore([thunk])
+    , { mockStore, mockResponse } = require('./mocks')
 
 const {
   REQUEST_API_RESOURCE,
@@ -16,43 +15,38 @@ const {
   FAILURE,
 } = require('../types').readyStates
 
+
+function toJS(obj) {
+  return Immutable.fromJS(obj).toJS();
+}
+
+
 if (!process.browser) {
   global.fetch = () => null;
   global.API_URL = 'http://testserver'
 }
 
 
-test('Fetching API resource', t => {
+test('API fetching actions', t => {
   const { fetchAPIResource } = require('../actions')
-
-  const stub = sinon.stub(global, 'fetch')
+      , stub = sinon.stub(global, 'fetch')
       , store = mockStore()
 
-  stub.onCall(0).returns(Promise.resolve({
-    ok: true,
-    status: 200,
-    json: () => Promise.resolve({
-      key: 'value'
-    })
-  }))
+  stub
+    .onCall(0)
+    .returns(mockResponse(200, { key: 'value' }))
 
-  stub.onCall(1).returns(Promise.resolve({
-    status: 404,
-    headers: new Map([
-      ['Content-Type', 'application/json']
-    ]),
-    json: () => Promise.resolve({
-      detail: 'Page not found'
-    })
-  }))
+  stub
+    .onCall(1)
+    .returns(mockResponse(404, { detail: 'Page not found' }))
 
   return Promise.resolve()
     .then(() =>
       store.dispatch(fetchAPIResource('/topics/123/'))
         .then(() => {
-          t.deepEqual(
-            Immutable.fromJS(store.getActions()).toJS(),
-            Immutable.fromJS([
+          t.deepEqual(...toJS([
+            store.getActions(),
+            [
               {
                 type: REQUEST_API_RESOURCE,
                 readyState: PENDING,
@@ -66,8 +60,8 @@ test('Fetching API resource', t => {
                 responseData: { key: 'value' },
                 responseTriples: false
               }
-            ]).toJS()
-          )
+            ]
+          ]));
 
           store.clearActions();
         })
@@ -75,9 +69,9 @@ test('Fetching API resource', t => {
     .then(() =>
       store.dispatch(fetchAPIResource('/qwyjibo/'))
         .then(() => {
-          t.deepEqual(
-            Immutable.fromJS(store.getActions()).toJS(),
-            Immutable.fromJS([
+          t.deepEqual(...toJS([
+            store.getActions(),
+            [
               {
                 type: REQUEST_API_RESOURCE,
                 readyState: PENDING,
@@ -92,10 +86,10 @@ test('Fetching API resource', t => {
                   detail: 'Page not found'
                 }
               }
-            ]).toJS()
-          );
+            ]
+          ]));
 
           stub.restore();
         })
     )
-})
+});
