@@ -85,7 +85,7 @@ $(VERSIONED_CSS_BUNDLE): $(CSS_FILES) | static
 	$(NPM_BIN)/postcss $(POSTCSS_OPTS) -o $@
 
 $(MINIFIED_VERSIONED_CSS_BUNDLE): $(VERSIONED_CSS_BUNDLE)
-	$(NPM_BIN)/cleancss $< -o $@
+	$(NPM_BIN)/cssnano $< -o $@
 	rm -f static/editorsnotes.css
 	ln -s $(notdir $@) static/editorsnotes.css
 
