@@ -16,8 +16,12 @@ const {
 } = require('../types').readyStates
 
 
-function toJS(obj) {
-  return Immutable.fromJS(obj).toJS();
+function normalize(actionLists) {
+  return Immutable.fromJS(actionLists)
+    .map(actionList =>
+      actionList.map(action =>
+        action.delete('id').delete('started').delete('updated')))
+    .toJS()
 }
 
 
@@ -44,7 +48,7 @@ test('API fetching actions', t => {
     .then(() =>
       store.dispatch(fetchAPIResource('/topics/123/'))
         .then(() => {
-          t.deepEqual(...toJS([
+          t.deepEqual(...normalize([
             store.getActions(),
             [
               {
@@ -69,7 +73,7 @@ test('API fetching actions', t => {
     .then(() =>
       store.dispatch(fetchAPIResource('/qwyjibo/'))
         .then(() => {
-          t.deepEqual(...toJS([
+          t.deepEqual(...normalize([
             store.getActions(),
             [
               {

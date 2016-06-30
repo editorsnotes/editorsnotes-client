@@ -18,8 +18,19 @@ const {
 } = require('./types').readyStates
 
 
-function dispatchReadyState(dispatch, type, readyState, opts) {
-  return dispatch(Object.assign({}, opts, { type, readyState }));
+function dispatchReadyState(dispatch, type) {
+  const started = new Date().getTime()
+      , id = Math.random().toString(16).slice(2)
+
+  return (readyState, opts) => {
+    dispatch(Object.assign({}, opts, {
+      id,
+      type,
+      readyState,
+      started,
+      updated: new Date().getTime(),
+    }))
+  }
 }
 
 
@@ -30,18 +41,14 @@ function navigateToPath(router, path, req=null) {
         , resourceURL = resource ? resource(path) : null
         , headers = {}
 
-    const updateReadyState = dispatchReadyState.bind(
-      null,
-      dispatch,
-      REQUEST_NAVIGATION
-    );
+    const updateRequest = dispatchReadyState(dispatch, REQUEST_NAVIGATION);
 
     if (req) {
       headers.Host = req.headers.host;
       headers.cookie = req.headers.cookie;
     }
 
-    updateReadyState(PENDING, { path });
+    updateRequest(PENDING, { path });
 
     const promises = [
       dispatch(fetchAPIResource('/me/')),
@@ -52,10 +59,10 @@ function navigateToPath(router, path, req=null) {
 
     return Promise.all(promises)
       .then(() => {
-        updateReadyState(SUCCESS, { path });
+        updateRequest(SUCCESS, { path });
       })
       .catch(err => {
-        updateReadyState(FAILURE, { path, err });
+        updateRequest(FAILURE, { path, err });
       })
 
   }
@@ -65,17 +72,13 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
   return (dispatch) => {
     let statusCode
 
-    const updateReadyState = dispatchReadyState.bind(
-      null,
-      dispatch,
-      REQUEST_API_RESOURCE
-    );
+    const updateRequest = dispatchReadyState(dispatch, REQUEST_API_RESOURCE);
 
     if (!process.browser) {
       url = global.API_URL + url;
     }
 
-    updateReadyState(PENDING, { url });
+    updateRequest(PENDING, { url });
 
     opts.headers = Object.assign({}, opts.headers, {
       Accept: 'application/ld+json'
@@ -93,7 +96,7 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
         Promise.resolve(parseTriples && parseLD(data))
       ]))
       .then(([data, triples]) => {
-        updateReadyState(SUCCESS, {
+        updateRequest(SUCCESS, {
           url,
           statusCode,
           responseData: Immutable.fromJS(data),
@@ -102,7 +105,7 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
       })
       .catch(err => {
         // TODO: Log stacktrace
-        updateReadyState(FAILURE, {
+        updateRequest(FAILURE, {
           url,
           statusCode: err.statusCode,
           responseError: err.data
