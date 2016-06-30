@@ -112,25 +112,42 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
 }
 
 
-function fetchUser(headers={}) {
+function typeFromRecord(record) {
+  const Note = require('../../records/note')
+      , Topic = require('../../records/topic')
+      , Document = require('../../records/document')
+
+  if (record instanceof Document) return 'document';
+  if (record instanceof Topic) return 'topic';
+  if (record instanceof Note) return 'note';
+
+  throw new Error('Could not detect item type from record.');
+}
+
+function saveItem(id, projectURL, record) {
   return dispatch => {
-    const url = global.API_URL + '/me/'
+    const isNew = id === null
+        , type = typeFromRecord(record)
+        , method = isNew ? 'post' : 'put'
+        , body = JSON.stringify(record)
 
-    headers.Accept = 'application/ld+json';
+    let url = `${projectURL}${type}s/`
 
-    return apiFetch(url, { headers })
-      .then(resp => resp.status === 403
-        ? null
-        : resp.json().then(data => dispatch(
-            receiveAPIResource(url, Immutable.fromJS(data))
-          ))
-      )
+    if (!isNew) {
+      url += `${id}/`;
+    }
+
+    if (type === 'topic' && !isNew) {
+      url += 'w/';
+    }
+
+    return dispatch(fetchAPIResource(url, { method, body }));
   }
 }
 
 
 module.exports = {
   fetchAPIResource,
-  fetchUser,
-  navigateToPath
+  navigateToPath,
+  saveItem,
 }

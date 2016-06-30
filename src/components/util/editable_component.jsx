@@ -5,18 +5,6 @@
 var React = require('react')
   , Immutable = require('immutable')
 
-function typeFromRecord(record) {
-  var Note = require('../../records/note')
-    , Topic = require('../../records/topic')
-    , Document = require('../../records/document')
-
-  if (record instanceof Document) return 'document';
-  if (record instanceof Topic) return 'topic';
-  if (record instanceof Note) return 'note';
-
-  throw new Error('Could not detect item type from record.');
-}
-
 // TODO: Decide on API. Should type be hardcoded, or should it be determined
 // by record type?
 module.exports = function makeEditableComponent(Component, type) {
