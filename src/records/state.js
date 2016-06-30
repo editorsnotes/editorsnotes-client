@@ -14,6 +14,8 @@ exports.ApplicationState = Immutable.Record({
 
 exports.APIRequest = Immutable.Record({
   url: null,
+  started: null,
+  updated: null,
   readyState: null,
   statusCode: null,
 
