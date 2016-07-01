@@ -1,6 +1,6 @@
 "use strict";
 
-require('babel/register')({ only: /src/ });
+require('babel-register')({ only: /src/ });
 
 var request = require('request')
   , server = require('../src/server')
