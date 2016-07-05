@@ -20,7 +20,7 @@ function normalize(actionLists) {
   return Immutable.fromJS(actionLists)
     .map(actionList =>
       actionList.map(action =>
-        action.delete('id').delete('started').delete('updated')))
+        action.delete('requestID').delete('started').delete('updated')))
     .toJS()
 }
 
@@ -31,6 +31,7 @@ if (!process.browser) {
 }
 
 
+// TODO: Add test for ERROR state (i.e. network error)
 test('API fetching actions', t => {
   const { fetchAPIResource } = require('../actions')
       , stub = sinon.stub(global, 'fetch')
@@ -45,33 +46,37 @@ test('API fetching actions', t => {
     .returns(mockResponse(404, { detail: 'Page not found' }))
 
   return Promise.resolve()
-    .then(() =>
-      store.dispatch(fetchAPIResource('/topics/123/'))
-        .then(() => {
-          t.deepEqual(...normalize([
-            store.getActions(),
-            [
-              {
-                type: REQUEST_API_RESOURCE,
-                readyState: PENDING,
-                url: 'http://testserver/topics/123/'
-              },
-              {
-                type: REQUEST_API_RESOURCE,
-                readyState: SUCCESS,
-                url: 'http://testserver/topics/123/',
-                statusCode: 200,
-                responseData: { key: 'value' },
-                responseTriples: false
-              }
-            ]
-          ]));
+    .then(() => {
+      const { promise, requestID } = store.dispatch(fetchAPIResource('/topics/123/'))
 
-          store.clearActions();
-        })
-    )
+      t.ok(requestID && typeof requestID === 'string', 'generate a unique request identifier');
+
+      return promise.then(() => {
+        t.deepEqual(...normalize([
+          store.getActions(),
+          [
+            {
+              type: REQUEST_API_RESOURCE,
+              readyState: PENDING,
+              url: 'http://testserver/topics/123/'
+            },
+            {
+              type: REQUEST_API_RESOURCE,
+              readyState: SUCCESS,
+              url: 'http://testserver/topics/123/',
+              statusCode: 200,
+              responseData: { key: 'value' },
+              responseTriples: false
+            }
+          ]
+        ]));
+
+        store.clearActions();
+      })
+    })
     .then(() =>
       store.dispatch(fetchAPIResource('/qwyjibo/'))
+        .promise
         .then(() => {
           t.deepEqual(...normalize([
             store.getActions(),

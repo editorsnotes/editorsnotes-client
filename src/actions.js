@@ -20,17 +20,16 @@ const {
 
 function dispatchReadyState(dispatch, type) {
   const started = new Date().getTime()
-      , id = Math.random().toString(16).slice(2)
+      , requestID = Math.random().toString(16).slice(2)
 
-  return (readyState, opts) => {
+  return (readyState, opts) =>
     dispatch(Object.assign({}, opts, {
-      id,
+      requestID,
       type,
       readyState,
       started,
       updated: new Date().getTime(),
     }))
-  }
 }
 
 
@@ -48,7 +47,7 @@ function navigateToPath(router, path, req=null) {
       headers.cookie = req.headers.cookie;
     }
 
-    updateRequest(PENDING, { path });
+    const { requestID } = updateRequest(PENDING, { path });
 
     const promises = [
       dispatch(fetchAPIResource('/me/')),
@@ -57,14 +56,16 @@ function navigateToPath(router, path, req=null) {
       )
     ]
 
-    return Promise.all(promises)
-      .then(() => {
+    const promise = Promise.all(promises).then(
+      () => {
         updateRequest(SUCCESS, { path });
-      })
-      .catch(err => {
+      },
+      err => {
         updateRequest(FAILURE, { path, err });
-      })
+      }
+    )
 
+    return { requestID, promise }
   }
 }
 
@@ -78,13 +79,13 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
       url = global.API_URL + url;
     }
 
-    updateRequest(PENDING, { url });
+    const { requestID } = updateRequest(PENDING, { url });
 
     opts.headers = Object.assign({}, opts.headers, {
       Accept: 'application/ld+json'
     });
 
-    return apiFetch(url, opts)
+    const promise = apiFetch(url, opts)
       .then(handleResponse)
       .then(resp => {
         statusCode = resp.status;
@@ -111,6 +112,8 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
           responseError: err.data
         });
       });
+
+    return { requestID, promise }
   }
 }
 

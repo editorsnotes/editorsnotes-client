@@ -4,17 +4,26 @@ const { ApplicationState, APIRequest, Route } = require('./records/state')
 const {
   REQUEST_API_RESOURCE,
   REQUEST_NAVIGATION,
-} = require('./types/actions')
+} = require('./types').actions
 
 const {
   PENDING,
   SUCCESS,
   FAILURE,
-} = require('./types/readyStates')
+} = require('./types').readyStates
 
 module.exports = createReducer(new ApplicationState(), {
     [REQUEST_API_RESOURCE]: (state, action) => {
-      return state.setIn(['resources', action.url], new APIRequest(action))
+      let updated = state
+        .setIn(['requests', action.requestID], new APIRequest(action))
+
+      if (action.readyState === SUCCESS) {
+        const url = action.url || action.responseData.get('url')
+
+        updated = updated.setIn(['resources', url], action.responseData);
+      }
+
+      return updated;
     },
 
     [REQUEST_NAVIGATION]: (state, action) => {
