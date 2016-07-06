@@ -30,17 +30,15 @@ const Application = React.createClass({
     let child = null
       , childProps = {}
 
-    if (currentRoute) {
-      const match = router.match(currentRoute.get('path'))
+    const match = router.match(currentRoute.get('path'))
 
-      if (match) {
-        const { Component, componentProps } = match.handler
+    if (match) {
+      const { Component, componentProps } = match.handler
 
-        if (componentProps) childProps = componentProps()
-        child = <Component {...childProps} />
-      } else {
-        child = <span>Could not find { currentRoute.get('path') }</span>
-      }
+      if (componentProps) childProps = componentProps()
+      child = <Component {...childProps} />
+    } else {
+      child = <span>Could not find { currentRoute.get('path') }</span>
     }
 
 
