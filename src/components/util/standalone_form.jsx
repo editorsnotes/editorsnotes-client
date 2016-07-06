@@ -1,10 +1,11 @@
 "use strict";
 
-var React = require('react')
-  , Immutable = require('immutable')
-  , editableComponent = require('./editable_component.jsx')
-  , { connect } = require('react-redux')
-  , { getType } = require('../../helpers/api')
+const React = require('react')
+    , Immutable = require('immutable')
+    , ItemEditor = require('./item_editor.jsx')
+    , { compose } = require('redux')
+    , { connect } = require('react-redux')
+    , { getType } = require('../../helpers/api')
 
 
 const types = Immutable.Map([
@@ -17,7 +18,12 @@ const types = Immutable.Map([
 module.exports = function (Component, RecordType) {
   const type = types.get(RecordType);
 
-  var StandaloneForm = React.createClass({
+  const StandaloneForm = React.createClass({
+    propTypes: {
+      data: React.PropTypes.instanceOf(Immutable.Map),
+      save: React.PropTypes.func.isRequired,
+    },
+
     getInitialState() {
       return {
         [type]: this.originalData(),
@@ -30,8 +36,8 @@ module.exports = function (Component, RecordType) {
 
     componentDidMount() {
       window.onbeforeunload = () => {
-        var updated = this.state[type]
-          , original = this.originalData()
+        const updated = this.state[type]
+            , original = this.originalData()
 
         if (!updated.equals(original)) {
           return 'There are unsaved pages on this page. Closing it will lose your changes.';
@@ -74,18 +80,18 @@ module.exports = function (Component, RecordType) {
     },
 
     handleSaveSuccess(response) {
-      var redirect = this.isNew()
-        ? response.headers.get('Location')
-        : this.props.data.get('url')
+      const redirect = this.isNew()
+          ? response.headers.get('Location')
+          : this.props.data.get('url')
 
       window.onbeforeunload = null;
       window.location.href = redirect;
     },
 
     saveAndRedirect() {
-      var { save } = this.props
-        , updatedData = this.state[types.get(RecordType)]
-        , id = this.isNew() ? null : this.props.data.get('id')
+      const { save } = this.props
+          , updatedData = this.state[types.get(RecordType)]
+          , id = this.isNew() ? null : this.props.data.get('id')
 
       save(id, this.getProjectURL(), updatedData).then(this.handleSaveSuccess);
     },
@@ -104,5 +110,8 @@ module.exports = function (Component, RecordType) {
     }
   });
 
-  return connect(require('../main/default_api_mapper'))(StandaloneForm);
+  return compose(
+    connect(require('../main/default_api_mapper')),
+    ItemEditor
+  )(StandaloneForm)
 }

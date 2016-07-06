@@ -2,12 +2,11 @@
 
 /* eslint camelcase:0 */
 
-var React = require('react')
-  , Immutable = require('immutable')
-  , Editable = require('../util/editable_component.jsx')
-  , Translate = require('./translate.jsx')
-  , commonStrings = require('../common_strings')
-  , AddInlineItem
+const React = require('react')
+    , Immutable = require('immutable')
+    , Translate = require('./translate.jsx')
+    , ItemEditor = require('../util/item_editor.jsx')
+    , commonStrings = require('../common_strings')
 
 
 const FORM_COMPONENTS = {
@@ -18,9 +17,9 @@ const FORM_COMPONENTS = {
 
 
 function makeItem(type, text) {
-  var Note = require('../../records/note')
-    , Topic = require('../../records/topic')
-    , Document = require('../../records/document')
+  const Note = require('../../records/note')
+      , Topic = require('../../records/topic')
+      , Document = require('../../records/document')
 
   switch (type) {
   case 'note':
@@ -33,16 +32,16 @@ function makeItem(type, text) {
 }
 
 
-AddInlineItem = React.createClass({
+const AddInlineItem = React.createClass({
   propTypes: {
+    className: React.PropTypes.string,
     onSelect: React.PropTypes.func.isRequired,
     onCancel: React.PropTypes.func.isRequired,
     type: React.PropTypes.string.isRequired,
-    projectURL: React.PropTypes.string.isRequired,
     initialText: React.PropTypes.string.isRequired,
     autofocus: React.PropTypes.bool,
 
-    /* from Editable */
+    /* from ItemEditor */
     save: React.PropTypes.func.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map),
     loading: React.PropTypes.bool.isRequired
@@ -52,30 +51,19 @@ AddInlineItem = React.createClass({
     return { item: null }
   },
 
-  handleSave() {
-    var { save, projectURL, onSelect } = this.props
-      , { item } = this.state
-
-    save(null, projectURL, item)
-      .then(resp => resp.json())
-      .then(Immutable.fromJS)
-      .then(onSelect)
-  },
-
   componentWillMount() {
-    var { type, initialText } = this.props
-      , item = makeItem(type, initialText)
+    const { type, initialText } = this.props
+        , item = makeItem(type, initialText)
 
     this.setState({ item });
   },
 
   componentDidMount() {
-    var { autofocus } = this.props
-      , firstInput
+    const { autofocus } = this.props
 
     if (!autofocus) return;
 
-    firstInput = this.refs.form.querySelector('input');
+    const firstInput = this.refs.form.querySelector('input');
 
     if (firstInput) {
       firstInput.focus();
@@ -84,12 +72,12 @@ AddInlineItem = React.createClass({
   },
 
   render() {
-    var Spinner = require('./spinner/component.jsx')
-      , spinnerOpts = require('./spinner/opts')
-      , { type, loading, onCancel, className } = this.props
-      , { item } = this.state
-      , FormComponent = FORM_COMPONENTS[type]
-      , formProps = { [type]: item }
+    const Spinner = require('./spinner/component.jsx')
+        , spinnerOpts = require('./spinner/opts')
+        , { type, loading, onCancel, className } = this.props
+        , { item } = this.state
+        , FormComponent = FORM_COMPONENTS[type]
+        , formProps = { [type]: item }
 
     return (
       <div className={className}>
@@ -136,4 +124,4 @@ AddInlineItem = React.createClass({
   }
 });
 
-module.exports = Editable(AddInlineItem);
+module.exports = ItemEditor(AddInlineItem);

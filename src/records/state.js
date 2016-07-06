@@ -5,15 +5,20 @@ const Immutable = require('immutable')
 exports.ApplicationState = Immutable.Record({
   jed: null,
   user: null,
+
   application: Immutable.Map({
     current: null,
     next: null
   }),
+
   resources: Immutable.Map(),
+  requests: Immutable.Map(),
 }, 'ApplicationState');
 
 exports.APIRequest = Immutable.Record({
+  requestID: null,
   url: null,
+  type: null,
   started: null,
   updated: null,
   readyState: null,
