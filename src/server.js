@@ -52,6 +52,7 @@ module.exports = {
         , initialState = new ApplicationState({ jed })
 
     const server = http.createServer((req, res) => {
+      const start = new Date();
       const store = createStore(
         rootReducer,
         initialState,
@@ -62,6 +63,8 @@ module.exports = {
         .promise
         .then(() => {
           let bodyHTML
+
+          let msg = `[${start.toDateString()} ${start.toLocaleTimeString()}] GET ${req.url}`
 
           try {
             const applicationHTML = renderToString(<Root store={store} />)
@@ -80,7 +83,7 @@ module.exports = {
     </script>
             `
 
-
+            msg += ' (200 OK) '
           } catch (e) {
             const fakeStore = createStore(() => Immutable.Map(), Immutable.Map())
 
@@ -88,6 +91,11 @@ module.exports = {
               <div>
                 <h1>Server error</h1>
                 <pre className="p2">{ e.stack }</pre>
+
+                <h2>Store state</h2>
+                <pre className="p2">
+                {JSON.stringify(store.getState(), true, '  ')}
+                </pre>
               </div>
             )
 
@@ -105,11 +113,17 @@ module.exports = {
               </Provider>
             )
 
+            msg += ' (500 ERROR) '
             process.stderr.write(e.stack + '\n');
           }
+          const html = render(bodyHTML);
+
+          msg += `${bodyHTML.length} ${new Date().getTime() - start.getTime()}ms\n`;
+
+          process.stdout.write(msg);
 
           res.writeHead(200, { 'Content-Type': 'text/html' });
-          res.end(render(bodyHTML));
+          res.end(html);
         })
         .catch(err => {
           // It should never get here, right?
