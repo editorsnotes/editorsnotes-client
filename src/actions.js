@@ -50,10 +50,10 @@ function navigateToPath(router, path, req=null) {
     const { requestID } = updateRequest(PENDING, { path });
 
     const promises = [
-      dispatch(fetchAPIResource('/me/')),
+      dispatch(fetchAPIResource('/me/', { headers })).promise,
       resourceURL && dispatch(
-        fetchAPIResource(resourceURL, headers, makeTripleStore)
-      )
+        fetchAPIResource(resourceURL, { headers }, makeTripleStore)
+      ).promise
     ]
 
     const promise = Promise.all(promises).then(
@@ -119,9 +119,9 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
 
 
 function typeFromRecord(record) {
-  const Note = require('../../records/note')
-      , Topic = require('../../records/topic')
-      , Document = require('../../records/document')
+  const Note = require('./records/note')
+      , Topic = require('./records/topic')
+      , Document = require('./records/document')
 
   if (record instanceof Document) return 'document';
   if (record instanceof Topic) return 'topic';

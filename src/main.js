@@ -28,9 +28,9 @@ function initialize() {
 
 function getInitialState() {
   const bootstrap = window.EDITORSNOTES_BOOTSTRAP
-      , { Store } = require('./records/state')
+      , { ApplicationState } = require('./records/state')
 
-  let state = new Store({ jed: require('./jed')() });
+  let state = new ApplicationState({ jed: require('./jed')() });
 
   if (bootstrap) {
     state = state.merge(Immutable.fromJS(bootstrap));
