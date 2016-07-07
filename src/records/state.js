@@ -33,7 +33,7 @@ exports.APIRequest = Immutable.Record({
 
 exports.Route = Immutable.Record({
   path: null,
-  APIPath: null,
+  apiPath: null,
   readyState: null,
   error: null,
 }, 'Route');

@@ -3,7 +3,7 @@
 const N3 = require('n3')
 
 module.exports = function mapStateToProps(state) {
-  const apiResourceURL = state.getIn(['application', 'current', 'APIPath'])
+  const apiResourceURL = state.getIn(['application', 'current', 'apiPath'])
       , resource = state.getIn(['resources', apiResourceURL])
 
   let store = null;
