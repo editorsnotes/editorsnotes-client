@@ -75,9 +75,7 @@ module.exports = {
               .filter((val, key) => key !== 'jed')
 
             bodyHTML = `
-    <div id="react-app" style="height: 100%">
-      ${applicationHTML}
-    </div>
+    <div id="react-app" style="height: 100%">${applicationHTML}</div>
     <script type="text/javascript">
       window.EDITORSNOTES_BOOTSTRAP = ${JSON.stringify(bootstrap, true, '  ')};
     </script>
@@ -94,7 +92,7 @@ module.exports = {
 
                 <h2>Store state</h2>
                 <pre className="p2">
-                {JSON.stringify(store.getState(), true, '  ')}
+                {JSON.stringify(store.getState().set('jed', '(omitted)'), true, '  ')}
                 </pre>
               </div>
             )
