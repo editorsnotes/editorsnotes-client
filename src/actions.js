@@ -118,7 +118,7 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
           statusCode,
           responseHeaders,
           responseData: Immutable.fromJS(data),
-          responseTriples: triples
+          responseTriples: Immutable.fromJS(triples)
         })
       })
       .catch(err => {
