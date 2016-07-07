@@ -10,7 +10,7 @@ const UserHomepage = require('./logged_in_homepage.jsx')
 
 function mapStateToProps(state) {
   return {
-    user: state.get('user'),
+    user: state.getIn(['user', 'data']),
   }
 }
 

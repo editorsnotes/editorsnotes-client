@@ -13,7 +13,7 @@ TopicForm = React.createClass({
     topic: React.PropTypes.instanceOf(Topic).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
-    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map),
     minimal: React.PropTypes.bool
   },
 

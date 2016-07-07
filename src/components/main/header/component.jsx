@@ -7,12 +7,12 @@ const React = require('react')
 
 function mapStateToProps(state) {
   return {
-    user: state.get('user'),
+    user: state.getIn(['user', 'data']),
     path: state.getIn(['application', 'current', 'path']),
   }
 }
 
-const UserMenu = ({ user, path }) =>
+const UserMenu = ({ user, path }) => (
   !user
     ? <a href={`/auth/signin?return_to=${path}`}>Sign in</a>
     : <div>
@@ -22,6 +22,7 @@ const UserMenu = ({ user, path }) =>
         </a>
         {/* <a href="/auth/signout">Sign out</a> */ }
       </div>
+)
 
 const Header = ({ user, path, noContainer }) =>
   <nav className={classnames('bg-black', {
