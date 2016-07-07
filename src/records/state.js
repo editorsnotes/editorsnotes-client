@@ -25,11 +25,21 @@ exports.APIRequest = Immutable.Record({
   statusCode: null,
 
   payload: null,
+  responseError: null,
+  responseHeaders: null,
+
+  /*
   responseData: null,
   responseTriples: null,
-
-  responseError: null
+  */
 }, 'APIRequest');
+
+exports.APIResource = Immutable.Record({
+  url: null,
+  data: null,
+  triples: null,
+  updated: null,
+}, 'APIResource')
 
 exports.Route = Immutable.Record({
   path: null,

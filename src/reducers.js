@@ -1,4 +1,5 @@
-const { ApplicationState, APIRequest, Route } = require('./records/state')
+const url = require('url')
+    , { ApplicationState, APIRequest, APIResource, Route } = require('./records/state')
     , { createReducer } = require('redux-immutablejs')
 
 const {
@@ -18,9 +19,20 @@ module.exports = createReducer(new ApplicationState(), {
         .setIn(['requests', action.requestID], new APIRequest(action))
 
       if (action.readyState === SUCCESS) {
-        const url = action.url || action.responseData.get('url')
+        const uri = url.parse(action.url || action.responseData.get('url')).pathname
 
-        updated = updated.setIn(['resources', url], action.responseData);
+        const resource = new APIResource({
+          url: uri,
+          data: action.responseData,
+          triples: action.responseTriples,
+          updated: action.updated,
+        })
+
+        const path = uri === '/me/'
+          ? ['user']
+          : ['resources', uri]
+
+        updated = updated.setIn(path, resource);
       }
 
       return updated;
