@@ -38,6 +38,7 @@ function navigateToPath(router, path, req=null) {
     const match = router.match(path)
         , { resource, makeTripleStore } = match.handler
         , apiPath = resource ? resource(path) : null
+        , skipUserRequest = req && !req.headers.cookie
         , headers = {}
 
     const updateRequest = dispatchReadyState(dispatch, REQUEST_NAVIGATION);
@@ -50,7 +51,7 @@ function navigateToPath(router, path, req=null) {
     const { requestID } = updateRequest(PENDING, { path, apiPath });
 
     const promises = [
-      dispatch(fetchAPIResource('/me/', { headers })).promise,
+      !skipUserRequest && dispatch(fetchAPIResource('/me/', { headers })).promise,
       apiPath && dispatch(
         fetchAPIResource(apiPath, { headers }, makeTripleStore)
       ).promise
