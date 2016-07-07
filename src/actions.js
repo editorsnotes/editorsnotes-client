@@ -69,9 +69,16 @@ function navigateToPath(router, path, req=null) {
   }
 }
 
+const PASSED_HEADERS = [
+  'Location',
+  'Date',
+  'Content-Type',
+]
+
 function fetchAPIResource(url, opts={}, parseTriples=false) {
   return (dispatch) => {
     let statusCode
+      , responseHeaders = {}
 
     const updateRequest = dispatchReadyState(dispatch, REQUEST_API_RESOURCE);
 
@@ -88,7 +95,16 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
     const promise = apiFetch(url, opts)
       .then(handleResponse)
       .then(resp => {
+
         statusCode = resp.status;
+
+        PASSED_HEADERS.forEach(header => {
+          const value = resp.headers.get(header);
+
+          if (value) {
+            responseHeaders[header] = value;
+          }
+        });
 
         return resp.json();
       })
@@ -100,6 +116,7 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
         updateRequest(SUCCESS, {
           url,
           statusCode,
+          responseHeaders,
           responseData: Immutable.fromJS(data),
           responseTriples: triples
         })
@@ -109,6 +126,7 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
         updateRequest(FAILURE, {
           url,
           statusCode: err.statusCode,
+          responseHeaders,
           responseError: err.data
         });
       });
