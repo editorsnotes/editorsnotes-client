@@ -62,7 +62,8 @@ module.exports = {
       store.dispatch(navigateToPath(router, req.url, req))
         .promise
         .then(() => {
-          let bodyHTML
+          let renderClient = true
+            , bodyHTML
 
           let msg = `[${start.toDateString()} ${start.toLocaleTimeString()}] GET ${req.url}`
 
@@ -83,6 +84,8 @@ module.exports = {
 
             msg += ' (200 OK) '
           } catch (e) {
+            renderClient = false;
+
             const fakeStore = createStore(() => Immutable.Map(), Immutable.Map())
 
             const ErrorComponent = () => (
@@ -114,7 +117,7 @@ module.exports = {
             msg += ' (500 ERROR) '
             process.stderr.write(e.stack + '\n');
           }
-          const html = render(bodyHTML);
+          const html = render(bodyHTML, renderClient);
 
           msg += `${bodyHTML.length} ${new Date().getTime() - start.getTime()}ms\n`;
 
