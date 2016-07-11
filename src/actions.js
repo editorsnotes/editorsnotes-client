@@ -94,11 +94,7 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
     });
 
     const promise = apiFetch(url, opts)
-      .then(handleResponse)
       .then(resp => {
-
-        statusCode = resp.status;
-
         PASSED_HEADERS.forEach(header => {
           const value = resp.headers.get(header);
 
@@ -106,6 +102,12 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
             responseHeaders[header] = value;
           }
         });
+
+        return resp;
+      })
+      .then(handleResponse)
+      .then(resp => {
+        statusCode = resp.status;
 
         return resp.json();
       })

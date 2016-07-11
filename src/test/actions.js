@@ -66,6 +66,7 @@ test('API fetching actions', t => {
               url: 'http://testserver/topics/123/',
               statusCode: 200,
               responseData: { key: 'value' },
+              responseHeaders: { 'Content-Type': 'application/json' },
               responseTriples: false
             }
           ]
@@ -93,7 +94,8 @@ test('API fetching actions', t => {
                 statusCode: 404,
                 responseError: {
                   detail: 'Page not found'
-                }
+                },
+                responseHeaders: { 'Content-Type': 'application/json' },
               }
             ]
           ]));
