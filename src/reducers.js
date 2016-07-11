@@ -13,6 +13,8 @@ const {
   FAILURE,
 } = require('./types').readyStates
 
+const PROJECT_REGEX = /^\/projects\/[^\/]+\//
+
 module.exports = createReducer(new ApplicationState(), {
     [REQUEST_API_RESOURCE]: (state, action) => {
       let updated = state
@@ -39,6 +41,8 @@ module.exports = createReducer(new ApplicationState(), {
     },
 
     [REQUEST_NAVIGATION]: (state, action) => {
+      const projectURL = PROJECT_REGEX.exec(action.path)
+
       switch (action.readyState) {
         case PENDING:
         case FAILURE:
@@ -49,6 +53,7 @@ module.exports = createReducer(new ApplicationState(), {
           return state
             .setIn(['application', 'next'], null)
             .setIn(['application', 'current'], new Route(action))
+            .setIn(['application', 'currentProjectURL'], projectURL && projectURL[0])
 
         default:
           throw Error('Invalid readyState');

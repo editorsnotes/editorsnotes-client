@@ -7,9 +7,11 @@ exports.ApplicationState = Immutable.Record({
   user: null,
 
   application: Immutable.Map({
+    currentProjectURL: null,
     current: null,
     next: null
   }),
+
 
   resources: Immutable.Map(),
   requests: Immutable.Map(),
