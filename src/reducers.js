@@ -21,7 +21,7 @@ module.exports = createReducer(new ApplicationState(), {
         .setIn(['requests', action.requestID], new APIRequest(action))
 
       if (action.readyState === SUCCESS) {
-        const uri = url.parse(action.url || action.responseData.get('url')).pathname
+        const uri = url.parse(action.url || action.responseData.get('url')).path
 
         const resource = new APIResource({
           url: uri,
