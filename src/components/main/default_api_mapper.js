@@ -14,5 +14,9 @@ module.exports = function mapStateToProps(state) {
     store.addTriples(resource.get('triples').toJS());
   }
 
-  return resource.toMap().set('store', store).toObject();
+  return resource
+    .toMap()
+    .set('store', store)
+    .set('projectURL', state.getIn(['application', 'currentProjectURL']))
+    .toObject();
 }

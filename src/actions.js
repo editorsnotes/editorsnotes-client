@@ -151,9 +151,11 @@ function typeFromRecord(record) {
   throw new Error('Could not detect item type from record.');
 }
 
-function saveItem(id, projectURL, record) {
-  return dispatch => {
-    const isNew = id === null
+
+function saveItem(id, record) {
+  return (dispatch, getState) => {
+    const projectURL = getState().getIn(['application', 'currentProjectURL'])
+        , isNew = id === null
         , type = typeFromRecord(record)
         , method = isNew ? 'post' : 'put'
         , body = JSON.stringify(record)
