@@ -130,7 +130,9 @@ function fetchAPIResource(url, opts={}, parseTriples=false) {
           url,
           statusCode: err.statusCode,
           responseHeaders,
-          responseError: err.data
+          responseError: Immutable.fromJS(err.data)
+            .delete('@context')
+            .delete('hydra:operation')
         });
       });
 
