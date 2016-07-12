@@ -10,28 +10,28 @@ const {
   PENDING,
 } = require('../../types').readyStates
 
-function mapStateToProps({ activeRequests }, { requestID }) {
-  const request = requestID && activeRequests.get(requestID)
+function mapStateToProps({ requests }, { requestID }) {
+  const request = requestID && requests.get(requestID)
 
   return {
     request,
-    completed: request && request.readyState === SUCCESS,
-    loading: request && request.readyState === PENDING,
+    completed: request ? request.readyState === SUCCESS : false,
+    loading: request ? request.readyState === PENDING : false,
     errors: request && request.responseError,
   }
 }
 
-function mapDispatchToProps(dispatch, { projectURL }) {
+function mapDispatchToProps(dispatch) {
   return {
-    save: (itemID, record) => dispatch(saveItem(itemID, projectURL, record))
+    save: (itemID, record) => dispatch(saveItem(itemID, record))
   }
 }
 
 module.exports = function itemEditor(Component) {
   let ItemEditor = React.createClass({
     propTypes: {
+      /* From mapDispatchToProps */
       save: React.PropTypes.func.isRequired,
-      projectURL: React.PropTypes.string.isRequired,
     },
 
     getInitialState() {

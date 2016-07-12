@@ -2,8 +2,7 @@
 
 const React = require('react')
     , Immutable = require('immutable')
-    , ItemEditor = require('./item_editor.jsx')
-    , { compose } = require('redux')
+    , SaveButton = require('../shared/save_button.jsx')
     , { connect } = require('react-redux')
     , { getType } = require('../../helpers/api')
 
@@ -21,16 +20,12 @@ module.exports = function (Component, RecordType) {
   const StandaloneForm = React.createClass({
     propTypes: {
       data: React.PropTypes.instanceOf(Immutable.Map),
-      save: React.PropTypes.func.isRequired,
     },
 
     getInitialState() {
       return {
         [type]: this.originalData(),
-
-        // FIXME
-        loading: false,
-        errors: Immutable.Map()
+        errors: null,
       }
     },
 
@@ -40,7 +35,7 @@ module.exports = function (Component, RecordType) {
             , original = this.originalData()
 
         if (!updated.equals(original)) {
-          return 'There are unsaved pages on this page. Closing it will lose your changes.';
+          return 'There are unsaved changes. They will be lost if you close this page.';
         }
       }
     },
@@ -79,39 +74,45 @@ module.exports = function (Component, RecordType) {
       this.setState({ [type]: updatedRecord });
     },
 
-    handleSaveSuccess(response) {
+    handleSaveSuccess(request) {
       const redirect = this.isNew()
-          ? response.headers.get('Location')
+          ? request.responseHeaders.Location
           : this.props.data.get('url')
 
       window.onbeforeunload = null;
       window.location.href = redirect;
     },
 
-    saveAndRedirect() {
-      const { save } = this.props
-          , updatedData = this.state[types.get(RecordType)]
-          , id = this.isNew() ? null : this.props.data.get('id')
+    handleError(errors) {
+      this.setState({ errors })
+    },
 
-      save(id, this.getProjectURL(), updatedData).then(this.handleSaveSuccess);
+    getIDAndRecord() {
+      const id = this.isNew() ? null : this.props.data.get('id')
+          , record = this.state[type]
+
+      return [ id, record ]
     },
 
     render() {
       return (
         <Component
-            {...this.props}
-            {...this.state}
-            data={this.isNew() ? null : this.props.data}
-            project={this.isNew() ? this.props.data : undefined}
-            projectURL={this.getProjectURL()}
-            handleRecordChange={this.handleRecordChange}
-            saveAndRedirect={this.saveAndRedirect} />
+          {...this.props}
+          {...this.state}
+          data={this.isNew() ? null : this.props.data}
+          project={this.isNew() ? this.props.data : undefined}
+          handleRecordChange={this.handleRecordChange}
+          saveButton={
+            <SaveButton
+              getIDAndRecord={this.getIDAndRecord}
+              onSuccess={this.handleSaveSuccess}
+              onError={this.handleError}
+            />
+          }
+        />
       )
     }
   });
 
-  return compose(
-    connect(require('../main/default_api_mapper')),
-    ItemEditor
-  )(StandaloneForm)
+  return connect(require('../main/default_api_mapper'))(StandaloneForm);
 }
