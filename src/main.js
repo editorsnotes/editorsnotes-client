@@ -1,66 +1,40 @@
 "use strict";
 
-var _ = require('underscore')
-  , EventEmitter = require('events')
-  , Immutable = require('immutable')
-  , React = require('react')
-  , Router = require('./router')
-  , router
-
-
-/* Polyfills */
 require('whatwg-fetch');
 
-
-/* Globals */
-window.EditorsNotes = {};
-window.EditorsNotes.jed = require('./jed');
-window.EditorsNotes.events = new EventEmitter();
-
-
-/* Function that will render the whole application */
-function renderApplication(props) {
-  var Application = require('./components/application.jsx')
+const Immutable = require('immutable')
+    , React = require('react')
     , { render } = require('react-dom')
+    , { createStore, applyMiddleware, compose } = require('redux')
+    , thunk = require('redux-thunk').default
 
-  return render(
-      React.createElement(Application, props),
-      document.body.querySelector('#react-app'))
+const rootReducer = require('./reducers')
+    , Root = require('./components/root.jsx')
+
+window.onload = initialize;
+
+function initialize() {
+  const store = createStore(
+    rootReducer,
+    getInitialState(),
+    compose(
+      applyMiddleware(thunk),
+      window.devToolsExtension ? window.devToolsExtension() : undefined
+    )
+  )
+
+  render(<Root store={store} />, document.body.querySelector('#react-app'))
 }
 
+function getInitialState() {
+  const bootstrap = window.EDITORSNOTES_BOOTSTRAP
+      , { ApplicationState } = require('./records/state')
 
-/* Router */
-router = new Router();
+  let state = new ApplicationState({ jed: require('./jed')() });
 
-// TODO: Only add admin_routes if user is logged in?
-router.add(require('./base_routes'));
-router.add(require('./admin_routes'));
-
-router.fallbackHandler = function (name, path) {
-  return function (config, params, queryParams) {
-    var promise = Promise.resolve({})
-
-    if (window.EDITORSNOTES_BOOTSTRAP) {
-      promise = promise
-        .then(() => {
-          var data = window.EDITORSNOTES_BOOTSTRAP
-            , immutableData = {}
-
-          Object.keys(data).forEach(key => {
-            immutableData[key] = Immutable.fromJS(data[key]);
-          });
-
-          return immutableData;
-        });
-    }
-
-    promise = promise
-      .then(props => _.extend(props, { ActiveComponent: config.Component, path }))
-      .then(renderApplication)
+  if (bootstrap) {
+    state = state.merge(Immutable.fromJS(bootstrap));
   }
-}
 
-/* Render the react application when DOM is ready */
-window.onload = function () {
-  router.execute(window.location.pathname);
+  return state
 }

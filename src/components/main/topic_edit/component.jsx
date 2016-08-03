@@ -6,17 +6,16 @@ var React = require('react')
   , standaloneForm = require('../../util/standalone_form.jsx')
   , commonStrings = require('../../common_strings')
   , Topic = require('../../../records/topic')
-  , TopicEdit
+  , { connect } = require('react-redux')
 
 
-TopicEdit = React.createClass({
+const TopicEdit = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map),
     topic: React.PropTypes.instanceOf(Topic).isRequired,
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     projectURL: React.PropTypes.string.isRequired,
-    saveAndRedirect: React.PropTypes.func.isRequired,
     handleRecordChange: React.PropTypes.func.isRequired
   },
 
@@ -52,12 +51,7 @@ TopicEdit = React.createClass({
 
         <section>
           <div className="well">
-            <button
-                className="btn btn-primary btn-large"
-                disabled={loading}
-                onClick={saveAndRedirect}>
-              <Translate text={commonStrings.save} />
-            </button>
+            { saveButton }
           </div>
         </section>
 
@@ -66,4 +60,4 @@ TopicEdit = React.createClass({
   }
 });
 
-module.exports = standaloneForm(TopicEdit, Topic);
+module.exports = connect(require('../default_api_mapper'))(standaloneForm(TopicEdit, Topic));

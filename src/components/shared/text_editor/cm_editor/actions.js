@@ -17,7 +17,7 @@ function checkEmptyReferences(cm, { to, text }) {
     if (isEmptyText) return;
 
     type = token.type.slice(16);
-    if (cm.handleAddReference) cm.handleAddReference(type);
+    if (type && cm.handleAddReference) cm.handleAddReference(type);
   }
 }
 

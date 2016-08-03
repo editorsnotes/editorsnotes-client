@@ -139,25 +139,6 @@ module.exports = React.createClass({
                 </button>
 
               </div>
-              <div className="px3">
-                <button
-                    onClick={handleSave}
-                    disabled={loading}
-                    className="btn btn-primary mr1"
-                    style={{
-                      position: 'absolute',
-                      height: '48px',
-                      width: '120px',
-                      top: '18px',
-                      right: '48px',
-                      fontSize: '18px'
-                    }}>
-                  Save
-                  <Spinner
-                      opts={require('../spinner/opts').compact}
-                      spin={loading} />
-              </button>
-              </div>
             </div>
           )
         }

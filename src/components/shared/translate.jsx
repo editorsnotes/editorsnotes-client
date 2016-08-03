@@ -1,11 +1,18 @@
 "use strict";
 
-var React = require('react')
+const React = require('react')
+    , Jed = require('jed')
+    , { connect } = require('react-redux')
 
-module.exports = React.createClass({
-  displayName: 'Translate',
+function mapStateToProps(state) {
+  return {
+    jed: state.get('jed')
+  }
+}
 
+const Translate = React.createClass({
   propTypes: {
+    jed: React.PropTypes.instanceOf(Jed),
     text: React.PropTypes.oneOfType([
         React.PropTypes.string,
         React.PropTypes.array
@@ -14,29 +21,23 @@ module.exports = React.createClass({
     domain: React.PropTypes.string
   },
 
-  getDefaultProps: function () {
-    return {
-      domain: 'messages_main'
-    }
-  },
+  render() {
+    const { jed, number, domain='messages_main' } = this.props
 
-  render: function () {
-    var { jed } = global.EditorsNotes
-      , { text, number, domain } = this.props
-      , translated
+    let { text } = this.props
 
     if (Array.isArray(text)) {
       text = text[0];
     }
 
-    translated = jed
+    const translated = jed
       .translate(text)
       .onDomain(domain)
 
-    translated = number ?
+    return <span>{ number ?
       translated.fetch(number) :
-      translated.fetch()
-
-    return <span>{ translated }</span>
+      translated.fetch() }</span>
   }
-});
+})
+
+module.exports = connect(mapStateToProps)(Translate)

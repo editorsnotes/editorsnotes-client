@@ -1,15 +1,14 @@
 "use strict";
 
-var { HTTPClientError, HTTPServerError } = require('../errors')
+const { HTTPClientError, HTTPServerError } = require('../errors')
 
+// If response is OK (2xx status code), pass it through. If not, return a
+// rejected promise that includes both the status and the message received
+// from the server (which would typically be a JSON object)
 module.exports = function (response) {
-  var contentType
-    , isJSON
+  if (response.ok) return Promise.resolve(response);
 
-  if (response.ok) return response;
-
-  contentType = response.headers.get('Content-Type') || '';
-  isJSON = contentType.indexOf('json') !== -1;
+  const isJSON = /json/.test(response.headers.get('Content-Type'))
 
   return (isJSON ? response.json() : response.text())
     .then(msg => {

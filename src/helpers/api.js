@@ -19,7 +19,7 @@ function getDisplayTitle(item) {
     case 'Document':
       return item.get('description');
     case 'Topic':
-      return getWNGraph(item).get('preferred_name');
+      return item.getIn(['wn_data', '@graph', '@graph', 'preferred_name'])
     default:
       throw new Error(`Not able to get label for item of type: ${type}`);
   }

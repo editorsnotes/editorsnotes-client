@@ -63,11 +63,21 @@ module.exports = function makeEmbeddedItemsHandler(Component) {
 
     getReferenceLabel(itemType, itemID) {
       var resolveItemText = require('editorsnotes-markup-renderer/lib/resolve_item_text')
+        , { getDisplayTitle } = require('../../helpers/api')
 
       return this.getEmbeddedItem(itemType, itemID)
         .then(item => {
           var id = item.get('id')
-            , data = { [itemType]: { [id]: item.toJS() }}
+            , itemData
+            , data
+
+          if (itemType === 'topic') {
+            itemData = { 'preferred_name': getDisplayTitle(item) }
+          } else {
+            itemData = item.toJS();
+          }
+
+          data = { [itemType]: { [id]: itemData }}
 
           return resolveItemText(data, itemType, id)
         })

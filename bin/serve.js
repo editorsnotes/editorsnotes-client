@@ -1,10 +1,10 @@
 "use strict";
 
-require('babel/register')({ only: /src/ });
+require('babel-register')({ only: /src/ });
 
 var request = require('request')
   , server = require('../src/server')
-  , apiURL = process.env.EDITORSNOTES_API_URL || 'http://127.0.0.1:8001'
+  , apiURL = process.env.EDITORSNOTES_API_URL || 'http://127.0.0.1:8000'
   , port = process.env.EDITORSNOTES_RENDERER_PORT || 8450
   , production = process.env.NODE_ENV === 'production'
 

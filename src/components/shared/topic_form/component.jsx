@@ -13,7 +13,7 @@ TopicForm = React.createClass({
     topic: React.PropTypes.instanceOf(Topic).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
-    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map),
     minimal: React.PropTypes.bool
   },
 
@@ -59,12 +59,12 @@ TopicForm = React.createClass({
 
     return (
       <div>
-        <GeneralErrors errors={errors.delete('preferred_name')} />
+        { errors && <GeneralErrors errors={errors.delete('preferred_name')} /> }
 
         <header>
           <h3>Preferred name</h3>
 
-          <FieldErrors errors={errors.get('preferred_name')} />
+          { errors && <FieldErrors errors={errors.get('preferred_name')} /> }
 
           <input
               type="text"
@@ -97,13 +97,15 @@ TopicForm = React.createClass({
 
         <section>
           <h3>Summary</h3>
-          <HTMLEditor
-              onChange={markup => this.mergeValues({ markup })}
-              embeddedItems={Immutable.Set()}
-              projectURL={projectURL}
-              minimal={minimal}
-              html={topic.markup} />
-          <br />
+          <div className="absolute" style={{ height: 300, left: 0, right: 0 }}>
+            <HTMLEditor
+                onChange={markup => this.mergeValues({ markup })}
+                embeddedItems={Immutable.Set()}
+                projectURL={projectURL}
+                minimal={minimal}
+                html={topic.markup} />
+          </div>
+          <div style={{ height: 320 }} />
         </section>
       </div>
     )

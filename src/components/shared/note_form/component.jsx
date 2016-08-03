@@ -1,24 +1,22 @@
 "use strict";
 
-var React = require('react')
-  , Immutable = require('immutable')
-  , EmbeddedItemsHandler = require('../../util/embedded_items_handler.jsx')
-  , Note = require('../../../records/note')
-  , NoteForm
+const React = require('react')
+    , Immutable = require('immutable')
+    , EmbeddedItemsHandler = require('../../util/embedded_items_handler.jsx')
+    , Note = require('../../../records/note')
 
-NoteForm = React.createClass({
+
+const NoteForm = React.createClass({
   propTypes: {
     note: React.PropTypes.instanceOf(Note).isRequired,
     embeddedItems: React.PropTypes.instanceOf(Immutable.Set).isRequired,
 
     projectURL: React.PropTypes.string.isRequired,
-    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map),
 
     onChange: React.PropTypes.func.isRequired,
     onAddEmbeddedItem: React.PropTypes.func.isRequired,
-    handleSave: React.PropTypes.func.isRequired,
 
-    loading: React.PropTypes.bool.isRequired,
     minimal: React.PropTypes.bool,
   },
 
@@ -27,19 +25,20 @@ NoteForm = React.createClass({
   },
 
   handleChange(e) {
-    var { name, value } = e.target
-      , updatedNote
+    let { value } = e.target
+
+    const { name } = e.target
+        , { note, onChange } = this.props
 
     if (name === 'is_private') {
       value = value === 'true' ? true : false;
     }
 
-    updatedNote = this.props.note.set(name, value);
-    this.props.onChange(updatedNote);
+    onChange(note.set(name, value));
   },
 
   handleTopicsChange(topics) {
-    var { onAddEmbeddedItem } = this.props
+    const { onAddEmbeddedItem } = this.props
 
     this.mergeValues({
       'related_topics': topics.map(topic => topic.get('url'))
@@ -53,16 +52,16 @@ NoteForm = React.createClass({
   },
 
   renderFields() {
-    var RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
-      , FieldErrors = require('../field_errors.jsx')
-      , { getEmbedded } = require('../../../helpers/api')
-      , { note, projectURL, errors, embeddedItems } = this.props
+    const RelatedTopicsSelector = require('../related_topic_selector/component.jsx')
+        , FieldErrors = require('../field_errors.jsx')
+        , { getEmbedded } = require('../../../helpers/api')
+        , { note, projectURL, errors, embeddedItems } = this.props
 
     return (
       <div>
         <div>
           <div className="mb2">
-            <FieldErrors errors={errors.get('title')} />
+            { errors && <FieldErrors errors={errors.get('title')} /> }
             <label>
               <span className="h4 bold block">Title</span>
               <input
@@ -125,23 +124,25 @@ NoteForm = React.createClass({
   },
 
   render() {
-    var ENEditor = require('../en_editor/component.jsx')
-      , TextEditor = require('../text_editor/component.jsx')
-      , FieldErrors = require('../field_errors.jsx')
-      , GeneralErrors = require('../general_errors.jsx')
-      , { note, errors, minimal } = this.props
-      , Editor = minimal ? TextEditor : ENEditor
+    const ENEditor = require('../en_editor/component.jsx')
+        , TextEditor = require('../text_editor/component.jsx')
+        , FieldErrors = require('../field_errors.jsx')
+        , GeneralErrors = require('../general_errors.jsx')
+        , { note, errors, minimal } = this.props
+        , Editor = minimal ? TextEditor : ENEditor
 
     return (
       <div className="flex-grow flex flex-column">
         <div className="container col-12 flex-none">
-          <GeneralErrors
-              errors={errors.delete('title').delete('markup')} />
+          { errors &&
+            <GeneralErrors
+                errors={errors.delete('title').delete('markup')} />
+          }
           { minimal && this.renderFields() }
         </div>
 
         <section className="flex-grow flex flex-column">
-          <FieldErrors errors={errors.get('markup')} />
+          { errors && <FieldErrors errors={errors.get('markup')} /> }
           <Editor
               ref="content"
               {...this.props}

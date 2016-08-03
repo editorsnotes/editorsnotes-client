@@ -1,69 +1,61 @@
 "use strict";
 
-var _ = require('underscore')
-  , React = require('react')
-  , Application
+const React = require('react')
+    , classnames = require('classnames')
+    , { connect } = require('react-redux')
 
-Application = React.createClass({
-  displayName: 'EditorsNotesApplication',
+const Router = require('../router')
+    , { Route } = require('../records/state')
+    , Header = require('./main/header/component.jsx')
+    , Footer = require('./main/footer/component.jsx')
 
-  getInitialState() {
-    return { loading: false }
+
+function mapStateToProps(state) {
+  return {
+    currentRoute: new Route(state.getIn(['application', 'current'])),
+    nextRoute: new Route(state.getIn(['application', 'next']))
+  }
+}
+
+const Application = React.createClass({
+  propTypes: {
+    router: React.PropTypes.instanceOf(Router).isRequired,
+    currentRoute: React.PropTypes.instanceOf(Route),
+    nextRoute: React.PropTypes.instanceOf(Route),
   },
 
-  componentDidMount() {
-    window.EditorsNotes.events.on('loadstart', () => this.setState({ loading: true }));
-    window.EditorsNotes.events.on('loadstop', () => this.setState({ loading: false }));
-  },
+  render() {
+    const { router, currentRoute } = this.props
 
-  render: function () {
-    var classnames = require('classnames')
-      , Header = require('./main/header/component.jsx')
-      , Footer = require('./main/footer/component.jsx')
-      , { ActiveComponent, noContainer, noFooter, noHeader, path } = this.props
-      , { loading } = this.state
-      , user = this.props.__AUTHENTICATED_USER__ || null
-      , activeComponentProps
+    let child = null
+      , childProps = {}
 
-    activeComponentProps = _.omit(this.props, ['ActiveComponent', '__AUTHENTICATED_USER__']);
-    activeComponentProps.user = user;
+    const match = router.match(currentRoute.get('path'))
+
+    if (match) {
+      const { Component, componentProps } = match.handler
+
+      if (componentProps) childProps = componentProps()
+      child = <Component {...childProps} />
+    } else {
+      child = <span>Could not find { currentRoute.get('path') }</span>
+    }
+
 
     return (
       <div className="flex flex-column" style={{ minHeight: '100vh' }}>
-        {
-          !noHeader && (
-            <Header
-                user={user}
-                path={path}
-                loading={loading}
-                noContainer={noContainer} />
-          )
-        }
-
-        {/* FIXME: messages
-
-        {% if messages %}
-        <div id="message-list" class="container">
-          {% for message in messages %}
-          <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">
-            {{ message|safe }}
-          </div>
-          {% endfor %}
-        </div>
-        {% endif %}
-
-        */}
+        <Header {...childProps} />
 
         <main className="flex-grow relative">
-          <div className={classnames({ container: !noContainer })}>
-            <ActiveComponent {...activeComponentProps} />
+          <div className={classnames({ container: !childProps.noContainer })}>
+            { child }
           </div>
         </main>
 
-        { !noFooter && <Footer /> }
+        <Footer {...childProps} />
       </div>
     )
   }
 });
 
-module.exports = Application;
+module.exports = connect(mapStateToProps)(Application);

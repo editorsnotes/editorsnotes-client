@@ -1,11 +1,11 @@
 "use strict";
 
-var React = require('react')
-  , Immutable = require('immutable')
+const React = require('react')
+    , Immutable = require('immutable')
 
 function getOptions(projectURL, q) {
-  var url = require('url')
-    , apiFetch = require('../../../utils/api_fetch')
+  const url = require('url')
+      , apiFetch = require('../../../utils/api_fetch')
 
   return apiFetch(url.format({
       pathname: projectURL + 'topics/',
@@ -17,8 +17,8 @@ function getOptions(projectURL, q) {
 }
 
 function RelatedTopicsSelector({ topics, projectURL, onChange }) {
-  var Select = require('react-select')
-    , { getDisplayTitle } = require('../../../helpers/api')
+  const Select = require('react-select')
+      , { getDisplayTitle } = require('../../../helpers/api')
 
   return (
     <Select.Async
@@ -28,7 +28,7 @@ function RelatedTopicsSelector({ topics, projectURL, onChange }) {
         className="mb1"
         value={topics.toArray()}
         cache={null}
-        placeholder=<strong>Related topics</strong>
+        placeholder={<strong>Related topics</strong>}
         filterOptions={opts => opts}
         loadOptions={query => getOptions(projectURL, query)}
         optionRenderer={getDisplayTitle}

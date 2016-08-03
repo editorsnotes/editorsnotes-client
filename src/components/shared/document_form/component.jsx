@@ -13,7 +13,7 @@ module.exports = React.createClass({
     document: React.PropTypes.instanceOf(Document).isRequired,
     projectURL: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
-    errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
+    errors: React.PropTypes.instanceOf(Immutable.Map),
     minimal: React.PropTypes.bool
   },
 
@@ -68,8 +68,8 @@ module.exports = React.createClass({
     return (
       <div className="clearfix">
         <div className={ minimal ? '' : 'md-col md-col-right md-col-6 col-right'}>
-          <GeneralErrors errors={errors.delete('description')} />
-          <FieldErrors errors={errors.get('description')} />
+          { errors && <GeneralErrors errors={errors.delete('description')} /> }
+          { errors && <FieldErrors errors={errors.get('description')} /> }
           <p dangerouslySetInnerHTML={{ __html: description }} />
         </div>
 
