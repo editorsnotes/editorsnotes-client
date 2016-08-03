@@ -1,7 +1,9 @@
 "use strict";
 
-var React = require('react')
-  , Immutable = require('immutable')
+const React = require('react')
+    , Immutable = require('immutable')
+    , Jed = require('jed')
+    , { connect } = require('react-redux')
 
 
 const CREATOR_TYPES = {
@@ -10,11 +12,16 @@ const CREATOR_TYPES = {
   name: 'Name'
 }
 
+function mapStateToProps(state) {
+  return {
+    jed: state.get('jed')
+  }
+}
 
-module.exports = React.createClass({
-  displayName: 'ZoteroCreator',
 
+const ZoteroCreator = React.createClass({
   propTypes: {
+    jed: React.PropTypes.instanceOf(Jed).isRequired,
     creator: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     creatorTypes: React.PropTypes.instanceOf(Immutable.List),
 
@@ -24,7 +31,7 @@ module.exports = React.createClass({
   },
 
   translate(value) {
-    var { jed } = global.EditorsNotes
+    const { jed } = this.props
 
     return jed
       .translate(value)
@@ -33,10 +40,9 @@ module.exports = React.createClass({
   },
 
   renderCreatorOptions() {
-    var { creator, creatorTypes } = this.props
-      , creatorTypesList
+    const { creator, creatorTypes } = this.props
 
-    creatorTypesList = creatorTypes || Immutable.fromJS([{
+    const creatorTypesList = creatorTypes || Immutable.fromJS([{
       creatorType: creator.get('creatorType')
     }]);
 
@@ -48,16 +54,15 @@ module.exports = React.createClass({
   },
 
   handleChange(field, e) {
-    var { creator, onCreatorChange } = this.props
+    const { creator, onCreatorChange } = this.props
 
     onCreatorChange(creator.set(field, e.target.value));
   },
 
   render() {
-    var { creator, handleCreatorAdd, handleCreatorRemove } = this.props
-      , creatorFields
+    const { creator, handleCreatorAdd, handleCreatorRemove } = this.props
 
-    creatorFields = creator
+    const creatorFields = creator
       .delete('creatorType')
       .map((val, field) => [field, val])
       .toList()
@@ -104,3 +109,5 @@ module.exports = React.createClass({
     )
   }
 });
+
+module.exports = connect(mapStateToProps)(ZoteroCreator);
