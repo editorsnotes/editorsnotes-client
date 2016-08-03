@@ -33,7 +33,7 @@
     "request": "^2.72.0",
     "route-recognizer": "^0.1.11",
     "spin.js": "^2.3.2",
-    "truncatise": "0.0.2",
+    "truncatise": "0.0.5",
     "typogr": "^0.6.6",
     "underscore": "^1.8.3",
     "validator": "^3.43.0",

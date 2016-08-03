@@ -1,11 +1,19 @@
 "use strict";
 
-var React = require('react')
+const React = require('react')
   , Immutable = require('immutable')
   , truncatise = require('truncatise')
-  , Breadcrumb
 
-Breadcrumb = ({ crumbs }) => (
+function truncate(label) {
+  return truncatise(label, {
+    TruncateBy: 'characters',
+    TruncateLength: 42,
+    StripHTML: true,
+    Strict: true
+  })
+}
+
+const Breadcrumb = ({ crumbs }) => (
   <ul className="list-reset">
     {
       crumbs.pop().map((crumb, i) =>
@@ -18,17 +26,14 @@ Breadcrumb = ({ crumbs }) => (
       )
     }
 
-    {
-      typeof crumbs.last().get('label') === 'string' ?
-        <li className="inline-block gray" dangerouslySetInnerHTML={{
-          __html: truncatise(crumbs.last().get('label'), {
-            TruncateBy: 'characters',
-            StripHTML: true,
-            Strict: false
-          }).replace(/&#?\d*\.{3}$/, '...')
-        }} /> :
-        <li className="inline-block gray">{ crumbs.last().get('label') }</li>
-    }
+
+    <li className="inline-block gray">
+      {
+        typeof crumbs.last().get('label') === 'string'
+          ? truncate(crumbs.last().get('label'))
+          : crumbs.last().get('label')
+      }
+    </li>
   </ul>
 )
 
