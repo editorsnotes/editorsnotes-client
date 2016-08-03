@@ -16,7 +16,6 @@ const TopicEdit = React.createClass({
     loading: React.PropTypes.bool.isRequired,
     errors: React.PropTypes.instanceOf(Immutable.Map).isRequired,
     projectURL: React.PropTypes.string.isRequired,
-    saveAndRedirect: React.PropTypes.func.isRequired,
     handleRecordChange: React.PropTypes.func.isRequired
   },
 
@@ -52,12 +51,7 @@ const TopicEdit = React.createClass({
 
         <section>
           <div className="well">
-            <button
-                className="btn btn-primary btn-large"
-                disabled={loading}
-                onClick={saveAndRedirect}>
-              <Translate text={commonStrings.save} />
-            </button>
+            { saveButton }
           </div>
         </section>
 

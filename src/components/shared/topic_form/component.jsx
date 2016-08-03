@@ -59,12 +59,12 @@ TopicForm = React.createClass({
 
     return (
       <div>
-        <GeneralErrors errors={errors.delete('preferred_name')} />
+        { errors && <GeneralErrors errors={errors.delete('preferred_name')} /> }
 
         <header>
           <h3>Preferred name</h3>
 
-          <FieldErrors errors={errors.get('preferred_name')} />
+          { errors && <FieldErrors errors={errors.get('preferred_name')} /> }
 
           <input
               type="text"

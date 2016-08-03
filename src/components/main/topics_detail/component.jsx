@@ -5,14 +5,6 @@ var React = require('react')
   , HydraAware = require('../../util/hydra_aware.jsx')
   , { connect } = require('react-redux')
 
-function mapStateToProps(state) {
-  const props = require('../default_api_mapper')(state);
-
-  props.store = state.get('tripleStore');
-
-  return props;
-}
-
 const TopicDetail = React.createClass({
   propTypes: {
     data: React.PropTypes.instanceOf(Immutable.Map).isRequired,
@@ -105,4 +97,4 @@ const TopicDetail = React.createClass({
   }
 });
 
-module.exports = connect(mapStateToProps)(HydraAware(TopicDetail));
+module.exports = connect(require('../default_api_mapper'))(HydraAware(TopicDetail));
