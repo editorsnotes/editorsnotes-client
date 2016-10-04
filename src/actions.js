@@ -38,7 +38,7 @@ function navigateToPath(router, path, req=null) {
     const match = router.match(path)
         , { resource, makeTripleStore } = match.handler
         , apiPath = resource ? resource(path) : null
-        , skipUserRequest = req && req.headers.cookie.indexOf('sessionid' === -1)
+        , skipUserRequest = req && req.headers.cookie.indexOf('sessionid') === -1
         , headers = {}
 
     const updateRequest = dispatchReadyState(dispatch, REQUEST_NAVIGATION);
